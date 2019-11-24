@@ -1,0 +1,49 @@
+﻿@model BcxbTeamBldr.Models.PlayerListVM
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>EditTeam</title>
+</head>
+<body>
+    @{ 
+       string teamName = @Model.UserTeam.TeamName;
+       string userName = @Model.UserTeam.UserName;
+    }
+
+    <h2>Roster for @teamName</h2>
+    <div>
+        @if (Model.Players.Count == 0) {
+            <div style="color:red;" >
+                @teamName  <text>doesn't have any players yet.</text>
+            </div>
+        }
+        else {
+            <table border="1" cellpadding="5" width="400px" style="border:1px solid black; border-collapse:collapse;">
+                <tr>
+                    <th>Player Name</th>
+                    <th>MLB Team</th>
+                    <th align="left">Year</th>
+                    <th>Positions</th>
+                                   </tr>
+                @foreach (var rec in Model.Players) {
+                    <tr>
+                        <td>@rec.PlayerName</td>
+                        <td>@rec.MlbTeam</td>
+                        <td>@rec.Year</td>
+                        <td>@rec.PosnString</td>
+                        <td>@Html.ActionLink("Remove", "RemovePlayerFromTeam", new { user = userName, team = teamName, id = @rec.PlayerId }) </td>
+                    </tr>
+                }
+            </table>
+        }
+
+        <div>
+            <p />
+            @Html.ActionLink("Add player", "SearchPlayers", new { user = userName, team = teamName })
+        </div>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,30 @@
+﻿
+@{
+    ViewBag.Title = "_Layout";
+}
+
+<!DOCTYPE html>
+
+<body style="font-family:sans-serif">
+
+    <h1>Zeemerix PlayByPlay Baseball Custom Team Builder</h1>
+    <table>
+        <tr>
+            <td style="background-color:cadetblue;" width="40" height="1000" valign="top">
+            </td>
+            <td valign="top" style="padding:20px;" >
+                <hr style="color:cadetblue;" />
+                @*<h1>Zeemerix PlayByPlay Baseball Custom Team Builder</h1>*@
+                <div style="border:20px,20px,20px,20px;">
+                    @RenderBody()
+                </div>
+            </td>
+        </tr>
+    </table>
+    @*<div>
+            @RenderBody()
+        </div>*@
+
+
+</body>
+

@@ -1,0 +1,23 @@
+﻿@model BcxbTeamBldr.DataLayer.CUserTeam
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>AddTeam</title>
+</head>
+<body>
+    <h2>Add new team for @Model.UserName.Split('@')[0]</h2>
+    @using (Html.BeginForm()) {
+        <div> 
+            New team name: @Html.TextBoxFor(t => t.TeamName)
+            <p/>Team uses DH at home: @Html.CheckBoxFor(t => t.UsesDh)
+            <p/>@Html.HiddenFor(t => t.UserName)
+            <p style="color:red; font-weight:bold"/>@ViewBag.Msg
+
+        </div>
+        <input type="submit" value="Add the new team" />
+    }
+</body>
+</html>

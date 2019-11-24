@@ -1,0 +1,47 @@
+﻿@model BcxbTeamBldr.Models.TeamListVM
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Team List</title>
+</head>
+<body>
+    <h2>Team List for @Model.UserName.Split(new char[] { '@' })[0]</h2>
+    <div>
+        @if (Model.UserName.Length == 0) {
+            <div style="color:red;">
+            <text>Click 'Add new team' to add your first team </text>
+            </div>
+        }
+        else {
+        <table>
+            <tr>
+                <th>Team</th>
+                <th>Batters</th>
+                <th>Pitchers</th>
+                <th>Uses DH</th>
+                <th></th>
+                <th></th>
+            </tr>
+            @foreach (var rec in Model.UserTeamList) {
+                <tr>
+                    <td>@rec.TeamName</td>
+                    <td>@rec.NumPos.ToString()</td>
+                    <td>@rec.NumPit.ToString()</td>
+                    <td>@(rec.UsesDh ? "Yes" : "No") </td>
+                    <td>@Html.ActionLink("Edit", "EditTeam", new { user = Model.UserName,team = @rec.TeamName }) </td>
+                    <td>@Html.ActionLink("Delete", "DeletetTeam", new { user = Model.UserName, team = @rec.TeamName }) </td>
+                </tr>
+        }
+        </table>
+        }
+
+        <div>
+            <p/>
+            @Html.ActionLink("Add new team", "AddTeam", new { user = Model.UserName })
+        </div>
+
+    </div>
+</body>
+</html>

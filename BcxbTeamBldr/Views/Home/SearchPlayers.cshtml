@@ -1,0 +1,127 @@
+﻿@model BcxbTeamBldr.DataLayer.CUserTeam
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>AddPlayer</title>
+
+    <script src="~/Scripts/jquery-3.4.1.js"> </script>
+
+    <script>
+        $(document).ready(function () {
+
+            $(document).on('click', '#tblMatching tr td.addPlayer',
+                function () {
+                    var tableData = $(this).siblings("td").map(function () {
+                        return $(this).text();
+                    }).get();
+                    //alert("Player is: " + $.trim(tableData[0]) + ", " + $.trim(tableData[4]));
+
+                    let pid1 = $.trim(tableData[4]);
+                    let user1 = $('#hdnUserName').val();
+                    let team1 = $('#hdnTeamName').val();
+
+                    //let url = '/Home/VerMsgAction?user=' + user1 + '&team=' + team1 + '&pid=' + pid1;
+                    //alert('url=' + url);
+                    $.get (
+                        "/Home/VerMsgAction",
+                        ///url,
+                        { user: user1, team: team1, pid: pid1 },
+                        function (msg) {
+                            //alert(msg);
+                            if (msg != "ok") {
+                                alert('msg=' + msg);
+                                $('#errMsg').val(msg);
+                            }
+                            else {
+                                //let url = '@Url.Action("AddPlayerToTeam", "Home", new { name1 = "Nixon", age = 58 })';
+                                //alert("url=>" + url);
+
+                                url = 'AddPlayerToTeam?user=' + user1 + '&team=' + team1 + '&pid=' + pid1;
+                                //alert(ur);
+                                window.location.href = url;
+                            }
+                        },
+                        "text"
+                     );
+
+                });
+
+
+            $('#btnSearch').click(function () {
+                //var crit1 = $(this).attr('id');
+                //$('#errMsg').css('display','none');
+                let crit1 = $('#txtName').val();
+                let user1 = $('#hdnUserName').val();
+                let team1 = $('#hdnTeamName').val();
+                //alert('criteria=' + crit1);
+
+                $.ajax({
+                    url: '/Home/detailasjson', type: "GET", dataType: "json",
+                    data: { crit: crit1 }, //This becomes the arg to the Action method.
+                    success: function (data) {
+                        //alert(JSON.stringify(data));
+                        //alert(JSON.stringify({ test: 'hello', quant: 12 })); So can be any object not just Json!
+                        //alert(data[0].PlayerName);
+                        content = '<h3>Matching Players...</h3>';
+                        content += '<table id="tblMatching" border="1" cellpadding="5" cellspacing="0" width="400px" style="border-collapse:collapse">';
+
+                        content += '<tr>';
+                        content += '<th>Player Name</th>';
+                        content += '<th>MLB Team</th>';
+                        content += '<th>Year</th>';
+                        content += '<th>Positions</th>';
+                        content += '<th></th>';
+                        content += '</tr>'
+
+                        let url;
+                        for (let p of data) {
+                            content += '<tr>';
+                            content += '<td>' + p.PlayerName + '</td>';
+                            content += '<td>' + p.MlbTeam + '</td>';
+                            content += '<td>' + p.Year + '</td>';
+                            content += '<td>' + p.PosnString + '</td>';
+                            url = '"AddPlayerToTeam?user=' + user1 + '&team=' + team1 + '&pid=' + p.PlayerId + '"';
+                            //content += '<td><a href=' + url + '>Add&nbsp;Player</a></td>';
+                            content += '<td class="addPlayer"><a href="#">Add&nbsp;Player</a></td>';
+                            content += '<td style="visibility:hidden">' + p.PlayerId + '</td>';
+                            content += '</tr>';
+                        }
+
+                        content += "</table>";
+
+                        //alert(content);
+                        $('#dvResults').html(content);
+                    },
+                    error: function (xhr, status, error) {
+                        alert(xhr.responseText);
+                        alert(status);
+                        alert(error);
+                    }
+
+                })
+
+            })
+
+        })
+    </script>
+</head>
+<body>
+    <div>
+        <h2>Search for player to add to @Model.TeamName</h2>
+
+        Enter first few characters of player's last name...
+        <br /><input type="text" id="txtName" />
+        <p /><button id="btnSearch">Search</button>
+        <div id="dvResults">
+
+        </div>
+        <p/><input id="errMsg" style="border:none; color:red; font-size:larger; font-weight:bold; width:600px;" value="" />
+        <p/>@Html.ActionLink("Close", "EditTeam", new { user = Model.UserName, team = Model.TeamName })
+    </div>
+    <br/><input id="hdnUserName" type="text" style="visibility:hidden" value="@Model.UserName" />
+    <input id="hdnTeamName" type="text" style="visibility:hidden" value="@Model.TeamName" />
+</body>
+</html>

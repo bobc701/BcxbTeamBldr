@@ -1,0 +1,161 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+
+    <style>
+        .entry1 {margin: 5px; padding:10px; font-size:larger;}
+        .button1 {margin:5px 0px 5px 25px; padding:10px; font-size:large; border-radius:10px;}
+    </style>
+
+    <script src="../../Scripts/jquery-3.4.1.js"></script>"
+
+    <script>
+        $(document).ready(function () {
+            //alert("In document.ready");
+            $("#btnSignUp").on("click", function () {
+                alert("In btnSignUp");
+
+            //  Validate the user name...
+                let msg = "";
+                let user1 = $("#txtUser").val(); //document.getElementById("txtUser");
+                alert(`user=${user1}`);
+                user1 = user1.trim();
+                if (user1 == "") msg = "You must enter User name";
+                else if (user1.length > 30) msg = "User name is too long. Must be 30 or less";
+                
+            //  Validate the (new) password...
+                if (msg == "") {
+                    let pwd1 = $("#txtPwd").val();
+                    alert(`pwd=${pwd1}`);
+                    if (pwd1 == "") msg = "You must enter a password";
+                    else if (pwd1.length > 30) msg = "Password is too long. Must be 30 or less";
+                    else if (pwd1.indexOf(" ") != -1) msg = "Password cannot include spaces";
+                    else {
+                        let pwd2 = $("#txtConfirm").val();
+                        alert(`pwd2=${pwd2}`);
+                        if (pwd1 != pwd2) msg = "Passwords do not match";
+                    }
+                }
+
+                if (msg == "") {
+                //  No errors... 
+                //  Use ajax to call a method to insert into db, and return "ok" or errorMsg.
+                //  If ok is returned, the Go to Team List.
+                    $.get (
+                        "/Home/AddNewUser",
+                        { user: user1, pwd: pwd1 },
+                        function (msg) {
+                            alert(`On return to get, msg=${msg}`);
+                            if (msg != "ok") {
+                            //  Error adding user to the database...
+                                alert('msg=' + msg);
+                                $('#errMsg').val(msg);
+                            }
+                            else {
+                            //  User sign up ok, go to (empty) team list...
+                                url = "/Home/TeamList?user=" + user1.trim().replace(" ", "%20");
+                                alert(url);
+                                window.location.href = url;
+                            }
+                        },
+                        "text"
+                     );
+
+                }
+                else {
+                //  Local validation error... post it...
+                    $('#errMsg').val(msg);
+                }
+
+            //  
+
+            });
+
+            $("#btnLogin").on("click", function () {
+                alert("In btnLogin");
+
+            //  Validate the user name...
+                let msg = "";
+                let user1 = $("#txtUser2").val().Trim(); 
+                alert(`user=${user1}`);
+                if (user1 == "") msg = "You must enter User name";
+                else if (user1.length > 30) msg = "User name is too long. Must be 30 or less";
+                
+            //  Validate the password...
+                if (msg == "") {
+                    let pwd1 = $("#txtPwd2").val().Trim();
+                    alert(`pwd=${pwd1}`);
+                    if (pwd1 == "") msg = "You must enter the password";
+                }
+
+                if (msg == "") {
+                //  No errors... 
+                //  Use ajax to call a method to validate vs db, and return "ok" or errorMsg.
+                //  If ok is returned, the Go to Team List.
+                    $.get (
+                        "/Home/Login",
+                        { user: user1, pwd: pwd1 },
+                        function (msg) {
+                            alert(`On return to get, msg=${msg}`);
+                            if (msg != "ok") {
+                            //  Error validating credentials vs db...
+                                alert('msg=' + msg);
+                                $('#errMsg2').val(msg);
+                            }
+                            else {
+                            //  Credentials validated ok, go to team list...
+                                url = "/Home/TeamList?user=" + user1.trim().replace(" ", "%20");
+                                alert(url);
+                                window.location.href = url;
+                            }
+                        },
+                        "text"
+                     );
+                }
+                else {
+                //  Local validation rror... post it...
+                    $('#errMsg2').val(msg);
+                }
+
+            //  
+
+            });
+
+
+        });
+        
+
+    </script>
+
+
+</head>
+<body>
+    <h2>Welcome to Zeemerix PlayByPlay Team Builder</h2>
+    @*<div>
+            @Html.ActionLink("List Teams", "TeamList", new { user = "bobc@4bcx.com" })
+        </div>*@
+
+    <p /><span style="font-size:x-large; ">Sign up... </span>
+    <p /><input type="text" id="txtUser" placeholder="User name" class="entry1" style="width:200px; ">
+    Up to 30 characters: numbers, letters, spaces, special characters
+
+    <br /><input type="password" id="txtPwd" placeholder="Password" class="entry1" style="width:200px;">
+    Up to 30 characters: numbers, letters, special characters, no spaces
+
+
+    <br /><input type="password" id="txtConfirm" placeholder="Confirm password" class="entry1" style="width:200px;">
+    <br /><button id="btnSignUp" class="button1" style="width:150px;">Sign Up</button>
+
+    <p /><input id="errMsg" style="border:none; color:red; font-size:larger; font-weight:bold; width:600px;" value="" />
+
+    <p /><span style="font-size:x-large;">Or Log in... </span>
+    <p /><input type="text" id="txtUser2" placeholder="User name" class="entry1" style="width:200px;">
+    <br /><input type="password" id="txtPwd2" placeholder="Password" class="entry1" style="width:200px;">
+    <br /><button id="btnLogIn" class="button1" style="width:150px;">Log In</button>
+
+    <p /><input id="errMsg2" style="border:none; color:red; font-size:larger; font-weight:bold; width:600px;" value="" />
+</body>
+</html>
