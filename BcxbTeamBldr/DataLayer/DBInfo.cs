@@ -35,7 +35,7 @@ namespace BcxbTeamBldr.DataLayer {
                while (rdr.Read()) {
                   var team = new CUserTeam();
                   team.UserName = user;
-                  team.TeamName = rdr["TeamName"].ToString(); ;
+                  team.TeamName = rdr["TeamName"].ToString(); 
                   team.NumPit = (int)rdr["TotPit"];
                   team.NumPos = (int)rdr["TotPos"];
                   team.UsesDh = (bool)rdr["UsesDh"];

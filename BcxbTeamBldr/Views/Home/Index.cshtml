@@ -6,7 +6,7 @@
     <title>Index</title>
 
     <style>
-        .entry1 {margin: 5px; padding:10px; font-size:larger;}
+        .entry1 {margin: 5px; padding:10px; font-size:larger; background-color:seashell; } 
         .button1 {margin:5px 0px 5px 25px; padding:10px; font-size:large; border-radius:10px;}
     </style>
 
@@ -15,12 +15,16 @@
     <script>
         $(document).ready(function () {
             //alert("In document.ready");
+
             $("#btnSignUp").on("click", function () {
+            //  -------------------------------------
+            //  Logic for when use clicks 'Sign Up'...
                 alert("In btnSignUp");
 
             //  Validate the user name...
                 let msg = "";
                 let user1 = $("#txtUser").val(); //document.getElementById("txtUser");
+                let pwd1;
                 alert(`user=${user1}`);
                 user1 = user1.trim();
                 if (user1 == "") msg = "You must enter User name";
@@ -28,10 +32,11 @@
                 
             //  Validate the (new) password...
                 if (msg == "") {
-                    let pwd1 = $("#txtPwd").val();
+                    pwd1 = $("#txtPwd").val();
                     alert(`pwd=${pwd1}`);
                     if (pwd1 == "") msg = "You must enter a password";
-                    else if (pwd1.length > 30) msg = "Password is too long. Must be 30 or less";
+                    else if (pwd1.length > 30) msg = "Password must be between 8 and 30 characters";
+                    else if (pwd1.length < 8) msg = "Password must be between 8 and 30 characters";
                     else if (pwd1.indexOf(" ") != -1) msg = "Password cannot include spaces";
                     else {
                         let pwd2 = $("#txtConfirm").val();
@@ -40,6 +45,7 @@
                     }
                 }
 
+                alert(`Final msg = |${msg}| so msg=blank is ${msg==""}`);
                 if (msg == "") {
                 //  No errors... 
                 //  Use ajax to call a method to insert into db, and return "ok" or errorMsg.
@@ -47,12 +53,12 @@
                     $.get (
                         "/Home/AddNewUser",
                         { user: user1, pwd: pwd1 },
-                        function (msg) {
-                            alert(`On return to get, msg=${msg}`);
-                            if (msg != "ok") {
+                        function (msgReturned) {
+                            alert(`On return to get, msg=${msgReturned}`);
+                            if (msgReturned != "ok") {
                             //  Error adding user to the database...
-                                alert('msg=' + msg);
-                                $('#errMsg').val(msg);
+                                alert('msg=' + msgReturned);
+                                $('#errMsg').val(msgReturned);
                             }
                             else {
                             //  User sign up ok, go to (empty) team list...
@@ -75,6 +81,8 @@
             });
 
             $("#btnLogin").on("click", function () {
+            //  --------------------------------------------------------------
+            //  Logic for when user click 'Log in'...
                 alert("In btnLogin");
 
             //  Validate the user name...
@@ -143,7 +151,7 @@
     Up to 30 characters: numbers, letters, spaces, special characters!
 
     <br /><input type="password" id="txtPwd" placeholder="Password" class="entry1" style="width:200px;">
-    Up to 30 characters: numbers, letters, special characters, no spaces!
+    8 to 30 characters: numbers, letters, special characters, no spaces!
 
 
     <br /><input type="password" id="txtConfirm" placeholder="Confirm password" class="entry1" style="width:200px;">
