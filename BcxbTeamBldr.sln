@@ -5,6 +5,11 @@ VisualStudioVersion = 16.0.29215.179
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BcxbTeamBldr", "BcxbTeamBldr\BcxbTeamBldr.csproj", "{E66E1AEE-25F2-4CF1-8D55-7A3C4806AD99}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{872649E0-1861-40F5-BFE6-0246EB81A74F}"
+	ProjectSection(SolutionItems) = preProject
+		@status1.txt = @status1.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
