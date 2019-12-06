@@ -1,3 +1,6 @@
+12/06'19
+The log-in feature is working.
+
 12/01'19
 Added this @status1.txt
 Currently working on log-in feature.
