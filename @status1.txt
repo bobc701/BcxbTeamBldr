@@ -1,4 +1,7 @@
 12/06'19
+Added new Web API project, BcxbTeamRdr
+
+12/06'19
 The log-in feature is working.
 
 12/01'19
