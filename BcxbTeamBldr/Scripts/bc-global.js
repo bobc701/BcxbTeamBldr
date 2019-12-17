@@ -1,0 +1,1 @@
+﻿bc_debug = true;
