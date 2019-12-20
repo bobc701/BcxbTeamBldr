@@ -64,7 +64,7 @@
                     //  Use ajax to call a method to insert into db, and return "ok" or errorMsg.
                     //  If ok is returned, the Go to Team List.
                     $.get(
-                        bc_debug ? "/Home/AddNewUser" : "Home/AddNewUser",
+                        bc.routePrefix + "Home/AddNewUser",
                         { user: user1, pwd: pwd1 },
                         function (msgReturned) {
                             alert(`On return to get, msg=${msgReturned}`);
@@ -75,7 +75,7 @@
                             }
                             else {
                                 //  User sign up ok, go to (empty) team list...
-                                url = "/Home/TeamList?user=" + user1.trim().replace(" ", "%20");
+                                url = bc.routePrefix + "Home/TeamList?user=" + user1.trim().replace(" ", "%20");
                                 alert(url);
                                 window.location.href = url;
                             }
@@ -116,9 +116,9 @@
                     //  No errors...
                     //  Use ajax to call a method to validate vs db, and return "ok" or errorMsg.
                     //  If ok is returned, the Go to Team List.
-                    alert(`bc_debug=${bc_debug}`);
+                    alert(`routePrefix=${bc.routePrefix}`);
                     $.get( 
-                        bc_debug ? "/Home/Login" : "Home/Login",
+                        bc.routePrefix + "Home/Login",
                         { user: user1, pwd: pwd1 },
                         function (msg) {
                             alert(`On return to get, msg=${msg}`);
@@ -128,7 +128,7 @@
                             }
                             else {
                                 //  Credentials validated ok, go to team list...
-                                url = "/Home/TeamList?user=" + user1.trim().replace(" ", "%20");
+                                url = bc.routePrefix + "Home/TeamList?user=" + user1.trim().replace(" ", "%20");
                                 alert(url);
                                 window.location.href = url;
                             }
@@ -140,8 +140,6 @@
                     //  Local validation rror... post it...
                     $('#errMsg2').val(msg);
                 }
-
-                //
 
             });
 

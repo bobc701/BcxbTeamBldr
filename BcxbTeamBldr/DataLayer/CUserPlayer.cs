@@ -9,7 +9,7 @@ namespace BcxbTeamBldr.DataLayer {
 
       public string UserName { get; set; }
       public string TeamName { get; set; }
-      public int  PlayerId { get; set; }
+      public string  PlayerId { get; set; }
 
    }
 }
