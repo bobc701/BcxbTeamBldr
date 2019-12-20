@@ -68,7 +68,7 @@ namespace BcxbTeamBldr.Controllers {
       }
 
 
-      public ActionResult AddPlayerToTeam(string user, string team, int pid) {
+      public ActionResult AddPlayerToTeam(string user, string team, string pid) {
          // ------------------------------------------------------------
          try {
             ViewBag.Msg = "";
@@ -94,7 +94,7 @@ namespace BcxbTeamBldr.Controllers {
       }
 
 
-      public ActionResult RemovePlayerFromTeam(string user, string team, int id) {
+      public ActionResult RemovePlayerFromTeam(string user, string team, string id) {
          // ------------------------------------------------------------
          try {
             ViewBag.Msg = "";
@@ -138,7 +138,7 @@ namespace BcxbTeamBldr.Controllers {
       }
 
 
-      public ContentResult VerMsgAction(string user, string team, int pid) {
+      public ContentResult VerMsgAction(string user, string team, string pid) {
       // --------------------------------------------------------------
          bool already = DbInfo.GetPlayerList(user, team).Exists(p => p.PlayerId == pid);
          if (already) { //Player already on team

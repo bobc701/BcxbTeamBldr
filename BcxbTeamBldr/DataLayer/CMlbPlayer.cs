@@ -8,7 +8,7 @@ namespace BcxbTeamBldr.DataLayer {
 
    public class CMlbPlayer {
 
-      public int PlayerId{ get; set; }
+      public string PlayerId{ get; set; }
       public string PlayerName { get; set; }
       public string MlbTeam { get; set; }
       public string MlbLeague { get; set; }

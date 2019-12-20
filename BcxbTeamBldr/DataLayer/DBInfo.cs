@@ -111,9 +111,9 @@ namespace BcxbTeamBldr.DataLayer {
 
 
 
-      public static void AddPlayerToTeam(string user, string team, int id) {
+      public static void AddPlayerToTeam(string user, string team, string id) {
          // --------------------------------------------------------------------
-         string sql = $"EXEC AddPlayerToTeam '{user}', '{team}', {id}";
+         string sql = $"EXEC AddPlayerToTeam '{user}', '{team}', '{id}'";
          using (var cmd = new SqlCommand(sql, con1)) {
             cmd.ExecuteNonQuery();
          }
@@ -121,9 +121,9 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
-      public static void RemovePlayerFromTeam(string user, string team, int id) {
+      public static void RemovePlayerFromTeam(string user, string team, string id) {
          // --------------------------------------------------------------------
-         string sql = $"EXEC RemovePlayerFromTeam '{user}', '{team}', {id}";
+         string sql = $"EXEC RemovePlayerFromTeam '{user}', '{team}', '{id}'";
          using (var cmd = new SqlCommand(sql, con1)) {
             cmd.ExecuteNonQuery();
          }
@@ -150,7 +150,7 @@ namespace BcxbTeamBldr.DataLayer {
             using (SqlDataReader rdr = cmd.ExecuteReader()) {
                while (rdr.Read()) {
                   var player = new CMlbPlayer();
-                  player.PlayerId = (int)rdr["PlayerId"];
+                  player.PlayerId = rdr["PlayerId"].ToString();
                   player.PlayerName = rdr["PlayerName"].ToString();
                   player.PlayerType = rdr["PlayerType"].ToString()[0];
                   player.FieldingString = rdr["FieldingString"].ToString();
@@ -177,7 +177,7 @@ namespace BcxbTeamBldr.DataLayer {
          using (SqlDataReader rdr = cmd.ExecuteReader()) {
             while (rdr.Read()) {
                var player = new CMlbPlayer();
-               player.PlayerId = (int)rdr["PlayerId"];
+               player.PlayerId = rdr["PlayerId"].ToString();
                player.PlayerName = rdr["PlayerName"].ToString();
                player.PlayerType = rdr["PlayerType"].ToString()[0];
                player.FieldingString = rdr["FieldingString"].ToString();

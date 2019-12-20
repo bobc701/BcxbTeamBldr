@@ -7,7 +7,8 @@
     <meta name="viewport" content="width=device-width" />
     <title>AddPlayer</title>
 
-    <script src="~/Scripts/jquery-3.4.1.js"> </script>
+    <script src="~/Scripts/jquery-3.4.1.js"></script>
+    <script src="~/Scripts/bc-global.js"></script>
 
     <script>
         $(document).ready(function () {
@@ -26,7 +27,7 @@
                     //let url = '/Home/VerMsgAction?user=' + user1 + '&team=' + team1 + '&pid=' + pid1;
                     //alert('url=' + url);
                     $.get (
-                        "/Home/VerMsgAction",
+                        bc.routePrefix + 'Home/VerMsgAction',
                         ///url,
                         { user: user1, team: team1, pid: pid1 },
                         function (msg) {
@@ -56,13 +57,13 @@
                 let crit1 = $('#txtName').val();
                 let user1 = $('#hdnUserName').val();
                 let team1 = $('#hdnTeamName').val();
-                //alert('criteria=' + crit1);
+                alert('criteria=' + crit1 + ' bc.routePrefix=' + bc.routePrefix);
 
                 $.ajax({
-                    url: '/Home/detailasjson', type: "GET", dataType: "json",
+                    url: bc.routePrefix + 'Home/detailasjson', type: "GET", dataType: "json",
                     data: { crit: crit1 }, //This becomes the arg to the Action method.
                     success: function (data) {
-                        //alert(JSON.stringify(data));
+                        alert(JSON.stringify(data));
                         //alert(JSON.stringify({ test: 'hello', quant: 12 })); So can be any object not just Json!
                         //alert(data[0].PlayerName);
                         content = '<h3>Matching Players...</h3>';
