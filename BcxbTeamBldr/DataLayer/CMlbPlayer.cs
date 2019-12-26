@@ -18,6 +18,8 @@ namespace BcxbTeamBldr.DataLayer {
       public string Ver { get; set; }
       public string Stats { get; set; }
 
+      public bool Selected { get; set; } = false;  // For use with SearchMulti view
+
       public string PosnString {
       // --------------------------------
       // Decided not to include skills here, but left in the logic.

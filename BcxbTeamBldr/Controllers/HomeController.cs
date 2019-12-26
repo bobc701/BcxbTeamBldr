@@ -114,15 +114,23 @@ namespace BcxbTeamBldr.Controllers {
 
 
       public ActionResult EditTeam(string user, string team) {
-         // -----------------------------------------------------
+      // -----------------------------------------------------
          var roster = new PlayerListVM(user, team);
          return View(roster);
       }
 
 
       public ActionResult SearchPlayers(string user, string team) {
-         // -----------------------------------------------------
+      // -----------------------------------------------------
 
+         var model = new CUserTeam() { UserName = user, TeamName = team };
+         return View(model);
+
+      }
+
+
+      public ActionResult SearchMulti(string user, string team) {
+      //  ------------------------------------------
          var model = new CUserTeam() { UserName = user, TeamName = team };
          return View(model);
 
