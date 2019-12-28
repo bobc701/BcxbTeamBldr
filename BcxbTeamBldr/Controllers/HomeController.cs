@@ -122,7 +122,6 @@ namespace BcxbTeamBldr.Controllers {
 
       public ActionResult SearchPlayers(string user, string team) {
       // -----------------------------------------------------
-
          var model = new CUserTeam() { UserName = user, TeamName = team };
          return View(model);
 
@@ -130,10 +129,9 @@ namespace BcxbTeamBldr.Controllers {
 
 
       public ActionResult SearchMulti(string user, string team) {
-      //  ------------------------------------------
-         var model = new CUserTeam() { UserName = user, TeamName = team };
+         //  ------------------------------------------
+         var model = new PlayerListVM(user, team, 0);
          return View(model);
-
       }
 
 

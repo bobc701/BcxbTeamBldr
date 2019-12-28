@@ -17,6 +17,13 @@ namespace BcxbTeamBldr.Models {
          Players = DbInfo.GetPlayerList(user, team);
       }
 
+      public PlayerListVM(string user, string team, int option) {
+         // ---------------------------------------------
+         UserTeam = new CUserTeam { UserName = user, TeamName = team };
+         switch (option) {
+            case 0: Players = null; break;
+         }
+      }
 
    }
 }

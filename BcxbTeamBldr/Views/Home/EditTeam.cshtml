@@ -39,10 +39,11 @@
             </table>
         }
 
-        <div>
-            <p />
-            @Html.ActionLink("Add player", "SearchPlayers", new { user = userName, team = teamName })
-        </div>
+    <div>
+        <p />
+        @Html.ActionLink("Add player", "SearchPlayers", new { user = userName, team = teamName })
+        @Html.ActionLink("Add players", "SearchMulti", new { user = userName, team = teamName })
+    </div>
 
     </div>
 </body>
