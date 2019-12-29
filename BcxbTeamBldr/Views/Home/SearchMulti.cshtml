@@ -13,6 +13,24 @@
     <script>
         $(document).ready(function () {
 
+            $('#btnSubmit').click(
+               function() {
+                  let idList = '', delim = '';
+                  $('.playerId').each(
+                     function(i, e) {
+                        //alert('element ' + i + ', id=' + e.value);
+                        idList += delim + e.value;
+                        delim = ',';
+                     });
+                  alert(idList);
+                  let url = 'AddPlayerToTeam?user=' + user1 + '&team=' + team1 + '&idList=' + idList;
+                  //alert(ur);
+                  window.location.href = url;
+
+               }
+            );
+
+
             $('#btnSearch').click(function () {
                 //var crit1 = $(this).attr('id');
                 //$('#errMsg').css('display','none');

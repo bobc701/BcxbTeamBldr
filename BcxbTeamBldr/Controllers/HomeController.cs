@@ -94,6 +94,32 @@ namespace BcxbTeamBldr.Controllers {
       }
 
 
+      public ActionResult AddPlayerToTeamMulti(string user, string team, string idList) {
+         // ------------------------------------------------------------
+         try {
+            ViewBag.Msg = "";
+            var aIdList = idList.Split(',');
+            foreach (var pid in aIdList) {
+               var already = DbInfo.GetPlayerList(user, team).Exists(p => p.PlayerId == pid);
+               if (!already) { //Player already on team
+                  DbInfo.AddPlayerToTeam(user, team, pid);
+               }
+               var roster = new PlayerListVM(user, team);
+               return View("EditTeam", roster);
+            }
+         }
+         catch (Exception ex) {
+            string msg =
+               "An error occurred adding players to the team:\r\n" +
+               ex.Message;
+            ViewBag.ErrorMsg = msg;
+            return View("ErrorView");
+         }
+
+      }
+
+
+
       public ActionResult RemovePlayerFromTeam(string user, string team, string id) {
          // ------------------------------------------------------------
          try {
