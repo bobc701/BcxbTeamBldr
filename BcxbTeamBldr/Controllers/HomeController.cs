@@ -136,12 +136,21 @@ namespace BcxbTeamBldr.Controllers {
 
 
       public JsonResult detailasjson(string crit) {
-         // ----------------------------------------------
+      // ----------------------------------------------
          List<CMlbPlayer> py = DbInfo.SearchPlayers(crit);
          var s = Json(py, JsonRequestBehavior.AllowGet);
          return Json(py, JsonRequestBehavior.AllowGet);
 
       }
+
+      public JsonResult searchMultiJson(string critName, string critTeam, string critYear, string critPosn) {
+      // -------------------------------------------------------------------------------------
+         List<CMlbPlayer> py = DbInfo.SearchPlayersMulti(critName, critTeam, critYear, critPosn);
+         var s = Json(py, JsonRequestBehavior.AllowGet);
+         return Json(py, JsonRequestBehavior.AllowGet);
+
+      }
+
 
 
       public ContentResult VerMsgAction(string user, string team, string pid) {

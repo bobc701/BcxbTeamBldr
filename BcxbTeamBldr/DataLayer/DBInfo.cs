@@ -167,34 +167,83 @@ namespace BcxbTeamBldr.DataLayer {
 
       }
 
+      public static List<CMlbPlayer> SearchPlayers(string crit) {
+         // ---------------------------------------------------------------------
+         var list = new List<CMlbPlayer>();
+         string sql = $"EXEC SearchPlayers '{crit}'";
+         using (var cmd = new SqlCommand(sql, con1)) {
 
-   public static List<CMlbPlayer> SearchPlayers(string crit) {
-      // ---------------------------------------------------------------------
-      var list = new List<CMlbPlayer>();
-      string sql = $"EXEC SearchPlayers '{crit}'";
-      using (var cmd = new SqlCommand(sql, con1)) {
+            using (SqlDataReader rdr = cmd.ExecuteReader()) {
+               while (rdr.Read()) {
+                  var player = new CMlbPlayer();
+                  player.PlayerId = rdr["PlayerId"].ToString();
+                  player.PlayerName = rdr["PlayerName"].ToString();
+                  player.PlayerType = rdr["PlayerType"].ToString()[0];
+                  player.FieldingString = rdr["FieldingString"].ToString();
+                  player.Year = (int)rdr["Year"];
+                  player.MlbTeam = rdr["MlbTeam"].ToString();
+                  player.MlbLeague = rdr["MlbLeague"].ToString(); ;
 
-         using (SqlDataReader rdr = cmd.ExecuteReader()) {
-            while (rdr.Read()) {
-               var player = new CMlbPlayer();
-               player.PlayerId = rdr["PlayerId"].ToString();
-               player.PlayerName = rdr["PlayerName"].ToString();
-               player.PlayerType = rdr["PlayerType"].ToString()[0];
-               player.FieldingString = rdr["FieldingString"].ToString();
-               player.Year = (int)rdr["Year"];
-               player.MlbTeam = rdr["MlbTeam"].ToString();
-               player.MlbLeague = rdr["MlbLeague"].ToString(); ;
+                  list.Add(player);
+               }
 
-               list.Add(player);
             }
-
          }
+         return list;
+
       }
-      return list;
+
+      public static List<CMlbPlayer> SearchPlayersMulti(string critName, string critTeam, string critYear, string critPosn) {
+      // ---------------------------------------------------------------------
+         var list = new List<CMlbPlayer>();
+
+         // Build search string for SQL select...
+         string crit = "", delim = "";
+         if (critName != "All") { crit = $"PlayerName LIKE '%{critName}%'"; delim = " AND "; }
+         if (critTeam != "All") { crit += delim + $"MlbTeam LIKE '%{critTeam}%'"; delim = " AND "; } // EG: 'NYA2019' LIKE '%NYA%'
+         if (critYear != "All") { crit += delim + $"Year = '{critYear}'"; delim = " AND "; }
+
+         switch (critPosn) {
+            case "p": crit += delim + "SUBSTRING(FieldingString,0,1) != '-'"; break;
+            case "c": crit += delim + "SUBSTRING(FieldingString,1,1) != '-'"; break;
+            case "1b": crit += delim + "SUBSTRING(FieldingString,2,1) != '-'"; break;
+            case "2b": crit += delim + "SUBSTRING(FieldingString,3,1) != '-'"; break;
+            case "3b": crit += delim + "SUBSTRING(FieldingString,4,1) != '-'"; break;
+            case "ss": crit += delim + "SUBSTRING(FieldingString,5,1) != '-'"; break;
+            case "lf": crit += delim + "SUBSTRING(FieldingString,6,1) != '-'"; break;
+            case "cf": crit += delim + "SUBSTRING(FieldingString,7,1) != '-'"; break;
+            case "rf": crit += delim + "SUBSTRING(FieldingString,8,1) != '-'"; break;
+            case "of":  
+               crit += delim +
+                  "(SUBSTRING(FieldingString,6,1) != '-' OR SUBSTRING(FieldingString,7,1) != '-' OR SUBSTRING(FieldingString,8,1) != '-')";
+               break;
+         }
+
+         string sql = $"SELECT * FROM MlbPlayers WHERE {crit}";
+         //string sql = $"EXEC SearchPlayers '{crit}'";
+         using (var cmd = new SqlCommand(sql, con1)) {
+
+            using (SqlDataReader rdr = cmd.ExecuteReader()) {
+               while (rdr.Read()) {
+                  var player = new CMlbPlayer();
+                  player.PlayerId = rdr["PlayerId"].ToString();
+                  player.PlayerName = rdr["PlayerName"].ToString();
+                  player.PlayerType = rdr["PlayerType"].ToString()[0];
+                  player.FieldingString = rdr["FieldingString"].ToString();
+                  player.Year = (int)rdr["Year"];
+                  player.MlbTeam = rdr["MlbTeam"].ToString();
+                  player.MlbLeague = rdr["MlbLeague"].ToString(); ;
+
+                  list.Add(player);
+               }
+
+            }
+         }
+         return list;
+
+      }
 
    }
-
-}
 
 
 

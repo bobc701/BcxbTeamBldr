@@ -28,10 +28,10 @@
                     url: bc.routePrefix + 'Home/detailasjson', type: "GET", dataType: "json",
                     //These become the arg to the Action method.
                     data: {
-                        crit: critName1
-                        //critTeam: critTeam1,
-                        //critYear: critYear1,
-                        //critPosn: critPosn1
+                        critName: critName1,
+                        critTeam: critTeam1,
+                        critYear: critYear1,
+                        critPosn: critPosn1
                     }, 
                     success: function (data) {
                         alert(JSON.stringify(data));
