@@ -104,9 +104,9 @@ namespace BcxbTeamBldr.Controllers {
                if (!already) { //Player already on team
                   DbInfo.AddPlayerToTeam(user, team, pid);
                }
-               var roster = new PlayerListVM(user, team);
-               return View("EditTeam", roster);
             }
+            var roster = new PlayerListVM(user, team);
+            return View("EditTeam", roster);
          }
          catch (Exception ex) {
             string msg =

@@ -16,14 +16,14 @@
             $('#btnSubmit').click(
                function() {
                   let idList = '', delim = '';
-                  $('.playerId').each(
+                  $('input.playerId:checked').each(
                      function(i, e) {
                         //alert('element ' + i + ', id=' + e.value);
                         idList += delim + e.value;
                         delim = ',';
                      });
                   alert(idList);
-                  let url = 'AddPlayerToTeam?user=' + user1 + '&team=' + team1 + '&idList=' + idList;
+                  let url = 'AddPlayerToTeamMulti?user=' + user1 + '&team=' + team1 + '&idList=' + idList;
                   //alert(ur);
                   window.location.href = url;
 
@@ -43,7 +43,7 @@
                 alert('criteria=' + critName1 + ' bc.routePrefix=' + bc.routePrefix);
 
                 $.ajax({
-                    url: bc.routePrefix + 'Home/detailasjson', type: "GET", dataType: "json",
+                    url: bc.routePrefix + 'Home/SearchMultiJson', type: "GET", dataType: "json",
                     //These become the arg to the Action method.
                     data: {
                         critName: critName1,
@@ -74,7 +74,7 @@
                             content += '<td>' + p.MlbTeam + '</td>';
                             content += '<td>' + p.Year + '</td>';
                             content += '<td>' + p.PosnString + '</td>';
-                            content += '<td><input type="checkbox" class="playerSelection" /></td>';
+                            content += `<td><input type="checkbox" class="playerSelection" value="${p.PlayerId}"/></td>`;
                             //url = '"AddPlayerToTeam?user=' + user1 + '&team=' + team1 + '&pid=' + p.PlayerId + '"';
                             content += '<td style="visibility:hidden">' + p.PlayerId + '</td>';
                             content += '</tr>';
