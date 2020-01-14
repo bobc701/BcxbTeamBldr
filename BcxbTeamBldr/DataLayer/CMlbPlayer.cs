@@ -46,8 +46,8 @@ namespace BcxbTeamBldr.DataLayer {
              * treated as a char array.
              * ----------------------------------------------------------*/
 
-            string[] posName = { "p", "c", "1b", "2b", "3b", "ss", "lf", "cf", "rf" };
-            var t = FieldingString.Zip(posName, (s, n) => s != '-' ? n : "-").Where(e => e != "-");
+            string[] posNames = { "p", "c", "1b", "2b", "3b", "ss", "lf", "cf", "rf" };
+            var t = FieldingString.Zip(posNames, (skill, posName) => skill != '-' ? posName : "-").Where(p => p != "-");
             return String.Join(",", t);
 
 

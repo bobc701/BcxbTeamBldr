@@ -40,8 +40,8 @@
                                 //let url = '@Url.Action("AddPlayerToTeam", "Home", new { name1 = "Nixon", age = 58 })';
                                 //alert("url=>" + url);
 
-                                url = 'AddPlayerToTeam?user=' + user1 + '&team=' + team1 + '&pid=' + pid1;
-                                //alert(ur);
+                                url = bc.routePrefix + "Home/AddPlayerToTeam?user=' + user1 + '&team=' + team1 + '&pid=' + pid1;
+                                alert(`url=${url}`);
                                 window.location.href = url;
                             }
                         },

@@ -26,15 +26,78 @@
                     <th>MLB Team</th>
                     <th align="left">Year</th>
                     <th>Positions</th>
-                                   </tr>
+                    <th>No DH<br />Lineup</th>
+                    <th>No DH<br />Position</th>
+                    <th>DH<br />Lineup</th>
+                    <th>DH<br />Position</th>
+                </tr>
                 @foreach (var rec in Model.Players) {
-                    <tr>
-                        <td>@rec.PlayerName</td>
-                        <td>@rec.MlbTeam</td>
-                        <td>@rec.Year</td>
-                        <td>@rec.PosnString</td>
-                        <td>@Html.ActionLink("Remove", "RemovePlayerFromTeam", new { user = userName, team = teamName, id = @rec.PlayerId }) </td>
-                    </tr>
+            <tr>
+                <td>@rec.PlayerName</td>
+                <td>@rec.MlbTeam</td>
+                <td>@rec.Year</td>
+                <td>@rec.PosnString</td>
+                <td>
+                    <select class="selSlot" name="selPosn">
+                        <option>-</option>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option>6</option>
+                        <option>7</option>
+                        <option>8</option>
+                        <option>9</option>
+                    </select>
+                </td>
+                <td>
+                    <select class="selPosn" name="selPosn">
+                        <option>-</option>
+                        <option>c</option>
+                        <option>1b</option>
+                        <option>2b</option>
+                        <option>3b</option>
+                        <option>ss</option>
+                        <option>lf</option>
+                        <option>cf</option>
+                        <option>rf</option>
+                        <option>p</option>
+                    </select>
+                </td>
+                <td>
+                    <select class="selSlot" name="selPosn">
+                        <option>-</option>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option>6</option>
+                        <option>7</option>
+                        <option>8</option>
+                        <option>9</option>
+                    </select>
+                </td>
+                <td>
+                    <select class="selPosn" name="selPosn">
+                        <option>-</option>
+                        <option>c</option>
+                        <option>1b</option>
+                        <option>2b</option>
+                        <option>3b</option>
+                        <option>ss</option>
+                        <option>lf</option>
+                        <option>cf</option>
+                        <option>rf</option>
+                        <option>dh</option>
+                    </select>
+                </td>
+                <td>
+                    @Html.ActionLink("Remove", "RemovePlayerFromTeam",
+               new { user = userName, team = teamName, id = @rec.PlayerId })
+                </td>
+            </tr>
                 }
             </table>
         }

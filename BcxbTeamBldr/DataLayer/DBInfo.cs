@@ -90,7 +90,7 @@ namespace BcxbTeamBldr.DataLayer {
          int n;
 
          //using (var cmd = new SqlCommand(sql, con1)) {
-         using (SqlCommand cmd = new SqlCommand("u196491_BcxbUser.Login", con1)) {
+         using (SqlCommand cmd = new SqlCommand("Login", con1)) {
             cmd.CommandType = CommandType.StoredProcedure;
 
             // Add parameter for return value...
@@ -204,18 +204,18 @@ namespace BcxbTeamBldr.DataLayer {
          if (critYear != "All") { crit += delim + $"Year = '{critYear}'"; delim = " AND "; }
 
          switch (critPosn) {
-            case "p": crit += delim + "SUBSTRING(FieldingString,0,1) != '-'"; break;
-            case "c": crit += delim + "SUBSTRING(FieldingString,1,1) != '-'"; break;
-            case "1b": crit += delim + "SUBSTRING(FieldingString,2,1) != '-'"; break;
-            case "2b": crit += delim + "SUBSTRING(FieldingString,3,1) != '-'"; break;
-            case "3b": crit += delim + "SUBSTRING(FieldingString,4,1) != '-'"; break;
-            case "ss": crit += delim + "SUBSTRING(FieldingString,5,1) != '-'"; break;
-            case "lf": crit += delim + "SUBSTRING(FieldingString,6,1) != '-'"; break;
-            case "cf": crit += delim + "SUBSTRING(FieldingString,7,1) != '-'"; break;
-            case "rf": crit += delim + "SUBSTRING(FieldingString,8,1) != '-'"; break;
+            case "p": crit += delim + "SUBSTRING(FieldingString,1,1) != '-'"; break;
+            case "c": crit += delim + "SUBSTRING(FieldingString,2,1) != '-'"; break;
+            case "1b": crit += delim + "SUBSTRING(FieldingString,3,1) != '-'"; break;
+            case "2b": crit += delim + "SUBSTRING(FieldingString,4,1) != '-'"; break;
+            case "3b": crit += delim + "SUBSTRING(FieldingString,5,1) != '-'"; break;
+            case "ss": crit += delim + "SUBSTRING(FieldingString,6,1) != '-'"; break;
+            case "lf": crit += delim + "SUBSTRING(FieldingString,7,1) != '-'"; break;
+            case "cf": crit += delim + "SUBSTRING(FieldingString,8,1) != '-'"; break;
+            case "rf": crit += delim + "SUBSTRING(FieldingString,9,1) != '-'"; break;
             case "of":  
                crit += delim +
-                  "(SUBSTRING(FieldingString,6,1) != '-' OR SUBSTRING(FieldingString,7,1) != '-' OR SUBSTRING(FieldingString,8,1) != '-')";
+                  "(SUBSTRING(FieldingString,7,1) != '-' OR SUBSTRING(FieldingString,8,1) != '-' OR SUBSTRING(FieldingString,9,1) != '-')";
                break;
          }
 

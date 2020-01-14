@@ -16,15 +16,17 @@
             $('#btnSubmit').click(
                function() {
                   let idList = '', delim = '';
-                  $('input.playerId:checked').each(
+                  $('input.playerSelection:checked').each(
                      function(i, e) {
                         //alert('element ' + i + ', id=' + e.value);
                         idList += delim + e.value;
                         delim = ',';
                      });
-                  alert(idList);
-                  let url = 'AddPlayerToTeamMulti?user=' + user1 + '&team=' + team1 + '&idList=' + idList;
-                  //alert(ur);
+                  //alert(`idList=|${idList}|`);
+                  let user1 = $('#hdnUserName').val();
+                  let team1 = $('#hdnTeamName').val();
+                  let url = bc.routePrefix + 'Home/AddPlayerToTeamMulti?user=' + user1 + '&team=' + team1 + '&idList=' + idList;
+                  //alert(`url=${url}`);
                   window.location.href = url;
 
                }
@@ -36,11 +38,11 @@
                 //$('#errMsg').css('display','none');
                 let critName1 = $('#txtName').val();
                 let critTeam1 = $('#selTeam').val();
-                let critYear1 = $('selYear').val();
-                let critPosn1 = $('selPosn').val();
+                let critYear1 = $('#selYear').val();
+                let critPosn1 = $('#selPosn').val();
                 let user1 = $('#hdnUserName').val();
                 let team1 = $('#hdnTeamName').val();
-                alert('criteria=' + critName1 + ' bc.routePrefix=' + bc.routePrefix);
+                //alert('criteria=' + critName1 + ' bc.routePrefix=' + bc.routePrefix);
 
                 $.ajax({
                     url: bc.routePrefix + 'Home/SearchMultiJson', type: "GET", dataType: "json",
@@ -107,7 +109,7 @@
         <chec>
         <p />Team:
         <select id="selTeam" name="selTeam">
-            <option>All</option>
+            <option selected>All</option>
             <option>NYA</option>
             <option>BOS</option>
             <option>KC</option>
@@ -115,14 +117,14 @@
 
         <p />Year:
         <select id="selYear" name="selYear">
-            <option>All</option>
+            <option selected>All</option>
             <option>2019</option>
             <option>2018</option>
         </select>
 
         <p />Position:
         <select id="selPosn" name="selPosn">
-            <option>All</option>
+            <option selected>All</option>
             <option>p</option>
             <option>c</option>
             <option>1b</option>
