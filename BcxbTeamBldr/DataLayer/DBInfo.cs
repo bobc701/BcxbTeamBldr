@@ -167,6 +167,34 @@ namespace BcxbTeamBldr.DataLayer {
 
       }
 
+
+      public static List<CUserPlayer> GetUserPlayerList(string user, string team) {
+         // ---------------------------------------------------------------------
+         var list = new List<CUserPlayer>();
+         string sql = $"EXEC GetPlayerList '{user}', '{team}'";
+         using (var cmd = new SqlCommand(sql, con1)) {
+
+            using (SqlDataReader rdr = cmd.ExecuteReader()) {
+               while (rdr.Read()) {
+                  var player = new CUserPlayer();
+                  player.PlayerId = rdr["PlayerId"].ToString();
+                  player.PlayerName = rdr["PlayerName"].ToString();
+                  player.PlayerType = rdr["PlayerType"].ToString()[0];
+                  player.FieldingString = rdr["FieldingString"].ToString();
+                  player.Year = (int)rdr["Year"];
+                  player.MlbTeam = rdr["MlbTeam"].ToString();
+                  player.MlbLeague = rdr["MlbLeague"].ToString(); ;
+
+                  list.Add(player);
+               }
+
+            }
+         }
+         return list;
+
+      }
+
+
       public static List<CMlbPlayer> SearchPlayers(string crit) {
          // ---------------------------------------------------------------------
          var list = new List<CMlbPlayer>();
@@ -192,6 +220,7 @@ namespace BcxbTeamBldr.DataLayer {
          return list;
 
       }
+
 
       public static List<CMlbPlayer> SearchPlayersMulti(string critName, string critTeam, string critYear, string critPosn) {
       // ---------------------------------------------------------------------

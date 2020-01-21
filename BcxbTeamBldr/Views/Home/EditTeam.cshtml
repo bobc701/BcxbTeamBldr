@@ -1,4 +1,4 @@
-﻿@model BcxbTeamBldr.Models.PlayerListVM
+﻿@model BcxbTeamBldr.Models.UserPlayerListVM
 <!DOCTYPE html>
 
 <html>
@@ -7,107 +7,150 @@
     <title>EditTeam</title>
 </head>
 <body>
-    @{ 
-       string teamName = @Model.UserTeam.TeamName;
-       string userName = @Model.UserTeam.UserName;
-    }
+  @{
+      string teamName = @Model.UserTeam.TeamName;
+      string userName = @Model.UserTeam.UserName;
+   }
+  @using (Html.BeginForm("EditTeam", "Home", FormMethod.Post)) {
 
-    <h2>Roster for @teamName</h2>
-    <div>
-        @if (Model.Players.Count == 0) {
-            <div style="color:red;" >
-                @teamName  <text>doesn't have any players yet.</text>
+      <h2>Roster for @teamName</h2>
+      <div>
+         @if (Model.Players.Count == 0) {
+            <div style="color:red;">
+               @teamName  <text>doesn't have any players yet.</text>
             </div>
-        }
-        else {
-            <table border="1" cellpadding="5" width="400px" style="border:1px solid black; border-collapse:collapse;">
-                <tr>
-                    <th>Player Name</th>
-                    <th>MLB Team</th>
-                    <th align="left">Year</th>
-                    <th>Positions</th>
-                    <th>No DH<br />Lineup</th>
-                    <th>No DH<br />Position</th>
-                    <th>DH<br />Lineup</th>
-                    <th>DH<br />Position</th>
-                </tr>
-                @foreach (var rec in Model.Players) {
-            <tr>
-                <td>@rec.PlayerName</td>
-                <td>@rec.MlbTeam</td>
-                <td>@rec.Year</td>
-                <td>@rec.PosnString</td>
-                <td>
-                    <select class="selSlot" name="selPosn">
-                        <option>-</option>
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
-                        <option>6</option>
-                        <option>7</option>
-                        <option>8</option>
-                        <option>9</option>
-                    </select>
-                </td>
-                <td>
-                    <select class="selPosn" name="selPosn">
-                        <option>-</option>
-                        <option>c</option>
-                        <option>1b</option>
-                        <option>2b</option>
-                        <option>3b</option>
-                        <option>ss</option>
-                        <option>lf</option>
-                        <option>cf</option>
-                        <option>rf</option>
-                        <option>p</option>
-                    </select>
-                </td>
-                <td>
-                    <select class="selSlot" name="selPosn">
-                        <option>-</option>
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
-                        <option>6</option>
-                        <option>7</option>
-                        <option>8</option>
-                        <option>9</option>
-                    </select>
-                </td>
-                <td>
-                    <select class="selPosn" name="selPosn">
-                        <option>-</option>
-                        <option>c</option>
-                        <option>1b</option>
-                        <option>2b</option>
-                        <option>3b</option>
-                        <option>ss</option>
-                        <option>lf</option>
-                        <option>cf</option>
-                        <option>rf</option>
-                        <option>dh</option>
-                    </select>
-                </td>
-                <td>
-                    @Html.ActionLink("Remove", "RemovePlayerFromTeam",
-               new { user = userName, team = teamName, id = @rec.PlayerId })
-                </td>
-            </tr>
-                }
+         }
+         else {
+            <table border="0" cellpadding="0" width="400px" style="border:1px solid black; border-collapse:collapse;">
+               <tr>
+                  <th>Player Name</th>
+                  <th>MLB Team</th>
+                  <th align="left">Year</th>
+                  <th>Positions</th>
+                  <th>No DH<br />Lineup</th>
+                  <th>No DH<br />Position</th>
+                  <th>DH<br />Lineup</th>
+                  <th>DH<br />Position</th>
+               </tr>
+               @for (var i = 0; i < Model.Players.Count; i++) {
+                  <tr>
+                     <td>@Html.TextBoxFor(x => Model.Players[i].PlayerName)</td>
+
+                     <td>@Html.TextBoxFor(x => Model.Players[i].MlbTeam)</td>
+                     <td>@Html.TextBoxFor(x => Model.Players[i].Year)</td>
+                     <td>@Html.TextBoxFor(x => Model.Players[i].PosnString)</td>
+                     <td>
+                        @Html.DropDownListFor(
+                     x => Model.Players[i].Slot_NoDH,
+                     new SelectList(
+                        //new List<string> { "-", "c", "1b" })
+                        new List<SelectListItem>  {
+                                  new SelectListItem { Value = "0", Text = "-"},
+                                  new SelectListItem { Value = "1", Text = "1"},
+                                  new SelectListItem { Value = "2", Text = "2"},
+                                  new SelectListItem { Value = "3", Text = "3"},
+                                  new SelectListItem { Value = "4", Text = "4"},
+                                  new SelectListItem { Value = "5", Text = "5"},
+                                  new SelectListItem { Value = "6", Text = "6"},
+                                  new SelectListItem { Value = "7", Text = "7"},
+                                  new SelectListItem { Value = "8", Text = "8"},
+                                  new SelectListItem { Value = "9", Text = "9"}
+                        },
+                        "Value",
+                        "Text"
+                     )
+                  )
+
+                     </td>
+                     <td>
+                        @Html.DropDownListFor(
+                     x => Model.Players[i].Posn_NoDH,
+                     new SelectList(
+                       new List<SelectListItem> {
+                                 new SelectListItem { Value = "0", Text = "-"},
+                                 new SelectListItem { Value = "2", Text = "c"},
+                                 new SelectListItem { Value = "3", Text = "1b"},
+                                 new SelectListItem { Value = "4", Text = "2b"},
+                                 new SelectListItem { Value = "5", Text = "2b"},
+                                 new SelectListItem { Value = "6", Text = "ss"},
+                                 new SelectListItem { Value = "7", Text = "lf"},
+                                 new SelectListItem { Value = "8", Text = "cf"},
+                                 new SelectListItem { Value = "9", Text = "rf"},
+                                 new SelectListItem { Value = "1", Text = "p"}
+                       },
+                       "Value",
+                       "Text"
+                    )
+                 )
+
+                     </td>
+                     <td>
+                        @Html.DropDownListFor(
+                     x => Model.Players[i].Slot_DH,
+                     new SelectList(
+                        new List<SelectListItem>  {
+                                  new SelectListItem { Value = "0", Text = "-"},
+                                  new SelectListItem { Value = "1", Text = "1"},
+                                  new SelectListItem { Value = "2", Text = "2"},
+                                  new SelectListItem { Value = "3", Text = "3"},
+                                  new SelectListItem { Value = "4", Text = "4"},
+                                  new SelectListItem { Value = "5", Text = "5"},
+                                  new SelectListItem { Value = "6", Text = "6"},
+                                  new SelectListItem { Value = "7", Text = "7"},
+                                  new SelectListItem { Value = "8", Text = "8"},
+                                  new SelectListItem { Value = "9", Text = "9"}
+                        },
+                        "Value",
+                        "Text"
+                     )
+                  )
+
+                     </td>
+                     <td>
+                        @Html.DropDownListFor(
+                     x => Model.Players[i].Posn_DH,
+                     new SelectList(
+                       new List<SelectListItem> {
+                                 new SelectListItem { Value = "0", Text = "-"},
+                                 new SelectListItem { Value = "2", Text = "c"},
+                                 new SelectListItem { Value = "3", Text = "1b"},
+                                 new SelectListItem { Value = "4", Text = "2b"},
+                                 new SelectListItem { Value = "5", Text = "2b"},
+                                 new SelectListItem { Value = "6", Text = "ss"},
+                                 new SelectListItem { Value = "7", Text = "lf"},
+                                 new SelectListItem { Value = "8", Text = "cf"},
+                                 new SelectListItem { Value = "9", Text = "rf"},
+                                 new SelectListItem { Value = "1", Text = "p"},
+                                 new SelectListItem { Value = "10", Text = "dh"}
+                       },
+                       "Value",
+                       "Text"
+                    )
+                 )
+                     </td>
+                     <td>
+                        @Html.ActionLink("Remove", "RemovePlayerFromTeam",
+                            new { user = userName, team = teamName, id = Model.Players[i].PlayerId })
+                     </td>
+                     <td>
+                        @*Addl stuff needed on server to update UserPlayer table...*@
+                        @Html.HiddenFor(m => m.Players[i].PlayerId);
+                        @Html.HiddenFor(m => m.Players[i].UserName);
+                        @Html.HiddenFor(m => m.Players[i].TeamName);
+                     </td>
+                  </tr>
+               }
             </table>
-        }
+         }
 
-    <div>
-        <p />
-        @Html.ActionLink("Add player", "SearchPlayers", new { user = userName, team = teamName })
-        @Html.ActionLink("Add players", "SearchMulti", new { user = userName, team = teamName })
-    </div>
+         <div>
+            <p />
+            <input type="submit" value="Save Changes"/>
+            <br/>@Html.ActionLink("Add player", "SearchPlayers", new { user = userName, team = teamName })
+            <br/>@Html.ActionLink("Add players", "SearchMulti", new { user = userName, team = teamName })
+         </div>
 
-    </div>
-</body>
+      </div>
+   }
+   </body>
 </html>

@@ -141,8 +141,16 @@ namespace BcxbTeamBldr.Controllers {
 
       public ActionResult EditTeam(string user, string team) {
       // -----------------------------------------------------
-         var roster = new PlayerListVM(user, team);
+         var roster = new UserPlayerListVM(user, team);
          return View(roster);
+      }
+
+      [HttpPost]
+      public ActionResult EditTeam(UserPlayerListVM model) {
+         // -----------------------------------------------------
+         var team = model.UserTeam;
+      // Logic here to return to TeamList.
+         return View(new TeamListVM(team.TeamName));
       }
 
 
