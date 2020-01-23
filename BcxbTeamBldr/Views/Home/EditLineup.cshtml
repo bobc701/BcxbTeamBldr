@@ -3,15 +3,15 @@
 
 <html>
 <head>
-    <meta name="viewport" content="width=device-width" />
-    <title>EditTeam</title>
+   <meta name="viewport" content="width=device-width" />
+   <title>EditTeam</title>
 </head>
 <body>
-  @{
+   @{
       string teamName = @Model.UserTeam.TeamName;
       string userName = @Model.UserTeam.UserName;
    }
-  @using (Html.BeginForm("EditTeam", "Home", FormMethod.Post)) {
+   @using (Html.BeginForm("EditLineup", "Home", FormMethod.Post)) {
 
       <h2>Roster for @teamName</h2>
       <div>
@@ -34,12 +34,34 @@
                </tr>
                @for (var i = 0; i < Model.Players.Count; i++) {
                   <tr>
-                     <td><input type="text" value="@Model.Players[i].PlayerName" /></td>
+                     <td>@Html.TextBoxFor(x => Model.Players[i].PlayerName)</td>
 
                      <td>@Html.TextBoxFor(x => Model.Players[i].MlbTeam)</td>
                      <td>@Html.TextBoxFor(x => Model.Players[i].Year)</td>
                      <td>@Html.TextBoxFor(x => Model.Players[i].PosnString)</td>
-                     <td><input type="text" value="@Model.Players[i].Slot_NoDH)" /></td>
+                     <td>
+                        @Html.DropDownListFor(
+                     x => Model.Players[i].Slot_NoDH,
+                     new SelectList(
+                        //new List<string> { "-", "c", "1b" })
+                        new List<SelectListItem>  {
+                                  new SelectListItem { Value = "0", Text = "-"},
+                                  new SelectListItem { Value = "1", Text = "1"},
+                                  new SelectListItem { Value = "2", Text = "2"},
+                                  new SelectListItem { Value = "3", Text = "3"},
+                                  new SelectListItem { Value = "4", Text = "4"},
+                                  new SelectListItem { Value = "5", Text = "5"},
+                                  new SelectListItem { Value = "6", Text = "6"},
+                                  new SelectListItem { Value = "7", Text = "7"},
+                                  new SelectListItem { Value = "8", Text = "8"},
+                                  new SelectListItem { Value = "9", Text = "9"}
+                        },
+                        "Value",
+                        "Text"
+                     )
+                  )
+
+                     </td>
                      <td>
                         @Html.DropDownListFor(
                      x => Model.Players[i].Posn_NoDH,
@@ -121,15 +143,12 @@
             </table>
          }
 
-      <div>
-         <p />
-         <input type="submit" value="Save Changes" />
-         <br />@Html.ActionLink("Add players", "SearchMulti", new { user = userName, team = teamName })
-         <br />@Html.ActionLink("Edit Lineups", "EditLineup", new { user = userName, team = teamName })
-
-      </div>
+         <div>
+            <p />
+            <input type="submit" value="Save Changes" />
+         </div>
 
       </div>
    }
-   </body>
+</body>
 </html>

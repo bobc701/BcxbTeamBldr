@@ -35,7 +35,7 @@ namespace BcxbTeamBldr.DataLayer {
                while (rdr.Read()) {
                   var team = new CUserTeam();
                   team.UserName = user;
-                  team.TeamName = rdr["TeamName"].ToString(); 
+                  team.TeamName = rdr["TeamName"].ToString();
                   team.NumPit = (int)rdr["TotPit"];
                   team.NumPos = (int)rdr["TotPos"];
                   team.UsesDh = (bool)rdr["UsesDh"];
@@ -69,16 +69,16 @@ namespace BcxbTeamBldr.DataLayer {
          using (SqlCommand cmd = new SqlCommand("u196491_BcxbUser.AddNewUser", con1)) {
             cmd.CommandType = CommandType.StoredProcedure;
 
-         // Add parameter for return value...
+            // Add parameter for return value...
             SqlParameter returnValue = new SqlParameter();
             returnValue.Direction = ParameterDirection.ReturnValue;
             cmd.Parameters.Add(returnValue);
 
-         // Add input parameters...
+            // Add input parameters...
             cmd.Parameters.AddWithValue("@user", user);
             cmd.Parameters.AddWithValue("@pwd", pwd);
-            
-            cmd.ExecuteNonQuery(); 
+
+            cmd.ExecuteNonQuery();
             n = (int)returnValue.Value;
          }
          return n;
@@ -132,7 +132,7 @@ namespace BcxbTeamBldr.DataLayer {
 
 
       public static bool TeamNameExists(string user, string team) {
-      // ------------------------------------------------------------------
+         // ------------------------------------------------------------------
          string sql = $"EXEC TeamNameExists '{user}', '{team}'";
          using (var cmd = new SqlCommand(sql, con1)) {
             return (int)cmd.ExecuteScalar() == 1 ? true : false;
@@ -141,8 +141,8 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
-      public static List<CMlbPlayer> GetPlayerList (string user, string team) {
-      // ---------------------------------------------------------------------
+      public static List<CMlbPlayer> GetPlayerList(string user, string team) {
+         // ---------------------------------------------------------------------
          var list = new List<CMlbPlayer>();
          string sql = $"EXEC GetPlayerList '{user}', '{team}'";
          using (var cmd = new SqlCommand(sql, con1)) {
@@ -223,7 +223,7 @@ namespace BcxbTeamBldr.DataLayer {
 
 
       public static List<CMlbPlayer> SearchPlayersMulti(string critName, string critTeam, string critYear, string critPosn) {
-      // ---------------------------------------------------------------------
+         // ---------------------------------------------------------------------
          var list = new List<CMlbPlayer>();
 
          // Build search string for SQL select...
@@ -242,7 +242,7 @@ namespace BcxbTeamBldr.DataLayer {
             case "lf": crit += delim + "SUBSTRING(FieldingString,7,1) != '-'"; break;
             case "cf": crit += delim + "SUBSTRING(FieldingString,8,1) != '-'"; break;
             case "rf": crit += delim + "SUBSTRING(FieldingString,9,1) != '-'"; break;
-            case "of":  
+            case "of":
                crit += delim +
                   "(SUBSTRING(FieldingString,7,1) != '-' OR SUBSTRING(FieldingString,8,1) != '-' OR SUBSTRING(FieldingString,9,1) != '-')";
                break;
@@ -261,7 +261,7 @@ namespace BcxbTeamBldr.DataLayer {
                   player.FieldingString = rdr["FieldingString"].ToString();
                   player.Year = (int)rdr["Year"];
                   player.MlbTeam = rdr["MlbTeam"].ToString();
-                  player.MlbLeague = rdr["MlbLeague"].ToString(); ;
+                  player.MlbLeague = rdr["MlbLeague"].ToString(); 
 
                   list.Add(player);
                }
@@ -272,8 +272,26 @@ namespace BcxbTeamBldr.DataLayer {
 
       }
 
+
+      public static void SetLineup(string user, string team, Models.UserPlayerListVM model) {
+      // ---------------------------------------------------------------------------------
+      // First, delete all existing lineup data...
+         string sql = $"EXEC ClearLineup '{user}', '{team}'";
+         using (var cmd = new SqlCommand(sql, con1)) {
+            cmd.ExecuteNonQuery();
+         }
+
+      // Now, update with new lineup data...
+      // NOTE: This should probably be a transaction!!!
+         foreach (CUserPlayer player in model.Players
+            .Where(p => p.Slot_NoDH != 0 || p.Posn_NoDH != 0 || p.Slot_DH != 0 || p.Posn_DH != 0)) { 
+               sql = $"EXEC SetLineup '{user}', '{team}', '{player.PlayerId}'";
+               using var cmd = new SqlCommand(sql, con1);
+               cmd.ExecuteNonQuery();
+         }
+      }
+
    }
 
-
-
 }
+

@@ -148,9 +148,29 @@ namespace BcxbTeamBldr.Controllers {
       [HttpPost]
       public ActionResult EditTeam(UserPlayerListVM model) {
          // -----------------------------------------------------
+         // This must be changed to operate on the static UserPlayerListVM object
          var team = model.UserTeam;
       // Logic here to return to TeamList.
          return View(new TeamListVM(team.TeamName));
+      }
+
+
+      public ActionResult EditLineup(string user, string team) {
+         // -----------------------------------------------------
+         var roster = new UserPlayerListVM(user, team);
+         return View(roster);
+      }
+
+      [HttpPost]
+      public ActionResult EditLineup(UserPlayerListVM model) {
+      // -----------------------------------------------------
+      // User has edited the lineups. 
+      // So we must update the DB with the 4 lineup fields...
+         var team = model.UserTeam;
+         DbInfo.SetLineup(team.UserName, team.TeamName, model);
+
+      // And then return the EditTeam view...
+         return View("EditTeam", new UserPlayerListVM(model.UserTeam.UserName, model.UserTeam.TeamName));
       }
 
 
