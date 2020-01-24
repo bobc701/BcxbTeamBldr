@@ -183,7 +183,12 @@ namespace BcxbTeamBldr.DataLayer {
                   player.FieldingString = rdr["FieldingString"].ToString();
                   player.Year = (int)rdr["Year"];
                   player.MlbTeam = rdr["MlbTeam"].ToString();
-                  player.MlbLeague = rdr["MlbLeague"].ToString(); ;
+                  player.MlbLeague = rdr["MlbLeague"].ToString();
+
+                  player.Slot_NoDH = (int)rdr["Slot_NoDH"];
+                  player.Posn_NoDH = (int)rdr["Posn_NoDH"];
+                  player.Slot_DH = (int)rdr["Slot_DH"];
+                  player.Posn_DH = (int)rdr["Posn_DH"];
 
                   list.Add(player);
                }
