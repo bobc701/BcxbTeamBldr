@@ -142,6 +142,8 @@ namespace BcxbTeamBldr.Controllers {
       public ActionResult EditTeam(string user, string team) {
       // -----------------------------------------------------
          var roster = new UserPlayerListVM(user, team);
+
+         Session["Roster"] = roster;
          return View(roster);
       }
 

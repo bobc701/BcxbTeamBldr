@@ -11,9 +11,18 @@
       string teamName = @Model.UserTeam.TeamName;
       string userName = @Model.UserTeam.UserName;
    }
-   @using (Html.BeginForm("EditLineup", "Home", FormMethod.Post)) {
+  @using (Html.BeginForm("EditLineup", "Home", FormMethod.Post)) {
 
-      <h2>Roster for @teamName</h2>
+      <h2>Edit lineups for @teamName</h2>
+
+      <em>
+         You must enter default starting lineups for both DH and no-DH.
+         <br/>The lineups can always be changed at game-time in Play-by-Play Baseball.
+         <br/>Players may play any position, but if a the position is not listed in 'Positions', 
+         <br/>then he's not qualified there and will be a defensive liability.
+      </em>
+      <p />
+
       <div>
          @if (Model.Players.Count == 0) {
             <div style="color:red;">
@@ -21,134 +30,134 @@
             </div>
          }
          else {
-            <table border="0" cellpadding="0" width="400px" style="border:1px solid black; border-collapse:collapse;">
+            <table border="0" cellpadding="0" style="border:0px solid black; border-collapse:collapse;">
                <tr>
-                  <th>Player Name</th>
-                  <th>MLB Team</th>
-                  <th align="left">Year</th>
-                  <th>Positions</th>
-                  <th>No DH<br />Lineup</th>
-                  <th>No DH<br />Position</th>
-                  <th>DH<br />Lineup</th>
-                  <th>DH<br />Position</th>
+                  <th width="130" align="left">Player Name</th>
+                  <th width="90" align="left">MLB Team</th>
+                  <th width="70" align="center">Year</th>
+                  <th width="100" align="left">Positions</th>
+                  <th width="70" align="center">Lineup<br />No DH</th>
+                  <th width="70" align="center">Position<br />No DH</th>
+                  <th width="70" align="center">Lineup<br />DH</th>
+                  <th width="70" align="center">Position<br />DH</th>
                </tr>
-               @for (var i = 0; i < Model.Players.Count; i++) {
+              @for (var i = 0; i < Model.Players.Count; i++) {
                   <tr>
-                     <td>@Html.TextBoxFor(x => Model.Players[i].PlayerName)</td>
+                     <td>@Model.Players[i].PlayerName</td>
 
-                     <td>@Html.TextBoxFor(x => Model.Players[i].MlbTeam)</td>
-                     <td>@Html.TextBoxFor(x => Model.Players[i].Year)</td>
-                     <td>@Html.TextBoxFor(x => Model.Players[i].PosnString)</td>
-                     <td>
+                     <td>@Model.Players[i].MlbTeam</td>
+                     <td align="center">@Model.Players[i].Year</td>
+                     <td>@Model.Players[i].PosnString</td>
+                     <td align="center">
                         @Html.DropDownListFor(
-                     x => Model.Players[i].Slot_NoDH,
-                     new SelectList(
-                        //new List<string> { "-", "c", "1b" })
-                        new List<SelectListItem>  {
-                                  new SelectListItem { Value = "0", Text = "-"},
-                                  new SelectListItem { Value = "1", Text = "1"},
-                                  new SelectListItem { Value = "2", Text = "2"},
-                                  new SelectListItem { Value = "3", Text = "3"},
-                                  new SelectListItem { Value = "4", Text = "4"},
-                                  new SelectListItem { Value = "5", Text = "5"},
-                                  new SelectListItem { Value = "6", Text = "6"},
-                                  new SelectListItem { Value = "7", Text = "7"},
-                                  new SelectListItem { Value = "8", Text = "8"},
-                                  new SelectListItem { Value = "9", Text = "9"}
-                        },
-                        "Value",
-                        "Text"
-                     )
-                  )
-
-                     </td>
-                     <td>
-                        @Html.DropDownListFor(
-                     x => Model.Players[i].Posn_NoDH,
-                     new SelectList(
-                       new List<SelectListItem> {
+                           x => Model.Players[i].Slot_NoDH,
+                           new SelectList(
+                              //new List<string> { "-", "c", "1b" })
+                              new List<SelectListItem>  {
                                  new SelectListItem { Value = "0", Text = "-"},
-                                 new SelectListItem { Value = "2", Text = "c"},
-                                 new SelectListItem { Value = "3", Text = "1b"},
-                                 new SelectListItem { Value = "4", Text = "2b"},
-                                 new SelectListItem { Value = "5", Text = "2b"},
-                                 new SelectListItem { Value = "6", Text = "ss"},
-                                 new SelectListItem { Value = "7", Text = "lf"},
-                                 new SelectListItem { Value = "8", Text = "cf"},
-                                 new SelectListItem { Value = "9", Text = "rf"},
-                                 new SelectListItem { Value = "1", Text = "p"}
-                       },
-                       "Value",
-                       "Text"
-                    )
-                 )
+                                 new SelectListItem { Value = "1", Text = "1"},
+                                 new SelectListItem { Value = "2", Text = "2"},
+                                 new SelectListItem { Value = "3", Text = "3"},
+                                 new SelectListItem { Value = "4", Text = "4"},
+                                 new SelectListItem { Value = "5", Text = "5"},
+                                 new SelectListItem { Value = "6", Text = "6"},
+                                 new SelectListItem { Value = "7", Text = "7"},
+                                 new SelectListItem { Value = "8", Text = "8"},
+                                 new SelectListItem { Value = "9", Text = "9"}
+                              },
+                              "Value",
+                              "Text" 
+                          )
+                        )
 
-                     </td>
-                     <td>
+                     <td align="center">
                         @Html.DropDownListFor(
-                     x => Model.Players[i].Slot_DH,
-                     new SelectList(
-                        new List<SelectListItem>  {
-                                  new SelectListItem { Value = "0", Text = "-"},
-                                  new SelectListItem { Value = "1", Text = "1"},
-                                  new SelectListItem { Value = "2", Text = "2"},
-                                  new SelectListItem { Value = "3", Text = "3"},
-                                  new SelectListItem { Value = "4", Text = "4"},
-                                  new SelectListItem { Value = "5", Text = "5"},
-                                  new SelectListItem { Value = "6", Text = "6"},
-                                  new SelectListItem { Value = "7", Text = "7"},
-                                  new SelectListItem { Value = "8", Text = "8"},
-                                  new SelectListItem { Value = "9", Text = "9"}
-                        },
-                        "Value",
-                        "Text"
-                     )
+                  x => Model.Players[i].Posn_NoDH,
+                  new SelectList(
+                     new List<SelectListItem> {
+                        new SelectListItem { Value = "0", Text = "-"},
+                        new SelectListItem { Value = "2", Text = "c"},
+                        new SelectListItem { Value = "3", Text = "1b"},
+                        new SelectListItem { Value = "4", Text = "2b"},
+                        new SelectListItem { Value = "5", Text = "3b"},
+                        new SelectListItem { Value = "6", Text = "ss"},
+                        new SelectListItem { Value = "7", Text = "lf"},
+                        new SelectListItem { Value = "8", Text = "cf"},
+                        new SelectListItem { Value = "9", Text = "rf"},
+                        new SelectListItem { Value = "1", Text = "p"}
+                     },
+                     "Value",
+                     "Text"
                   )
+               )
 
                      </td>
-                     <td>
+                     <td align="center">
                         @Html.DropDownListFor(
-                     x => Model.Players[i].Posn_DH,
-                     new SelectList(
-                       new List<SelectListItem> {
-                                 new SelectListItem { Value = "0", Text = "-"},
-                                 new SelectListItem { Value = "2", Text = "c"},
-                                 new SelectListItem { Value = "3", Text = "1b"},
-                                 new SelectListItem { Value = "4", Text = "2b"},
-                                 new SelectListItem { Value = "5", Text = "2b"},
-                                 new SelectListItem { Value = "6", Text = "ss"},
-                                 new SelectListItem { Value = "7", Text = "lf"},
-                                 new SelectListItem { Value = "8", Text = "cf"},
-                                 new SelectListItem { Value = "9", Text = "rf"},
-                                 new SelectListItem { Value = "1", Text = "p"},
-                                 new SelectListItem { Value = "10", Text = "dh"}
-                       },
-                       "Value",
-                       "Text"
-                    )
-                 )
+                  x => Model.Players[i].Slot_DH,
+                  new SelectList(
+                     new List<SelectListItem>  {
+                        new SelectListItem { Value = "0", Text = "-"},
+                        new SelectListItem { Value = "1", Text = "1"},
+                        new SelectListItem { Value = "2", Text = "2"},
+                        new SelectListItem { Value = "3", Text = "3"},
+                        new SelectListItem { Value = "4", Text = "4"},
+                        new SelectListItem { Value = "5", Text = "5"},
+                        new SelectListItem { Value = "6", Text = "6"},
+                        new SelectListItem { Value = "7", Text = "7"},
+                        new SelectListItem { Value = "8", Text = "8"},
+                        new SelectListItem { Value = "9", Text = "9"}
+                     },
+                     "Value",
+                     "Text"
+                  )
+               )
+
+                     </td>
+                     <td align="center">
+                        @Html.DropDownListFor(
+                  x => Model.Players[i].Posn_DH,
+                  new SelectList(
+                     new List<SelectListItem> {
+                        new SelectListItem { Value = "0", Text = "-"},
+                        new SelectListItem { Value = "2", Text = "c"},
+                        new SelectListItem { Value = "3", Text = "1b"},
+                        new SelectListItem { Value = "4", Text = "2b"},
+                        new SelectListItem { Value = "5", Text = "3b"},
+                        new SelectListItem { Value = "6", Text = "ss"},
+                        new SelectListItem { Value = "7", Text = "lf"},
+                        new SelectListItem { Value = "8", Text = "cf"},
+                        new SelectListItem { Value = "9", Text = "rf"},
+                        new SelectListItem { Value = "1", Text = "p"},
+                        new SelectListItem { Value = "10", Text = "dh"}
+                     },
+                     "Value",
+                     "Text"
+                  )
+               )
                      </td>
                      <td>
                         @Html.ActionLink("Remove", "RemovePlayerFromTeam",
-                            new { user = userName, team = teamName, id = Model.Players[i].PlayerId })
+                        new { user = userName, team = teamName, id = Model.Players[i].PlayerId })
                      </td>
                      <td>
                         @*Addl stuff needed on server to update UserPlayer table...*@
-                        @Html.HiddenFor(m => m.Players[i].PlayerId);
-                        @Html.HiddenFor(m => m.Players[i].UserName);
-                        @Html.HiddenFor(m => m.Players[i].TeamName);
+                        @Html.HiddenFor(m => m.Players[i].PlayerId)
+                        @Html.HiddenFor(m => m.Players[i].UserName)
+                        @Html.HiddenFor(m => m.Players[i].TeamName)
                      </td>
                   </tr>
                }
             </table>
          }
 
-         <div>
-            <p />
-            <input type="submit" value="Save Changes" />
-         </div>
+      <div>
+         <p /><input type="submit" value="Save Changes" style="font-weight:bold"/>
+         &nbsp;&nbsp;<button id="btnCancel" style="font-weight:bold">Cancel</button>
+      </div>
 
       </div>
-   }
+      }
+
 </body>
 </html>
