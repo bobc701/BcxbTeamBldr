@@ -130,14 +130,14 @@
     <Content Include="Views\Home\AddTeam.cshtml" />
     <Content Include="Views\Home\ErrorView.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\EditTeam.cshtml" />
+    <Content Include="Views\Home\EditTeam_obs.cshtml" />
     <None Include="Properties\PublishProfiles\FileSystemProfile.pubxml" />
     <None Include="Properties\PublishProfiles\FTPProfile.pubxml" />
     <Content Include="Views\Home\SearchPlayers.cshtml" />
     <Content Include="Scripts\jquery-3.4.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.4.1.min.map" />
     <Content Include="Views\Home\SearchMulti.cshtml" />
-    <Content Include="Views\Home\EditLineup.cshtml" />
+    <Content Include="Views\Home\EditTeam.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
