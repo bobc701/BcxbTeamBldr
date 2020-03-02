@@ -24,6 +24,7 @@ namespace BcxbTeamBldr.DataLayer {
       public int Posn_DH { get; set; }    //Source table: UserPlayer
 
       public bool Selected { get; set; } = false;  // For use with SearchMulti view
+      public bool Deleted { get; set; } = false;   // For use with EditTeam
 
       public string PosnString {
          // --------------------------------

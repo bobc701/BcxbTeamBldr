@@ -125,7 +125,7 @@
     <Content Include="Views\web.config" />
     <None Include="packages.config" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\_temp.cshtml" />
     <Content Include="Views\Home\TeamList.cshtml" />
     <Content Include="Views\Home\AddTeam.cshtml" />
     <Content Include="Views\Home\ErrorView.cshtml" />

@@ -21,12 +21,48 @@
       $(document).ready(
          function () {
             alert("In document.ready");
-            $(".lineupPick").on("change", function () {
-               alert("The select element was changed.");
-               $('#btnSaveChanges').prop('disabled', false);
-               $('#btnAddPlayers').prop('disabled', true);
-            });
+
+            $(".lineupPick").on("change",
+               function () {
+                  alert("The select element was changed.");
+                  $('#btnSaveChanges').prop('disabled', false);
+                  $('#btnAddPlayers').prop('disabled', true);
+               });
+
+            // ---------------------------------------------------------
+            // A nice agorism this, but I decided to not use it after all
+            // and use a form/submit instead...
+            // ---------------------------------------------------------
+            //$('#btnSaveLineupNot').click(
+            //   function () {
+            //      table.find('tr').each(
+            //         function (i, el) {
+            //            let $tds = $(this).find('td'),
+            //               playerId[i] = $tds.eq(0).text(),
+            //               slotNoDh[i] = $tds.eq(1).text(),
+            //               posnNoDh[i] = $tds.eq(2).text(),
+            //               slotDh[i] = $tds.eq(3).text(),
+            //               posnDh[i] = $tds.eq(4).text();
+            //         });
+            //      let data = {
+            //         User:
+            //         Team:
+            //         PlayerId: playerId,
+            //         SlotNoDh: slotNoDh,
+            //         PosnNoDh: posnNoDh,
+            //         SlotDh: slotDh,
+            //         PosnDh: posnDh
+            //      }
+            //      $.post('Home/UpdateLineup', data,
+            //         function () {
+            //            alert('Lineup updated');
+            //         }
+            //      )
+
+            //   });
+
          });
+
    </script>
 
 </head>
@@ -35,15 +71,18 @@
       string teamName = @Model.UserTeam.TeamName;
       string userName = @Model.UserTeam.UserName;
    }
-  @using (Html.BeginForm("EditLineup", "Home", FormMethod.Post)) {
+   @using (Html.BeginForm("EditTeam", "Home", FormMethod.Post)) {
 
-      <h2>Edit lineups for @teamName</h2>
+      <h2>Edit lineups</h2>
+      <h3>User: @Html.TextBoxFor(m => m.UserTeam.UserName, new { @readonly = "readonly" })
+      <br/>Team: @Html.TextBoxFor(m => m.UserTeam.TeamName, new { @readonly = "readonly" })
+      </h3>
 
       <em>
          You must enter default starting lineups for both DH and no-DH.
-         <br/>The lineups can always be changed at game-time in Play-by-Play Baseball.
-         <br/>Players may play any position, but if a the position is not listed in 'Positions', 
-         <br/>then he's not qualified there and will be a defensive liability.
+         <br />The lineups can always be changed at game-time in Play-by-Play Baseball.
+         <br />Players may play any position, but if a the position is not listed in 'Positions',
+         <br />then he's not qualified there and will be a defensive liability.
       </em>
       <p />
 
@@ -64,8 +103,9 @@
                   <th width="70" align="center">Position<br />No DH</th>
                   <th width="70" align="center">Lineup<br />DH</th>
                   <th width="70" align="center">Position<br />DH</th>
+                  <th width="70" align="center">Remove</th>
                </tr>
-              @for (var i = 0; i < Model.Players.Count; i++) {
+               @for (var i = 0; i < Model.Players.Count; i++) {
                   <tr>
                      <td>@Model.Players[i].PlayerName</td>
 
@@ -90,80 +130,83 @@
                                  new SelectListItem { Value = "9", Text = "9"}
                               },
                               "Value",
-                              "Text" 
+                              "Text"
                           ),
-                          new {@class = "lineupPick"}
+                          new { @class = "lineupPick" }
                         )
 
                      <td align="center">
                         @Html.DropDownListFor(
-                  x => Model.Players[i].Posn_NoDH,
-                  new SelectList(
-                     new List<SelectListItem> {
-                        new SelectListItem { Value = "0", Text = "-"},
-                        new SelectListItem { Value = "2", Text = "c"},
-                        new SelectListItem { Value = "3", Text = "1b"},
-                        new SelectListItem { Value = "4", Text = "2b"},
-                        new SelectListItem { Value = "5", Text = "3b"},
-                        new SelectListItem { Value = "6", Text = "ss"},
-                        new SelectListItem { Value = "7", Text = "lf"},
-                        new SelectListItem { Value = "8", Text = "cf"},
-                        new SelectListItem { Value = "9", Text = "rf"},
-                        new SelectListItem { Value = "1", Text = "p"}
-                     },
-                     "Value",
-                     "Text"
-                  )
-               )
+                           x => Model.Players[i].Posn_NoDH,
+                           new SelectList(
+                              new List<SelectListItem> {
+                                 new SelectListItem { Value = "0", Text = "-"},
+                                 new SelectListItem { Value = "2", Text = "c"},
+                                 new SelectListItem { Value = "3", Text = "1b"},
+                                 new SelectListItem { Value = "4", Text = "2b"},
+                                 new SelectListItem { Value = "5", Text = "3b"},
+                                 new SelectListItem { Value = "6", Text = "ss"},
+                                 new SelectListItem { Value = "7", Text = "lf"},
+                                 new SelectListItem { Value = "8", Text = "cf"},
+                                 new SelectListItem { Value = "9", Text = "rf"},
+                                 new SelectListItem { Value = "1", Text = "p"}
+                              },
+                              "Value",
+                              "Text"
+                           ),
+                           new {@class = "lineupPick"}
+                        )
 
                      </td>
                      <td align="center">
                         @Html.DropDownListFor(
-                  x => Model.Players[i].Slot_DH,
-                  new SelectList(
-                     new List<SelectListItem>  {
-                        new SelectListItem { Value = "0", Text = "-"},
-                        new SelectListItem { Value = "1", Text = "1"},
-                        new SelectListItem { Value = "2", Text = "2"},
-                        new SelectListItem { Value = "3", Text = "3"},
-                        new SelectListItem { Value = "4", Text = "4"},
-                        new SelectListItem { Value = "5", Text = "5"},
-                        new SelectListItem { Value = "6", Text = "6"},
-                        new SelectListItem { Value = "7", Text = "7"},
-                        new SelectListItem { Value = "8", Text = "8"},
-                        new SelectListItem { Value = "9", Text = "9"}
-                     },
-                     "Value",
-                     "Text"
-                  )
-               )
-
+                           x => Model.Players[i].Slot_DH,
+                           new SelectList(
+                              new List<SelectListItem>  {
+                                 new SelectListItem { Value = "0", Text = "-"},
+                                 new SelectListItem { Value = "1", Text = "1"},
+                                 new SelectListItem { Value = "2", Text = "2"},
+                                 new SelectListItem { Value = "3", Text = "3"},
+                                 new SelectListItem { Value = "4", Text = "4"},
+                                 new SelectListItem { Value = "5", Text = "5"},
+                                 new SelectListItem { Value = "6", Text = "6"},
+                                 new SelectListItem { Value = "7", Text = "7"},
+                                 new SelectListItem { Value = "8", Text = "8"},
+                                 new SelectListItem { Value = "9", Text = "9"}
+                              },
+                              "Value",
+                              "Text"
+                           ),
+                           new {@class = "lineupPick"}
+                        )
                      </td>
                      <td align="center">
                         @Html.DropDownListFor(
-                  x => Model.Players[i].Posn_DH,
-                  new SelectList(
-                     new List<SelectListItem> {
-                        new SelectListItem { Value = "0", Text = "-"},
-                        new SelectListItem { Value = "2", Text = "c"},
-                        new SelectListItem { Value = "3", Text = "1b"},
-                        new SelectListItem { Value = "4", Text = "2b"},
-                        new SelectListItem { Value = "5", Text = "3b"},
-                        new SelectListItem { Value = "6", Text = "ss"},
-                        new SelectListItem { Value = "7", Text = "lf"},
-                        new SelectListItem { Value = "8", Text = "cf"},
-                        new SelectListItem { Value = "9", Text = "rf"},
-                        new SelectListItem { Value = "1", Text = "p"},
-                        new SelectListItem { Value = "10", Text = "dh"}
-                     },
-                     "Value",
-                     "Text"
-                  )
-               )
+                           x => Model.Players[i].Posn_DH,
+                           new SelectList(
+                              new List<SelectListItem> {
+                                 new SelectListItem { Value = "0", Text = "-"},
+                                 new SelectListItem { Value = "2", Text = "c"},
+                                 new SelectListItem { Value = "3", Text = "1b"},
+                                 new SelectListItem { Value = "4", Text = "2b"},
+                                 new SelectListItem { Value = "5", Text = "3b"},
+                                 new SelectListItem { Value = "6", Text = "ss"},
+                                 new SelectListItem { Value = "7", Text = "lf"},
+                                 new SelectListItem { Value = "8", Text = "cf"},
+                                 new SelectListItem { Value = "9", Text = "rf"},
+                                 new SelectListItem { Value = "1", Text = "p"},
+                                 new SelectListItem { Value = "10", Text = "dh"}
+                              },
+                              "Value",
+                              "Text"
+                           ),
+                           new {@class = "lineupPick"}
+                        )
                      </td>
                      <td>
-                        @Html.ActionLink("Remove", "RemovePlayerFromTeam",
-                        new { user = userName, team = teamName, id = Model.Players[i].PlayerId })
+                        @Html.CheckBoxFor(m => m.Players[i].Deleted)
+                        @*@Html.ActionLink("Remove", "RemovePlayerFromTeam",
+                        new { user = userName, team = teamName, id = Model.Players[i].PlayerId })*@
                      </td>
                      <td>
                         @*Addl stuff needed on server to update UserPlayer table...*@
@@ -176,18 +219,20 @@
             </table>
          }
 
-      <div>
-         <p /><input type="submit" id="btnSaveChanges" value="Save Changes" class="button1" style="width:150px;" disabled="disabled" />
-         <button id="btnAddPlayers" class="button1" style="width:150px;">Add Players</button>
-         <button id="btnCancel" class="button1" style="width:150px;">Cancel</button>
+         <div>
+            <p /><input type="submit" id="btnSaveChanges" value="Save Changes" class="button1" style="width:150px;" disabled="disabled" />
+            @*<button id="btnAddPlayers" class="button1" style="width:150px;">Add Players</button>*@
+            <button id="btnCancel" class="button1" style="width:150px;">Cancel</button>
 
-         @*<br />@Html.ActionLink("Add players", "SearchMulti", new { user = userName, team = teamName })*@
-         
-         @*$('#my-input-id').prop('disabled', false);*@
-      </div>
+            @*<br />@Html.ActionLink("Add players", "SearchMulti", new { user = userName, team = teamName })*@
+
+            @*$('#my-input-id').prop('disabled', false);*@
+         </div>
 
       </div>
-      }
+   }
+
+   @Html.ActionLink("Add players", "SearchMulti", new { user = userName, team = teamName })
 
 </body>
 </html>

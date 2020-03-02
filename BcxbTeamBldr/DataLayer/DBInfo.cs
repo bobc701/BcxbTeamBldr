@@ -112,8 +112,17 @@ namespace BcxbTeamBldr.DataLayer {
 
 
       public static void AddPlayerToTeam(string user, string team, string id) {
-         // --------------------------------------------------------------------
+      // --------------------------------------------------------------------
          string sql = $"EXEC AddPlayerToTeam '{user}', '{team}', '{id}'";
+         using (var cmd = new SqlCommand(sql, con1)) {
+            cmd.ExecuteNonQuery();
+         }
+      }
+
+
+      public static void RemovePlayerFromTeam(string user, string team, string id) {
+         // --------------------------------------------------------------------
+         string sql = $"EXEC RemovePlayerFromTeam '{user}', '{team}', '{id}'";
          using (var cmd = new SqlCommand(sql, con1)) {
             cmd.ExecuteNonQuery();
          }
@@ -121,9 +130,9 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
-      public static void RemovePlayerFromTeam(string user, string team, string id) {
+      public static void RemoveAllPlayersFromTeam(string user, string team) {
          // --------------------------------------------------------------------
-         string sql = $"EXEC RemovePlayerFromTeam '{user}', '{team}', '{id}'";
+         string sql = $"EXEC RemoveAllPlayersFromTeam '{user}', '{team}'";
          using (var cmd = new SqlCommand(sql, con1)) {
             cmd.ExecuteNonQuery();
          }

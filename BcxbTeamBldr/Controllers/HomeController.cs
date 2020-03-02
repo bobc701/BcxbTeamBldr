@@ -105,7 +105,8 @@ namespace BcxbTeamBldr.Controllers {
                   DbInfo.AddPlayerToTeam(user, team, pid);
                }
             }
-            var roster = new PlayerListVM(user, team);
+            //var roster = new PlayerListVM(user, team);
+            var roster = new UserPlayerListVM(user, team);
             return View("EditTeam", roster);
          }
          catch (Exception ex) {
@@ -147,14 +148,43 @@ namespace BcxbTeamBldr.Controllers {
          return View(roster);
       }
 
+
       [HttpPost]
       public ActionResult EditTeam(UserPlayerListVM model) {
-         // -----------------------------------------------------
-         // This must be changed to operate on the static UserPlayerListVM object
-         var team = model.UserTeam;
-      // Logic here to return to TeamList.
-         return View(new TeamListVM(team.TeamName));
+      // -----------------------------------------------------
+         try {
+            string team = model.UserTeam.TeamName;
+            string user = model.UserTeam.UserName;
+
+            DbInfo.RemoveAllPlayersFromTeam(user, team);
+            foreach (CUserPlayer p in model.Players) {
+               DbInfo.AddPlayerToTeam(user, team, p.PlayerId);
+            }
+
+            return View("EditTeam", new UserPlayerListVM(user, team));
+
+         }
+         catch (Exception ex) {
+            ViewBag.ErrorMsg =
+               $"There was an error updating the team in the database:\r\n{ex.Message}";
+            return View("ErrorView");
+         }
       }
+
+
+      //[HttpPost]
+      //public ActionResult EditLineup(UserPlayerListVM model) {
+      //// -----------------------------------------------------
+      //// User has edited the lineups. 
+      //// So we must update the DB with the 4 lineup fields...
+      //   var team = model.UserTeam;
+      //   DbInfo.SetLineup(team.UserName, team.TeamName, model);
+
+      //// And then return the EditTeam view...
+      //   return View("EditTeam", new UserPlayerListVM(model.UserTeam.UserName, model.UserTeam.TeamName));
+      //}
+
+
 
 
       public ActionResult EditLineup(string user, string team) {
@@ -163,17 +193,17 @@ namespace BcxbTeamBldr.Controllers {
          return View(roster);
       }
 
-      [HttpPost]
-      public ActionResult EditLineup(UserPlayerListVM model) {
-      // -----------------------------------------------------
-      // User has edited the lineups. 
-      // So we must update the DB with the 4 lineup fields...
-         var team = model.UserTeam;
-         DbInfo.SetLineup(team.UserName, team.TeamName, model);
+      //[HttpPost]
+      //public ActionResult EditLineup(UserPlayerListVM model) {
+      //// -----------------------------------------------------
+      //// User has edited the lineups. 
+      //// So we must update the DB with the 4 lineup fields...
+      //   var team = model.UserTeam;
+      //   DbInfo.SetLineup(team.UserName, team.TeamName, model);
 
-      // And then return the EditTeam view...
-         return View("EditTeam", new UserPlayerListVM(model.UserTeam.UserName, model.UserTeam.TeamName));
-      }
+      //// And then return the EditTeam view...
+      //   return View("EditTeam", new UserPlayerListVM(model.UserTeam.UserName, model.UserTeam.TeamName));
+      //}
 
 
       public ActionResult SearchPlayers(string user, string team) {
