@@ -1,9 +1,15 @@
 ﻿
-@{
-    ViewBag.Title = "_Layout";
-}
-
 <!DOCTYPE html>
+
+<html>
+
+<head>
+   <script src="~/Scripts/jquery-3.4.1.js"></script>
+   <script src="~/Scripts/bc-global.js"></script>
+
+@RenderSection("HeaderStuff", required: false)
+
+</head>
 
 <body style="font-family:sans-serif">
 
@@ -21,10 +27,9 @@
             </td>
         </tr>
     </table>
-    @*<div>
-            @RenderBody()
-        </div>*@
 
+@RenderSection("Scripting", required: false)
 
 </body>
+</html>
 

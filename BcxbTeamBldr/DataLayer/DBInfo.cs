@@ -5,6 +5,7 @@ using System.Web;
 using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
+using System.Diagnostics;
 
 using BcxbTeamBldr.Models;
 
@@ -120,6 +121,67 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
+      public static void UpdateLineups(string user, string team, List<CUserPlayer> roster) {
+         // ----------------------------------------------------------------------------
+
+         SqlTransaction sqlTran = null;
+         try {
+            
+            sqlTran = con1.BeginTransaction();
+
+            using SqlCommand cmd1 = new SqlCommand("RemovePlayerFromTeam", con1);
+            cmd1.CommandType = CommandType.StoredProcedure;
+            cmd1.Transaction = sqlTran;
+
+            using SqlCommand cmd2 = new SqlCommand("UpdateLineups", con1);
+            cmd2.CommandType = CommandType.StoredProcedure;
+            cmd2.Transaction = sqlTran;
+
+            foreach (CUserPlayer player in roster) {
+               if (player.Remove) {
+               // Player is flagged for removal...
+                  cmd1.Parameters.Clear();
+                  cmd1.Parameters.AddWithValue("@user", user);
+                  cmd1.Parameters.AddWithValue("@team", team);
+                  cmd1.Parameters.AddWithValue("@pid", player.PlayerId);
+                  cmd1.ExecuteNonQuery();
+               }
+               else {
+               // Player not flagged, so update lineups (NoDh & Dh)...
+                  cmd2.Parameters.Clear();
+                  cmd2.Parameters.AddWithValue("@user", user);
+                  cmd2.Parameters.AddWithValue("@team", team);
+                  cmd2.Parameters.AddWithValue("@pid", player.PlayerId);
+                  cmd2.Parameters.AddWithValue("@slotNoDh", player.Slot_NoDH);
+                  cmd2.Parameters.AddWithValue("@posnNoDh", player.Posn_NoDH);
+                  cmd2.Parameters.AddWithValue("@slotDh", player.Slot_DH);
+                  cmd2.Parameters.AddWithValue("@posnDh", player.Posn_DH);
+                  cmd2.ExecuteNonQuery();
+               }
+            }
+            sqlTran.Commit();
+            Debug.WriteLine("Both records were written to database.");
+         }
+         catch (Exception ex) {
+            Debug.WriteLine(ex.Message);
+
+            try {
+               sqlTran.Rollback();
+               throw ex;
+            }
+            catch (Exception exRollback) {
+               // Throws an InvalidOperationException if the connection 
+               // is closed or the transaction has already been rolled 
+               // back on the server.
+               Console.WriteLine(exRollback.Message);
+               throw exRollback;
+
+            }
+         }
+
+      }
+
+
       public static void RemovePlayerFromTeam(string user, string team, string id) {
          // --------------------------------------------------------------------
          string sql = $"EXEC RemovePlayerFromTeam '{user}', '{team}', '{id}'";
@@ -165,7 +227,7 @@ namespace BcxbTeamBldr.DataLayer {
                   player.FieldingString = rdr["FieldingString"].ToString();
                   player.Year = (int)rdr["Year"];
                   player.MlbTeam = rdr["MlbTeam"].ToString();
-                  player.MlbLeague = rdr["MlbLeague"].ToString(); ;
+                  player.MlbLeague = rdr["MlbLeague"].ToString();
 
                   list.Add(player);
                }

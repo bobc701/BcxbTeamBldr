@@ -144,7 +144,6 @@ namespace BcxbTeamBldr.Controllers {
       // -----------------------------------------------------
          var roster = new UserPlayerListVM(user, team);
 
-         Session["Roster"] = roster;
          return View(roster);
       }
 
@@ -156,10 +155,10 @@ namespace BcxbTeamBldr.Controllers {
             string team = model.UserTeam.TeamName;
             string user = model.UserTeam.UserName;
 
-            DbInfo.RemoveAllPlayersFromTeam(user, team);
-            foreach (CUserPlayer p in model.Players) {
-               DbInfo.AddPlayerToTeam(user, team, p.PlayerId);
-            }
+         // Loop over player list, 
+         // If they are marked'Remove', shoot off a delete.
+         // Otherwise, shoot off an update for each with lineups. 
+            DbInfo.UpdateLineups(user, team, model.Players);
 
             return View("EditTeam", new UserPlayerListVM(user, team));
 
@@ -169,6 +168,7 @@ namespace BcxbTeamBldr.Controllers {
                $"There was an error updating the team in the database:\r\n{ex.Message}";
             return View("ErrorView");
          }
+
       }
 
 
