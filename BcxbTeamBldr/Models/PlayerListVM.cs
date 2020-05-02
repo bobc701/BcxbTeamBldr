@@ -11,18 +11,18 @@ namespace BcxbTeamBldr.Models {
       public CUserTeam UserTeam { get; set; }
       public List<CMlbPlayer> Players { get; set; }
 
-      public PlayerListVM (string user, string team) {
+      public PlayerListVM (string user, string team, DbInfo info) {
       // ---------------------------------------------
          UserTeam = new CUserTeam { UserName = user, TeamName = team };
-         Players = DbInfo.GetPlayerList(user, team);
+         Players = info.GetPlayerList(user, team);
       }
 
-      public PlayerListVM(string user, string team, int option) {
+      public PlayerListVM(string user, string team, DbInfo info, int option) {
       // ---------------------------------------------
          UserTeam = new CUserTeam { UserName = user, TeamName = team };
          Players = option switch {
             0 => null,
-            _ => DbInfo.GetPlayerList(user, team)
+            _ => info.GetPlayerList(user, team)
          };
       }
 

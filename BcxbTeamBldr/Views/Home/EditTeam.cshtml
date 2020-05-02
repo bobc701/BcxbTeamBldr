@@ -14,6 +14,8 @@
          padding: 10px;
          font-size: large;
          border-radius: 10px;
+         width: 150px;
+         box-shadow: 1px 1px;
       }
    </style>
 }
@@ -33,12 +35,14 @@
       <br />Team: @Html.TextBoxFor(m => m.UserTeam.TeamName, new { @readonly = "readonly" })
    </h3>
 
+   <div style="border:5px; box-shadow: 3px 3px 3px 3px; border-radius: 10px; padding:10px; ">
    <em>
       You must enter default starting lineups for both DH and no-DH.
       <br />The lineups can always be changed at game-time in Play-by-Play Baseball.
       <br />Players may play any position, but if a the position is not listed in 'Positions',
       <br />then he's not qualified there and will be a defensive liability.
    </em>
+   </div>
    <p />
 
    <div>
@@ -180,9 +184,9 @@
       }
 
       <div>
-         <p /><input type="submit" id="btnSaveChanges" value="Save Changes" class="button1" style="width:150px;" disabled="disabled" />
+         <p /><input type="submit" id="btnSaveChanges" value="Save Changes" class="button1" disabled="disabled" />
          @*<button id="btnAddPlayers" class="button1" style="width:150px;">Add Players</button>*@
-         <button id="btnCancel" class="button1" style="width:150px;">Cancel</button>
+         <button id="btnCancel" class="button1">Cancel</button>
 
          @*<br />@Html.ActionLink("Add players", "SearchMulti", new { user = userName, team = teamName })*@
 

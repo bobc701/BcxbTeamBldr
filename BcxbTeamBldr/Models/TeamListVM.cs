@@ -11,12 +11,13 @@ namespace BcxbTeamBldr.Models {
       public string UserName;
       public List<CUserTeam> UserTeamList;
 
-      public TeamListVM(string userName) {
+      public TeamListVM(string userName, DbInfo info) {
       // --------------------------------------------------------
       // Constructor...
          this.UserName = userName;
-         this.UserTeamList = DbInfo.GetUserTeamList(userName);
+         this.UserTeamList = info.GetUserTeamList(userName);
       }
+
 
 
    }

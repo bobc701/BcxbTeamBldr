@@ -11,19 +11,21 @@ using BcxbTeamBldr.Models;
 
 namespace BcxbTeamBldr.DataLayer {
 
-   public static class DbInfo {
+   public class DbInfo {
       // This class, DBInfo, is responsible for all intereaction with the database.
 
-      public static SqlConnection con1;
+      public SqlConnection con1;
 
-      static DbInfo() {
+      public DbInfo() {
          // -----------------------------------------
          string connect = ConfigurationManager.ConnectionStrings["ConnectionString1"].ConnectionString;
          con1 = new SqlConnection(connect);
          con1.Open();
+         
       }
 
-      public static List<CUserTeam> GetUserTeamList(string user) {
+
+      public List<CUserTeam> GetUserTeamList(string user) {
          // --------------------------------------------------------------------
          // Purpose: Retrieve from database, a list of all teams for this user.
 
@@ -50,7 +52,7 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
-      public static void AddNewTeam(string user, string team, bool dh) {
+      public void AddNewTeam(string user, string team, bool dh) {
          // ---------------------------------------------------------------------
          string sql = $"EXEC AddNewTeam '{user}', '{team}', {(dh ? '1' : '0')}";
          using (var cmd = new SqlCommand(sql, con1)) {
@@ -61,7 +63,7 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
-      public static int AddNewUser(string user, string pwd) {
+      public int AddNewUser(string user, string pwd) {
          // ----------------------------------------------------------
          int n;
          //string sql = $"EXEC AddNewUser '{user}', '{pwd}'";
@@ -86,7 +88,7 @@ namespace BcxbTeamBldr.DataLayer {
 
       }
 
-      public static int Login(string user, string pwd) {
+      public int Login(string user, string pwd) {
          // ----------------------------------------------------------
          int n;
 
@@ -112,7 +114,7 @@ namespace BcxbTeamBldr.DataLayer {
 
 
 
-      public static void AddPlayerToTeam(string user, string team, string id) {
+      public void AddPlayerToTeam(string user, string team, string id) {
       // --------------------------------------------------------------------
          string sql = $"EXEC AddPlayerToTeam '{user}', '{team}', '{id}'";
          using (var cmd = new SqlCommand(sql, con1)) {
@@ -121,7 +123,7 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
-      public static void UpdateLineups(string user, string team, List<CUserPlayer> roster) {
+      public void UpdateLineups(string user, string team, List<CUserPlayer> roster) {
          // ----------------------------------------------------------------------------
 
          SqlTransaction sqlTran = null;
@@ -182,7 +184,7 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
-      public static void RemovePlayerFromTeam(string user, string team, string id) {
+      public void RemovePlayerFromTeam(string user, string team, string id) {
          // --------------------------------------------------------------------
          string sql = $"EXEC RemovePlayerFromTeam '{user}', '{team}', '{id}'";
          using (var cmd = new SqlCommand(sql, con1)) {
@@ -192,7 +194,7 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
-      public static void RemoveAllPlayersFromTeam(string user, string team) {
+      public void RemoveAllPlayersFromTeam(string user, string team) {
          // --------------------------------------------------------------------
          string sql = $"EXEC RemoveAllPlayersFromTeam '{user}', '{team}'";
          using (var cmd = new SqlCommand(sql, con1)) {
@@ -202,7 +204,7 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
-      public static bool TeamNameExists(string user, string team) {
+      public bool TeamNameExists(string user, string team) {
          // ------------------------------------------------------------------
          string sql = $"EXEC TeamNameExists '{user}', '{team}'";
          using (var cmd = new SqlCommand(sql, con1)) {
@@ -212,7 +214,7 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
-      public static List<CMlbPlayer> GetPlayerList(string user, string team) {
+      public List<CMlbPlayer> GetPlayerList(string user, string team) {
          // ---------------------------------------------------------------------
          var list = new List<CMlbPlayer>();
          string sql = $"EXEC GetPlayerList '{user}', '{team}'";
@@ -239,7 +241,7 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
-      public static List<CUserPlayer> GetUserPlayerList(string user, string team) {
+      public List<CUserPlayer> GetUserPlayerList(string user, string team) {
          // ---------------------------------------------------------------------
          var list = new List<CUserPlayer>();
          string sql = $"EXEC GetPlayerList '{user}', '{team}'";
@@ -271,7 +273,7 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
-      public static List<CMlbPlayer> SearchPlayers(string crit) {
+      public List<CMlbPlayer> SearchPlayers(string crit) {
          // ---------------------------------------------------------------------
          var list = new List<CMlbPlayer>();
          string sql = $"EXEC SearchPlayers '{crit}'";
@@ -298,7 +300,7 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
-      public static List<CMlbPlayer> SearchPlayersMulti(string critName, string critTeam, string critYear, string critPosn) {
+      public List<CMlbPlayer> SearchPlayersMulti(string critName, string critTeam, string critYear, string critPosn) {
          // ---------------------------------------------------------------------
          var list = new List<CMlbPlayer>();
 
@@ -349,7 +351,7 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
-      public static void SetLineup(string user, string team, Models.UserPlayerListVM model) {
+      public void SetLineup(string user, string team, Models.UserPlayerListVM model) {
       // ---------------------------------------------------------------------------------
       // First, delete all existing lineup data...
          string sql = $"EXEC ClearLineup '{user}', '{team}'";
