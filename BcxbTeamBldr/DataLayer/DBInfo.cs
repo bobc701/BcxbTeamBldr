@@ -46,9 +46,36 @@ namespace BcxbTeamBldr.DataLayer {
                }
 
             }
-            int n = cmd.ExecuteNonQuery();
+            int n = cmd.ExecuteNonQuery(); //<-- What's this???
          }
          return list;
+      }
+
+
+      public List<CUserTeam> GetUserTeamList2(string user) {
+      // -----------------------------------------------------------
+      // I see tha this doesn't simplify the original approach much at all.
+      // It hides the connection and command objects, but there's almost the same amount of code.
+      // Better 
+      // -----------------------------------------------------------
+      // I don't think it would work for TalkToDb to be static, because would the connection then
+      // live accross instances of dbInfo? 
+      // -----------------------------------------------------------
+         var list = new List<CUserTeam>();
+         string sql = $"EXEC GetUserTeamList '{user}'";
+         using SqlDataReader rdr = TalkToDB.GetReader(sql);
+
+         while (rdr.Read()) {
+            var team = new CUserTeam();
+            team.UserName = user;
+            team.TeamName = rdr["TeamName"].ToString();
+            team.NumPit = (int)rdr["TotPit"];
+            team.NumPos = (int)rdr["TotPos"];
+            team.UsesDh = (bool)rdr["UsesDh"];
+            list.Add(team);
+         }
+         return list;
+
       }
 
 

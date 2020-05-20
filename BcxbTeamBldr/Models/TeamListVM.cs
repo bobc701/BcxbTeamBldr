@@ -15,7 +15,7 @@ namespace BcxbTeamBldr.Models {
       // --------------------------------------------------------
       // Constructor...
          this.UserName = userName;
-         this.UserTeamList = info.GetUserTeamList(userName);
+         this.UserTeamList = info.GetUserTeamList2(userName);
       }
 
 

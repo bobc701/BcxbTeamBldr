@@ -1,3 +1,15 @@
+05/20'20
+Implimented class TalkToDb in attempt to have reuseable abstraction for use
+in the "pure ADO.NET" approach.
+Can't make it work as a static class, and instance class the code doesn't really
+save anything, so I will abandon this branch.
+
+
+05/19'20
+Branch: b4 - Plan to do overhauled Data Access
+
+-------------------------------------------
+
 12/06'19
 Added new Web API project, BcxbTeamRdr
 
@@ -7,3 +19,5 @@ The log-in feature is working.
 12/01'19
 Added this @status1.txt
 Currently working on log-in feature.
+
+branch: b3
