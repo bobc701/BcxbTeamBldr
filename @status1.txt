@@ -1,3 +1,10 @@
+
+05/20'20 
+branch: b5 (from b3)
+I plan to implement EF in this branch
+
+----------------------------------------------
+
 12/06'19
 Added new Web API project, BcxbTeamRdr
 
