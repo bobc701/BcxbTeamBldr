@@ -30,4 +30,41 @@ textarea {
     border-radius: 10px;
 }
 
+/*----------------------------------*/
+/*From my 'Rudamentary CSS' input EN*/
+/*----------------------------------*/
+
+.bordered-table1 {
+    border: 3px solid black;
+    border-collapse: collapse; /*Not needed*/
+}
+
+    .bordered-table1 th {
+        padding: 5px;
+        border: 1px solid black;
+        border-collapse: collapse;
+        background-color: lightgray;
+    }
+
+    .bordered-table1 td {
+        padding: 5px;
+        border: 1px solid darkgray;
+        border-collapse: collapse; 
+    }
+
+.button-style1 {
+    margin: 5px 0px 5px 25px;
+    padding: 10px;
+    font-size: large;
+    border-radius: 10px;
+    width: 150px;
+    box-shadow: 2px 2px;
+}
+
+.bordered-div1 {
+    border: 5px;
+    box-shadow: 3px 3px 3px 3px;
+    border-radius: 10px;
+    padding: 10px;
+}
 
