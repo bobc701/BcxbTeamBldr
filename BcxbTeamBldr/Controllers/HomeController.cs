@@ -28,7 +28,8 @@ namespace BcxbTeamBldr.Controllers {
 
       // GET: Home
       public ActionResult Index() {
-      // ---------------------------------------
+         // ---------------------------------------
+         ViewBag.Title = "Team Bldr";
          return View();
       }
 

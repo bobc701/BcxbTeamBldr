@@ -1,35 +1,44 @@
-﻿
-<!DOCTYPE html>
-
+﻿<!DOCTYPE html>
 <html>
-
 <head>
-   <script src="~/Scripts/jquery-3.4.1.js"></script>
+   <meta charset="utf-8" />
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>@ViewBag.Title</title>
+   <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+   <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+   <script src="~/Scripts/modernizr-2.8.3.js"></script>
+</head>
+<body>
+   <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+         <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+               <span class="icon-bar"></span>
+               <span class="icon-bar"></span>
+               <span class="icon-bar"></span>
+            </button>
+            @Html.ActionLink("Zeemerix Team Builder", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+         </div>
+         <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+            </ul>
+         </div>
+      </div>
+   </div>
+
+   <div class="container body-content">
+      @RenderBody()
+      <hr />
+      <footer>
+         <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+      </footer>
+   </div>
+
+   <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+   <script src="~/Scripts/bootstrap.min.js"></script>
    <script src="~/Scripts/bc-global.js"></script>
 
-@RenderSection("HeaderStuff", required: false)
-
-</head>
-
-<body style="font-family:sans-serif">
-
-    <h2>Zeemerix PlayByPlay Baseball Custom Team Builder</h2>
-    <table>
-        <tr>
-            <td style="background-color:cadetblue;" width="40" height="1000" valign="top">
-            </td>
-            <td valign="top" style="padding:20px;" >
-                <hr style="color:cadetblue;" />
-                @*<h1>Zeemerix PlayByPlay Baseball Custom Team Builder</h1>*@
-                <div style="border:20px,20px,20px,20px;">
-                    @RenderBody()
-                </div>
-            </td>
-        </tr>
-    </table>
-
-@RenderSection("Scripting", required: false)
+   @RenderSection("Scripting", required:false)
 
 </body>
 </html>
-

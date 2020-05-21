@@ -1,27 +1,42 @@
-﻿@{
-   Layout = "~/Views/Shared/_Layout.cshtml";
+﻿
+
+@{
+   TempData.Keep("dbinfo");
 }
 
-@section HeaderStuff {
-   <meta name="viewport" content="width=device-width" />
-   <title>Index</title>
+<h2>Welcome to Zeemerix PlayByPlay Team Builder</h2>
+@*<div>
+       @Html.ActionLink("List Teams", "TeamList", new { user = "bobc@4bcx.com" })
+   </div>*@
 
-   <style>
-      .entry1 {
-         margin: 5px;
-         padding: 10px;
-         font-size: larger;
-         background-color: seashell;
-      }
+<p /><span style="font-size:x-large; ">Sign up... </span>
+<p />
+<input type="text" id="txtUser" placeholder="User name" class="entry1" style="width:200px; " />
+   Up to 30 characters: numbers, letters, spaces, special characters!
 
-      .button1 {
-         margin: 5px 0px 5px 25px;
-         padding: 10px;
-         font-size: large;
-         border-radius: 10px;
-      }
-   </style>
-}
+<br />
+<input type="password" id="txtPwd" placeholder="Password" class="entry1" style="width:200px;" />
+   8 to 30 characters: numbers, letters, special characters, no spaces!
+
+
+<br />
+<input type="password" id="txtConfirm" placeholder="Confirm password" class="entry1" style="width:200px;" />
+<br />
+<button id="btnSignUp" class="button1" style="width:150px;">Sign Up</button>
+
+<p />
+<input id="errMsg" style="border:none; color:red; font-size:larger; font-weight:bold; width:600px;" value="" />
+
+<p /><span style="font-size:x-large;">Or Log in... </span>
+<p />
+<input type="text" id="txtUser2" placeholder="User name" class="entry1" style="width:200px;" />
+<br />
+<input type="password" id="txtPwd2" placeholder="Password" class="entry1" style="width:200px;" />
+<br />
+<button id="btnLogIn" class="button1" style="width:150px;">Log In</button>
+
+<p /><textarea id="errMsg2" style="border:none; color:red; font-size:larger; font-weight:bold; width:800px; height:60px;" value=""></textarea>
+
 
 @section Scripting {
 
@@ -149,32 +164,3 @@
 
    </script>
 }
-
-@{ 
-   TempData.Keep("dbinfo");
-}
-
-   <h2>Welcome to Zeemerix PlayByPlay Team Builder</h2>
-   @*<div>
-          @Html.ActionLink("List Teams", "TeamList", new { user = "bobc@4bcx.com" })
-      </div>*@
-
-   <p /><span style="font-size:x-large; ">Sign up... </span>
-   <p /><input type="text" id="txtUser" placeholder="User name" class="entry1" style="width:200px; "/>
-   Up to 30 characters: numbers, letters, spaces, special characters!
-
-   <br /><input type="password" id="txtPwd" placeholder="Password" class="entry1" style="width:200px;"/>
-   8 to 30 characters: numbers, letters, special characters, no spaces!
-
-
-   <br /><input type="password" id="txtConfirm" placeholder="Confirm password" class="entry1" style="width:200px;" />
-   <br /><button id="btnSignUp" class="button1" style="width:150px;">Sign Up</button>
-
-   <p /><input id="errMsg" style="border:none; color:red; font-size:larger; font-weight:bold; width:600px;" value="" />
-
-   <p /><span style="font-size:x-large;">Or Log in... </span>
-   <p /><input type="text" id="txtUser2" placeholder="User name" class="entry1" style="width:200px;"/>
-   <br /><input type="password" id="txtPwd2" placeholder="Password" class="entry1" style="width:200px;"/>
-   <br /><button id="btnLogIn" class="button1" style="width:150px;">Log In</button>
-
-   <p /><textarea id="errMsg2" style="border:none; color:red; font-size:larger; font-weight:bold; width:800px; height:60px;" value="" ></textarea>

@@ -1,13 +1,4 @@
 ﻿@model BcxbTeamBldr.Models.TeamListVM
-@{
-   Layout = "~/Views/Shared/_Layout.cshtml";
-}
-
-@section HeaderStuff {
-   <meta name="viewport" content="width=device-width" />
-   <title>Team List</title>
-}
-
 
    <h2>Team List for @Model.UserName.Split(new char[] { '@' })[0]</h2>
    <div>
@@ -41,7 +32,7 @@
 
       <div>
          <p />
-         @Html.ActionLink("Add new team", "AddTeam", new { user = Model.UserName })
+         @Html.ActionLink("Add new team", "AddTeam", new { user = Model.UserName, @class = "btn" })
       </div>
 
    </div>
