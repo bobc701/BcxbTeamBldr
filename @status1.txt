@@ -1,3 +1,5 @@
+05/22'20
+Working on pages with syling using BS + site.css
 
 05/20'20 
 branch: b5 (from b3)

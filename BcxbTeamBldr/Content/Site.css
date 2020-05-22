@@ -18,24 +18,37 @@ textarea {
 
 .entry1 {
     margin: 5px;
-    padding: 10px;
+    border: 1px solid gray;
+    padding: 5px;
     font-size: larger;
     background-color: seashell;
+    width: 200px; /* Override this in <style> if nec. */
 }
+
+/*.button1 {
+    margin: 5px 0px 5px 25px;
+    padding: 10px;
+    font-size: large;
+    border-radius: 10px;
+}*/
 
 .button1 {
     margin: 5px 0px 5px 25px;
     padding: 10px;
     font-size: large;
+    border: 2px solid gray;
     border-radius: 10px;
+    width: 150px;
+    background-color:lightblue;
 }
+
 
 /*----------------------------------*/
 /*From my 'Rudamentary CSS' input EN*/
 /*----------------------------------*/
 
 .bordered-table1 {
-    border: 3px solid black;
+    border: 1px solid black;
     border-collapse: collapse; /*Not needed*/
 }
 
@@ -52,6 +65,15 @@ textarea {
         border-collapse: collapse; 
     }
 
+    .no-border {
+        border: 0px;
+    }
+
+.no-border-table1 {
+    border:0px solid black; 
+    border-collapse:collapse;
+}
+
 .button-style1 {
     margin: 5px 0px 5px 25px;
     padding: 10px;
@@ -61,10 +83,11 @@ textarea {
     box-shadow: 2px 2px;
 }
 
+/*This has small drop shadow*/
+/*Syntax: h-offset v-offset blur spread*/
 .bordered-div1 {
-    border: 5px;
-    box-shadow: 3px 3px 3px 3px;
+    border: 10px;
+    box-shadow: 1px 1px 5px 1px;
     border-radius: 10px;
     padding: 10px;
 }
-
