@@ -32,15 +32,6 @@ textarea {
     border-radius: 10px;
 }*/
 
-.button1 {
-    margin: 5px 0px 5px 25px;
-    padding: 10px;
-    font-size: large;
-    border: 2px solid gray;
-    border-radius: 10px;
-    width: 150px;
-    background-color:lightblue;
-}
 
 
 /*----------------------------------*/
@@ -74,13 +65,15 @@ textarea {
     border-collapse:collapse;
 }
 
-.button-style1 {
+/* suggest to use this w/ 'BS's btn -- class = "btn button1" */
+.button1 {
     margin: 5px 0px 5px 25px;
-    padding: 10px;
+    padding: 6px;
     font-size: large;
+    border: 2px solid gray;
     border-radius: 10px;
     width: 150px;
-    box-shadow: 2px 2px;
+    background-color: lightblue;
 }
 
 /*This has small drop shadow*/
@@ -91,3 +84,4 @@ textarea {
     border-radius: 10px;
     padding: 10px;
 }
+

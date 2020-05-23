@@ -31,8 +31,10 @@
       }
 
       <div>
-         <p />
-         @Html.ActionLink("Add new team", "AddTeam", new { user = Model.UserName, @class = "btn" })
+         <p /><p/>
+         @Html.ActionLink("Add new team", "AddTeam",
+            new { user = Model.UserName },
+            new { @class = "btn button1" })
       </div>
 
    </div>
