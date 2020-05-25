@@ -1,0 +1,247 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="DB_133455_bcxbteambldrModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="MlbLeagues">
+          <Key>
+            <PropertyRef Name="MlbLeague" />
+          </Key>
+          <Property Name="MlbLeague" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Year" Type="int" />
+          <Property Name="Stats" Type="varchar" MaxLength="70" />
+          <Property Name="Ver" Type="varchar" MaxLength="8" />
+        </EntityType>
+        <EntityType Name="MlbPlayers">
+          <Key>
+            <PropertyRef Name="PlayerId" />
+          </Key>
+          <Property Name="PlayerName" Type="varchar" MaxLength="30" />
+          <Property Name="MlbTeam" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Year" Type="int" />
+          <Property Name="FieldingString" Type="varchar" MaxLength="10" />
+          <Property Name="PlayerType" Type="char" MaxLength="1" />
+          <Property Name="Stats" Type="varchar" MaxLength="70" />
+          <Property Name="LgStats" Type="varchar" MaxLength="70" />
+          <Property Name="Ver" Type="varchar" MaxLength="8" />
+          <Property Name="MlbLeague" Type="varchar" MaxLength="10" />
+          <Property Name="PlayerId" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="ab" Type="int" Nullable="false" />
+          <Property Name="r" Type="int" Nullable="false" />
+          <Property Name="h" Type="int" Nullable="false" />
+          <Property Name="rbi" Type="int" Nullable="false" />
+          <Property Name="b2" Type="int" Nullable="false" />
+          <Property Name="b3" Type="int" Nullable="false" />
+          <Property Name="hr" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="UserPlayers">
+          <Key>
+            <PropertyRef Name="UserName" />
+            <PropertyRef Name="TeamName" />
+            <PropertyRef Name="PlayerId" />
+          </Key>
+          <Property Name="UserName" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="TeamName" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="PlayerId" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Slot_NoDH" Type="int" Nullable="false" />
+          <Property Name="Slot_DH" Type="int" Nullable="false" />
+          <Property Name="Posn_NoDH" Type="int" Nullable="false" />
+          <Property Name="Posn_DH" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Users">
+          <Key>
+            <PropertyRef Name="UserName" />
+          </Key>
+          <Property Name="UserName" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="pwd" Type="varchar" MaxLength="12" Nullable="false" />
+        </EntityType>
+        <EntityType Name="UserTeams">
+          <Key>
+            <PropertyRef Name="UserName" />
+            <PropertyRef Name="TeamName" />
+          </Key>
+          <Property Name="UserName" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="TeamName" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="NumPos" Type="int" Nullable="false" />
+          <Property Name="NumPit" Type="int" Nullable="false" />
+          <Property Name="UsesDh" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityContainer Name="DB_133455_bcxbteambldrModelStoreContainer">
+          <EntitySet Name="MlbLeagues" EntityType="Self.MlbLeagues" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MlbPlayers" EntityType="Self.MlbPlayers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserPlayers" EntityType="Self.UserPlayers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserTeams" EntityType="Self.UserTeams" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="DB_133455_bcxbteambldrModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="MlbLeague">
+          <Key>
+            <PropertyRef Name="MlbLeague1" />
+          </Key>
+          <Property Name="MlbLeague1" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Year" Type="Int32" />
+          <Property Name="Stats" Type="String" MaxLength="70" FixedLength="false" Unicode="false" />
+          <Property Name="Ver" Type="String" MaxLength="8" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="MlbPlayer">
+          <Key>
+            <PropertyRef Name="PlayerId" />
+          </Key>
+          <Property Name="PlayerName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="MlbTeam" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Year" Type="Int32" />
+          <Property Name="FieldingString" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="PlayerType" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Stats" Type="String" MaxLength="70" FixedLength="false" Unicode="false" />
+          <Property Name="LgStats" Type="String" MaxLength="70" FixedLength="false" Unicode="false" />
+          <Property Name="Ver" Type="String" MaxLength="8" FixedLength="false" Unicode="false" />
+          <Property Name="MlbLeague" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="PlayerId" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ab" Type="Int32" Nullable="false" />
+          <Property Name="r" Type="Int32" Nullable="false" />
+          <Property Name="h" Type="Int32" Nullable="false" />
+          <Property Name="rbi" Type="Int32" Nullable="false" />
+          <Property Name="b2" Type="Int32" Nullable="false" />
+          <Property Name="b3" Type="Int32" Nullable="false" />
+          <Property Name="hr" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="UserPlayer">
+          <Key>
+            <PropertyRef Name="UserName" />
+            <PropertyRef Name="TeamName" />
+            <PropertyRef Name="PlayerId" />
+          </Key>
+          <Property Name="UserName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="TeamName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="PlayerId" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Slot_NoDH" Type="Int32" Nullable="false" />
+          <Property Name="Slot_DH" Type="Int32" Nullable="false" />
+          <Property Name="Posn_NoDH" Type="Int32" Nullable="false" />
+          <Property Name="Posn_DH" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="UserName" />
+          </Key>
+          <Property Name="UserName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="pwd" Type="String" MaxLength="12" FixedLength="false" Unicode="false" Nullable="false" />
+        </EntityType>
+        <EntityType Name="UserTeam">
+          <Key>
+            <PropertyRef Name="UserName" />
+            <PropertyRef Name="TeamName" />
+          </Key>
+          <Property Name="UserName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="TeamName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="NumPos" Type="Int32" Nullable="false" />
+          <Property Name="NumPit" Type="Int32" Nullable="false" />
+          <Property Name="UsesDh" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityContainer Name="DB_133455_bcxbteambldrEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="MlbLeagues" EntityType="Self.MlbLeague" />
+          <EntitySet Name="MlbPlayers" EntityType="Self.MlbPlayer" />
+          <EntitySet Name="UserPlayers" EntityType="Self.UserPlayer" />
+          <EntitySet Name="Users" EntityType="Self.User" />
+          <EntitySet Name="UserTeams" EntityType="Self.UserTeam" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="DB_133455_bcxbteambldrModelStoreContainer" CdmEntityContainer="DB_133455_bcxbteambldrEntities">
+          <EntitySetMapping Name="MlbLeagues">
+            <EntityTypeMapping TypeName="DB_133455_bcxbteambldrModel.MlbLeague">
+              <MappingFragment StoreEntitySet="MlbLeagues">
+                <ScalarProperty Name="MlbLeague1" ColumnName="MlbLeague" />
+                <ScalarProperty Name="Year" ColumnName="Year" />
+                <ScalarProperty Name="Stats" ColumnName="Stats" />
+                <ScalarProperty Name="Ver" ColumnName="Ver" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MlbPlayers">
+            <EntityTypeMapping TypeName="DB_133455_bcxbteambldrModel.MlbPlayer">
+              <MappingFragment StoreEntitySet="MlbPlayers">
+                <ScalarProperty Name="PlayerName" ColumnName="PlayerName" />
+                <ScalarProperty Name="MlbTeam" ColumnName="MlbTeam" />
+                <ScalarProperty Name="Year" ColumnName="Year" />
+                <ScalarProperty Name="FieldingString" ColumnName="FieldingString" />
+                <ScalarProperty Name="PlayerType" ColumnName="PlayerType" />
+                <ScalarProperty Name="Stats" ColumnName="Stats" />
+                <ScalarProperty Name="LgStats" ColumnName="LgStats" />
+                <ScalarProperty Name="Ver" ColumnName="Ver" />
+                <ScalarProperty Name="MlbLeague" ColumnName="MlbLeague" />
+                <ScalarProperty Name="PlayerId" ColumnName="PlayerId" />
+                <ScalarProperty Name="ab" ColumnName="ab" />
+                <ScalarProperty Name="r" ColumnName="r" />
+                <ScalarProperty Name="h" ColumnName="h" />
+                <ScalarProperty Name="rbi" ColumnName="rbi" />
+                <ScalarProperty Name="b2" ColumnName="b2" />
+                <ScalarProperty Name="b3" ColumnName="b3" />
+                <ScalarProperty Name="hr" ColumnName="hr" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserPlayers">
+            <EntityTypeMapping TypeName="DB_133455_bcxbteambldrModel.UserPlayer">
+              <MappingFragment StoreEntitySet="UserPlayers">
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="TeamName" ColumnName="TeamName" />
+                <ScalarProperty Name="PlayerId" ColumnName="PlayerId" />
+                <ScalarProperty Name="Slot_NoDH" ColumnName="Slot_NoDH" />
+                <ScalarProperty Name="Slot_DH" ColumnName="Slot_DH" />
+                <ScalarProperty Name="Posn_NoDH" ColumnName="Posn_NoDH" />
+                <ScalarProperty Name="Posn_DH" ColumnName="Posn_DH" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="DB_133455_bcxbteambldrModel.User">
+              <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="pwd" ColumnName="pwd" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserTeams">
+            <EntityTypeMapping TypeName="DB_133455_bcxbteambldrModel.UserTeam">
+              <MappingFragment StoreEntitySet="UserTeams">
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="TeamName" ColumnName="TeamName" />
+                <ScalarProperty Name="NumPos" ColumnName="NumPos" />
+                <ScalarProperty Name="NumPit" ColumnName="NumPit" />
+                <ScalarProperty Name="UsesDh" ColumnName="UsesDh" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

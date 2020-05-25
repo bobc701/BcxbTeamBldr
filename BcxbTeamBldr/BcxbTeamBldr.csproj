@@ -128,6 +128,7 @@
     <Compile Include="DataLayer\CUser.cs" />
     <Compile Include="DataLayer\CUserPlayer.cs" />
     <Compile Include="DataLayer\DBInfo.cs" />
+    <Compile Include="DataLayer\DBInfoEF.cs" />
     <Compile Include="DataLayer\DBRepos.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -167,6 +168,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DBAccess2\DBAccess2.csproj">
+      <Project>{9bc8af62-268a-4260-9bd6-48a1feb1beea}</Project>
+      <Name>DBAccess2</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
