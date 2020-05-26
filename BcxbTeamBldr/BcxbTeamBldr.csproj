@@ -45,6 +45,12 @@
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
@@ -170,9 +176,9 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DBAccess2\DBAccess2.csproj">
-      <Project>{9bc8af62-268a-4260-9bd6-48a1feb1beea}</Project>
-      <Name>DBAccess2</Name>
+    <ProjectReference Include="..\DBAccess3\DBAccess3.csproj">
+      <Project>{7acbcb45-8b71-4ec4-aeff-0e2cf8c16940}</Project>
+      <Name>DBAccess3</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

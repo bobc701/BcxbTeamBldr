@@ -6,22 +6,30 @@ using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data;
+using System.Data.SqlClient;
+using System.Diagnostics;
+
+
 
 namespace DBAccess2 {
 
    public class DbInfoEF {
       // This class, DBInfo, is responsible for all intereaction with the database.
 
+      public SqlConnection con1 = null; // Just for compiling -- take it out.
 
 
 
-      public List<UserTeam> GetUserTeamList(string user) {
-         // --------------------------------------------------------------------
-         // Purpose: Retrieve from database, a list of all teams for this user.
+
+      public static List<UserTeam> GetUserTeamList(string user) {
+      // --------------------------------------------------------------------
+      // Purpose: Retrieve from database, a list of all teams for this user.
 
          List<UserTeam> list;
          using (var ctx = new DB_133455_bcxbteambldrEntities()) {
             list = ctx.UserTeams.Where(t => t.UserName == user).ToList();
+            list = (from t in ctx.UserTeams where t.UserName == user select t).ToList();
          }
          return list;
 
@@ -118,7 +126,7 @@ namespace DBAccess2 {
       }
 
 
-      public void UpdateLineups(string user, string team, List<CUserPlayer> roster) {
+      public void UpdateLineups(string user, string team, List<UserPlayer> roster) {
          // ----------------------------------------------------------------------------
 
          SqlTransaction sqlTran = null;
@@ -134,8 +142,8 @@ namespace DBAccess2 {
             cmd2.CommandType = CommandType.StoredProcedure;
             cmd2.Transaction = sqlTran;
 
-            foreach (CUserPlayer player in roster) {
-               if (player.Remove) {
+            foreach (UserPlayer player in roster) {
+               if (true) { //if (player.Remove) {
                   // Player is flagged for removal...
                   cmd1.Parameters.Clear();
                   cmd1.Parameters.AddWithValue("@user", user);
@@ -181,7 +189,7 @@ namespace DBAccess2 {
 
       public void RemovePlayerFromTeam(string user, string team, string id) {
       // --------------------------------------------------------------------
-         using (var ctx = new DBAccess2.DB_133455_bcxbteambldrEntities()) {
+         using (var ctx = new DB_133455_bcxbteambldrEntities()) {
             UserPlayer userPlayer = ctx.UserPlayers.FirstOrDefault(
                p => p.UserName == user && p.TeamName == team && p.PlayerId == id);
             ctx.UserPlayers.Remove(userPlayer);
@@ -239,6 +247,14 @@ namespace DBAccess2 {
             //   .Select(p => p.PlayerId)
             //   .ToList();
 
+            List<MlbPlayer> mps2 =
+              (from mp in ctx.MlbPlayers
+               join up in ctx.UserPlayers.Where(up => up.UserName == user && up.TeamName == team)
+               on mp.PlayerId equals up.PlayerId
+               select mp).ToList();
+
+            mps2[0].PlayerName = "Smith";
+
             List<MlbPlayer> mps = ctx.MlbPlayers
                .Join(
                   ctx.UserPlayers.Where(up => up.UserName == user && up.TeamName == team),
@@ -275,22 +291,22 @@ namespace DBAccess2 {
       }
 
 
-      public List<CUserPlayer> GetUserPlayerList(string user, string team) {
+      public List<UserPlayer> GetUserPlayerList(string user, string team) {
          // ---------------------------------------------------------------------
-         var list = new List<CUserPlayer>();
+         var list = new List<UserPlayer>();
          string sql = $"EXEC GetPlayerList '{user}', '{team}'";
          using (var cmd = new SqlCommand(sql, con1)) {
 
             using (SqlDataReader rdr = cmd.ExecuteReader()) {
                while (rdr.Read()) {
-                  var player = new CUserPlayer();
+                  var player = new UserPlayer();
                   player.PlayerId = rdr["PlayerId"].ToString();
-                  player.PlayerName = rdr["PlayerName"].ToString();
-                  player.PlayerType = rdr["PlayerType"].ToString()[0];
-                  player.FieldingString = rdr["FieldingString"].ToString();
-                  player.Year = (int)rdr["Year"];
-                  player.MlbTeam = rdr["MlbTeam"].ToString();
-                  player.MlbLeague = rdr["MlbLeague"].ToString();
+                  //player.PlayerName = rdr["PlayerName"].ToString();
+                  //player.PlayerType = rdr["PlayerType"].ToString()[0];
+                  //player.FieldingString = rdr["FieldingString"].ToString();
+                  //player.Year = (int)rdr["Year"];
+                  //player.MlbTeam = rdr["MlbTeam"].ToString();
+                  //player.MlbLeague = rdr["MlbLeague"].ToString();
 
                   player.Slot_NoDH = (int)rdr["Slot_NoDH"];
                   player.Posn_NoDH = (int)rdr["Posn_NoDH"];
@@ -307,18 +323,18 @@ namespace DBAccess2 {
       }
 
 
-      public List<CMlbPlayer> SearchPlayers(string crit) {
+      public List<MlbPlayer> SearchPlayers(string crit) {
          // ---------------------------------------------------------------------
-         var list = new List<CMlbPlayer>();
+         var list = new List<MlbPlayer>();
          string sql = $"EXEC SearchPlayers '{crit}'";
          using (var cmd = new SqlCommand(sql, con1)) {
 
             using (SqlDataReader rdr = cmd.ExecuteReader()) {
                while (rdr.Read()) {
-                  var player = new CMlbPlayer();
+                  var player = new MlbPlayer();
                   player.PlayerId = rdr["PlayerId"].ToString();
                   player.PlayerName = rdr["PlayerName"].ToString();
-                  player.PlayerType = rdr["PlayerType"].ToString()[0];
+                  player.PlayerType = rdr["PlayerType"].ToString();
                   player.FieldingString = rdr["FieldingString"].ToString();
                   player.Year = (int)rdr["Year"];
                   player.MlbTeam = rdr["MlbTeam"].ToString();
@@ -334,9 +350,9 @@ namespace DBAccess2 {
       }
 
 
-      public List<CMlbPlayer> SearchPlayersMulti(string critName, string critTeam, string critYear, string critPosn) {
+      public List<MlbPlayer> SearchPlayersMulti(string critName, string critTeam, string critYear, string critPosn) {
          // ---------------------------------------------------------------------
-         var list = new List<CMlbPlayer>();
+         var list = new List<MlbPlayer>();
 
          // Build search string for SQL select...
          string crit = "", delim = "";
@@ -366,10 +382,10 @@ namespace DBAccess2 {
 
             using (SqlDataReader rdr = cmd.ExecuteReader()) {
                while (rdr.Read()) {
-                  var player = new CMlbPlayer();
+                  var player = new MlbPlayer();
                   player.PlayerId = rdr["PlayerId"].ToString();
                   player.PlayerName = rdr["PlayerName"].ToString();
-                  player.PlayerType = rdr["PlayerType"].ToString()[0];
+                  //player.PlayerType = rdr["PlayerType"].ToString()[0];
                   player.FieldingString = rdr["FieldingString"].ToString();
                   player.Year = (int)rdr["Year"];
                   player.MlbTeam = rdr["MlbTeam"].ToString();
@@ -385,23 +401,24 @@ namespace DBAccess2 {
       }
 
 
-      public void SetLineup(string user, string team, Models.UserPlayerListVM model) {
-         // ---------------------------------------------------------------------------------
-         // First, delete all existing lineup data...
-         string sql = $"EXEC ClearLineup '{user}', '{team}'";
-         using (var cmd = new SqlCommand(sql, con1)) {
-            cmd.ExecuteNonQuery();
-         }
+      //public void SetLineup(string user, string team, Models.UserPlayerListVM model) {
+      //   // ---------------------------------------------------------------------------------
+      //   // First, delete all existing lineup data...
+      //   string sql = $"EXEC ClearLineup '{user}', '{team}'";
+      //   using (var cmd = new SqlCommand(sql, con1)) {
+      //      cmd.ExecuteNonQuery();
+      //   }
 
-         // Now, update with new lineup data...
-         // NOTE: This should probably be a transaction!!!
-         foreach (CUserPlayer player in model.Players
-            .Where(p => p.Slot_NoDH != 0 || p.Posn_NoDH != 0 || p.Slot_DH != 0 || p.Posn_DH != 0)) {
-            sql = $"EXEC SetLineup '{user}', '{team}', '{player.PlayerId}'";
-            using var cmd = new SqlCommand(sql, con1);
-            cmd.ExecuteNonQuery();
-         }
-      }
+      //   // Now, update with new lineup data...
+      //   // NOTE: This should probably be a transaction!!!
+      //   foreach (UserPlayer player in model.Players
+      //      .Where(p => p.Slot_NoDH != 0 || p.Posn_NoDH != 0 || p.Slot_DH != 0 || p.Posn_DH != 0)) {
+      //      sql = $"EXEC SetLineup '{user}', '{team}', '{player.PlayerId}'";
+      //      using (SqlCommand cmd = new SqlCommand(sql, con1)) {
+      //         cmd.ExecuteNonQuery();
+      //      }  
+      //   }
+      //}
 
    }
 }

@@ -7,9 +7,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DBAccess2
+namespace DBAccess3
 {
-    using Microsoft.EntityFrameworkCore;
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;

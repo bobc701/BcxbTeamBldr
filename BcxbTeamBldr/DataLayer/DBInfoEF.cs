@@ -1,61 +1,58 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core.Common.CommandTrees;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
-using System.Web;
+using System.Runtime.InteropServices.ComTypes;
+using System.Text;
+using System.Threading.Tasks;
 using System.Data;
 using System.Data.SqlClient;
-using System.Configuration;
 using System.Diagnostics;
 
-using BcxbTeamBldr.Models;
-using DBAccess2;
+using DBAccess3;
+
 
 namespace BcxbTeamBldr.DataLayer {
 
    public class DbInfoEF {
       // This class, DBInfo, is responsible for all intereaction with the database.
 
-      public SqlConnection con1;
-
-      public DbInfoEF() {
-         // -----------------------------------------
-         string connect = ConfigurationManager.ConnectionStrings["ConnectionString1"].ConnectionString;
-         con1 = new SqlConnection(connect);
-         con1.Open();
-
-      }
+      public SqlConnection con1 = null; // Just for compiling -- take it out.
 
 
-      public List<UserTeam> GetUserTeamList(string user) {
+
+
+      public static List<UserTeam> GetUserTeamList(string user) {
          // --------------------------------------------------------------------
          // Purpose: Retrieve from database, a list of all teams for this user.
 
-         //var list = new List<UserTeam>();
-
-         var ctx = new DB_133455_bcxbteambldrEntities();
-
-         List<UserTeam> list = ctx.UserTeams.
-         
-
-
-         string sql = $"EXEC GetUserTeamList '{user}'";
-         using (var cmd = new SqlCommand(sql, con1)) {
-
-            using (SqlDataReader rdr = cmd.ExecuteReader()) {
-               while (rdr.Read()) {
-                  var team = new CUserTeam();
-                  team.UserName = user;
-                  team.TeamName = rdr["TeamName"].ToString();
-                  team.NumPit = (int)rdr["TotPit"];
-                  team.NumPos = (int)rdr["TotPos"];
-                  team.UsesDh = (bool)rdr["UsesDh"];
-                  list.Add(team);
-               }
-
-            }
-            int n = cmd.ExecuteNonQuery();
+         List<UserTeam> list;
+         using (var ctx = new DB_133455_bcxbteambldrEntities()) {
+            list = ctx.UserTeams.Where(t => t.UserName == user).ToList();
+            list = (from t in ctx.UserTeams where t.UserName == user select t).ToList();
          }
          return list;
+
+
+         //string sql = $"EXEC GetUserTeamList '{user}'";
+         //using (var cmd = new SqlCommand(sql, con1)) {
+
+         //   using (SqlDataReader rdr = cmd.ExecuteReader()) {
+         //      while (rdr.Read()) {
+         //         var team = new CUserTeam();
+         //         team.UserName = user;
+         //         team.TeamName = rdr["TeamName"].ToString();
+         //         team.NumPit = (int)rdr["TotPit"];
+         //         team.NumPos = (int)rdr["TotPos"];
+         //         team.UsesDh = (bool)rdr["UsesDh"];
+         //         list.Add(team);
+         //      }
+
+         //   }
+         //   int n = cmd.ExecuteNonQuery();
+         //}
+         //return list;
       }
 
 
@@ -130,7 +127,7 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
-      public void UpdateLineups(string user, string team, List<CUserPlayer> roster) {
+      public void UpdateLineups(string user, string team, List<UserPlayer> roster) {
          // ----------------------------------------------------------------------------
 
          SqlTransaction sqlTran = null;
@@ -146,8 +143,8 @@ namespace BcxbTeamBldr.DataLayer {
             cmd2.CommandType = CommandType.StoredProcedure;
             cmd2.Transaction = sqlTran;
 
-            foreach (CUserPlayer player in roster) {
-               if (player.Remove) {
+            foreach (UserPlayer player in roster) {
+               if (true) { //if (player.Remove) {
                   // Player is flagged for removal...
                   cmd1.Parameters.Clear();
                   cmd1.Parameters.AddWithValue("@user", user);
@@ -193,105 +190,180 @@ namespace BcxbTeamBldr.DataLayer {
 
       public void RemovePlayerFromTeam(string user, string team, string id) {
          // --------------------------------------------------------------------
-         string sql = $"EXEC RemovePlayerFromTeam '{user}', '{team}', '{id}'";
-         using (var cmd = new SqlCommand(sql, con1)) {
-            cmd.ExecuteNonQuery();
+         using (var ctx = new DB_133455_bcxbteambldrEntities()) {
+            UserPlayer userPlayer = ctx.UserPlayers.FirstOrDefault(
+               p => p.UserName == user && p.TeamName == team && p.PlayerId == id);
+            ctx.UserPlayers.Remove(userPlayer);
+            ctx.SaveChanges();
          }
-         //GetUserTeamList(user);
+
+         //string sql = $"EXEC RemovePlayerFromTeam '{user}', '{team}', '{id}'";
+         //using (var cmd = new SqlCommand(sql, con1)) {
+         //   cmd.ExecuteNonQuery();
+         //}
+         ////GetUserTeamList(user);
       }
 
 
       public void RemoveAllPlayersFromTeam(string user, string team) {
          // --------------------------------------------------------------------
-         string sql = $"EXEC RemoveAllPlayersFromTeam '{user}', '{team}'";
-         using (var cmd = new SqlCommand(sql, con1)) {
-            cmd.ExecuteNonQuery();
-         }
-         //GetUserTeamList(user);
+         // Looks like no references
+         //string sql = $"EXEC RemoveAllPlayersFromTeam '{user}', '{team}'";
+         //using (var cmd = new SqlCommand(sql, con1)) {
+         //   cmd.ExecuteNonQuery();
+         //}
+         ////GetUserTeamList(user);
       }
 
 
       public bool TeamNameExists(string user, string team) {
          // ------------------------------------------------------------------
-         string sql = $"EXEC TeamNameExists '{user}', '{team}'";
-         using (var cmd = new SqlCommand(sql, con1)) {
-            return (int)cmd.ExecuteScalar() == 1 ? true : false;
+         using (var ctx = new DB_133455_bcxbteambldrEntities()) {
+            UserTeam team1 = ctx.UserTeams.FirstOrDefault(t => t.UserName == user && t.TeamName == team);
+            return (team1 != null);
+
+            //string sql = $"EXEC TeamNameExists '{user}', '{team}'";
+            //using (var cmd = new SqlCommand(sql, con1)) {
+            //return (int)cmd.ExecuteScalar() == 1 ? true : false;
          }
 
       }
 
 
-      public List<CMlbPlayer> GetPlayerList(string user, string team) {
+      public static List<MlbPlayer> GetPlayerList(string user, string team) {
          // ---------------------------------------------------------------------
-         var list = new List<CMlbPlayer>();
-         string sql = $"EXEC GetPlayerList '{user}', '{team}'";
-         using (var cmd = new SqlCommand(sql, con1)) {
 
-            using (SqlDataReader rdr = cmd.ExecuteReader()) {
-               while (rdr.Read()) {
-                  var player = new CMlbPlayer();
-                  player.PlayerId = rdr["PlayerId"].ToString();
-                  player.PlayerName = rdr["PlayerName"].ToString();
-                  player.PlayerType = rdr["PlayerType"].ToString()[0];
-                  player.FieldingString = rdr["FieldingString"].ToString();
-                  player.Year = (int)rdr["Year"];
-                  player.MlbTeam = rdr["MlbTeam"].ToString();
-                  player.MlbLeague = rdr["MlbLeague"].ToString();
+         //  SELECT up.PlayerId, mp.PlayerName, mp.MlbTeam, mp.MlbLeague, mp.Year, mp.FieldingString, mp.PlayerType,
+         //mp.Stats, mp.LgStats, up.Slot_NoDH, up.Posn_NoDH, up.Slot_DH, up.Posn_DH
+         //  FROM UserPlayers up
+         //  JOIN MlbPlayers mp ON mp.PlayerId = up.PlayerId
+         //  WHERE up.UserName = @user AND up.TeamName = @team
 
-                  list.Add(player);
-               }
 
-            }
+
+         using (var ctx = new DB_133455_bcxbteambldrEntities()) {
+
+            //List<string> pids = ctx.UserPlayers
+            //   .Where(p => p.UserName == user && p.TeamName == team)
+            //   .Select(p => p.PlayerId)
+            //   .ToList();
+
+            List<MlbPlayer> mps2 =
+              (from mp in ctx.MlbPlayers
+               join up in ctx.UserPlayers.Where(up => up.UserName == user && up.TeamName == team)
+               on mp.PlayerId equals up.PlayerId
+               select mp).ToList();
+
+            mps2[0].PlayerName = "Smith";
+
+            List<MlbPlayer> mps = ctx.MlbPlayers
+               .Join(
+                  ctx.UserPlayers.Where(up => up.UserName == user && up.TeamName == team),
+                  mp => mp.PlayerId,
+                  up => up.PlayerId,
+                  (mp, up) => mp)
+               .ToList();
+
+            return mps;
          }
-         return list;
+
+
+         //   string sql = $"EXEC GetPlayerList '{user}', '{team}'";
+         //   using (var cmd = new SqlCommand(sql, con1)) {
+
+         //   using (SqlDataReader rdr = cmd.ExecuteReader()) {
+         //      while (rdr.Read()) {
+         //         var player = new CMlbPlayer();
+         //         player.PlayerId = rdr["PlayerId"].ToString();
+         //         player.PlayerName = rdr["PlayerName"].ToString();
+         //         player.PlayerType = rdr["PlayerType"].ToString()[0];
+         //         player.FieldingString = rdr["FieldingString"].ToString();
+         //         player.Year = (int)rdr["Year"];
+         //         player.MlbTeam = rdr["MlbTeam"].ToString();
+         //         player.MlbLeague = rdr["MlbLeague"].ToString();
+
+         //         list.Add(player);
+         //      }
+
+         //   }
+         //}
+         //return list;
 
       }
 
 
-      public List<CUserPlayer> GetUserPlayerList(string user, string team) {
-         // ---------------------------------------------------------------------
-         var list = new List<CUserPlayer>();
-         string sql = $"EXEC GetPlayerList '{user}', '{team}'";
-         using (var cmd = new SqlCommand(sql, con1)) {
+      public static List<CUserPlayer> GetUserPlayerList(string user, string team) {
+      // ---------------------------------------------------------------------
 
-            using (SqlDataReader rdr = cmd.ExecuteReader()) {
-               while (rdr.Read()) {
-                  var player = new CUserPlayer();
-                  player.PlayerId = rdr["PlayerId"].ToString();
-                  player.PlayerName = rdr["PlayerName"].ToString();
-                  player.PlayerType = rdr["PlayerType"].ToString()[0];
-                  player.FieldingString = rdr["FieldingString"].ToString();
-                  player.Year = (int)rdr["Year"];
-                  player.MlbTeam = rdr["MlbTeam"].ToString();
-                  player.MlbLeague = rdr["MlbLeague"].ToString();
+         // This is the SQL that was used in SP version, for reference...
+         //SELECT up.PlayerId, mp.PlayerName, mp.MlbTeam, mp.MlbLeague, mp.Year, mp.FieldingString, mp.PlayerType,
+         // mp.Stats, mp.LgStats, up.Slot_NoDH, up.Posn_NoDH, up.Slot_DH, up.Posn_DH
 
-                  player.Slot_NoDH = (int)rdr["Slot_NoDH"];
-                  player.Posn_NoDH = (int)rdr["Posn_NoDH"];
-                  player.Slot_DH = (int)rdr["Slot_DH"];
-                  player.Posn_DH = (int)rdr["Posn_DH"];
+         using (var ctx = new DB_133455_bcxbteambldrEntities()) {
+            List<CUserPlayer> mps2 =
+              (from mp in ctx.MlbPlayers
+               join up in ctx.UserPlayers.Where(up => up.UserName == user && up.TeamName == team)
+               on mp.PlayerId equals up.PlayerId
+               select new CUserPlayer {
+                  PlayerId = mp.PlayerId,
+                  PlayerName = mp.PlayerName,
+                  PlayerType = mp.PlayerType[0],
+                  FieldingString = mp.FieldingString,
+                  Year = (int)mp.Year,
+                  MlbTeam = mp.MlbTeam,
+                  MlbLeague = mp.MlbLeague,
+                  Slot_NoDH = up.Slot_NoDH,
+                  Posn_NoDH = up.Posn_NoDH,
+                  Slot_DH = up.Slot_DH,
+                  Posn_DH = up.Posn_DH
+               }).ToList();
 
-                  list.Add(player);
-               }
-
-            }
+            return mps2;
          }
-         return list;
+
+
+         //var list = new List<CUserPlayer>();
+         //string sql = $"EXEC GetPlayerList '{user}', '{team}'";
+         //using (var cmd = new SqlCommand(sql, con1)) {
+
+         //   using (SqlDataReader rdr = cmd.ExecuteReader()) {
+         //      while (rdr.Read()) {
+         //         var player = new UserPlayer();
+         //         player.PlayerId = rdr["PlayerId"].ToString();
+         //         //player.PlayerName = rdr["PlayerName"].ToString();
+         //         //player.PlayerType = rdr["PlayerType"].ToString()[0];
+         //         //player.FieldingString = rdr["FieldingString"].ToString();
+         //         //player.Year = (int)rdr["Year"];
+         //         //player.MlbTeam = rdr["MlbTeam"].ToString();
+         //         //player.MlbLeague = rdr["MlbLeague"].ToString();
+
+         //         player.Slot_NoDH = (int)rdr["Slot_NoDH"];
+         //         player.Posn_NoDH = (int)rdr["Posn_NoDH"];
+         //         player.Slot_DH = (int)rdr["Slot_DH"];
+         //         player.Posn_DH = (int)rdr["Posn_DH"];
+
+         //         list.Add(player);
+         //      }
+
+         //   }
+         //}
+         //return list;
 
       }
 
 
-      public List<CMlbPlayer> SearchPlayers(string crit) {
+      public List<MlbPlayer> SearchPlayers(string crit) {
          // ---------------------------------------------------------------------
-         var list = new List<CMlbPlayer>();
+         var list = new List<MlbPlayer>();
          string sql = $"EXEC SearchPlayers '{crit}'";
          using (var cmd = new SqlCommand(sql, con1)) {
 
             using (SqlDataReader rdr = cmd.ExecuteReader()) {
                while (rdr.Read()) {
-                  var player = new CMlbPlayer();
+                  var player = new MlbPlayer();
                   player.PlayerId = rdr["PlayerId"].ToString();
                   player.PlayerName = rdr["PlayerName"].ToString();
-                  player.PlayerType = rdr["PlayerType"].ToString()[0];
+                  player.PlayerType = rdr["PlayerType"].ToString();
                   player.FieldingString = rdr["FieldingString"].ToString();
                   player.Year = (int)rdr["Year"];
                   player.MlbTeam = rdr["MlbTeam"].ToString();
@@ -307,9 +379,9 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
-      public List<CMlbPlayer> SearchPlayersMulti(string critName, string critTeam, string critYear, string critPosn) {
+      public List<MlbPlayer> SearchPlayersMulti(string critName, string critTeam, string critYear, string critPosn) {
          // ---------------------------------------------------------------------
-         var list = new List<CMlbPlayer>();
+         var list = new List<MlbPlayer>();
 
          // Build search string for SQL select...
          string crit = "", delim = "";
@@ -339,10 +411,10 @@ namespace BcxbTeamBldr.DataLayer {
 
             using (SqlDataReader rdr = cmd.ExecuteReader()) {
                while (rdr.Read()) {
-                  var player = new CMlbPlayer();
+                  var player = new MlbPlayer();
                   player.PlayerId = rdr["PlayerId"].ToString();
                   player.PlayerName = rdr["PlayerName"].ToString();
-                  player.PlayerType = rdr["PlayerType"].ToString()[0];
+                  //player.PlayerType = rdr["PlayerType"].ToString()[0];
                   player.FieldingString = rdr["FieldingString"].ToString();
                   player.Year = (int)rdr["Year"];
                   player.MlbTeam = rdr["MlbTeam"].ToString();
@@ -358,25 +430,24 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
-      public void SetLineup(string user, string team, Models.UserPlayerListVM model) {
-         // ---------------------------------------------------------------------------------
-         // First, delete all existing lineup data...
-         string sql = $"EXEC ClearLineup '{user}', '{team}'";
-         using (var cmd = new SqlCommand(sql, con1)) {
-            cmd.ExecuteNonQuery();
-         }
+      //public void SetLineup(string user, string team, Models.UserPlayerListVM model) {
+      //   // ---------------------------------------------------------------------------------
+      //   // First, delete all existing lineup data...
+      //   string sql = $"EXEC ClearLineup '{user}', '{team}'";
+      //   using (var cmd = new SqlCommand(sql, con1)) {
+      //      cmd.ExecuteNonQuery();
+      //   }
 
-         // Now, update with new lineup data...
-         // NOTE: This should probably be a transaction!!!
-         foreach (CUserPlayer player in model.Players
-            .Where(p => p.Slot_NoDH != 0 || p.Posn_NoDH != 0 || p.Slot_DH != 0 || p.Posn_DH != 0)) {
-            sql = $"EXEC SetLineup '{user}', '{team}', '{player.PlayerId}'";
-            using var cmd = new SqlCommand(sql, con1);
-            cmd.ExecuteNonQuery();
-         }
-      }
+      //   // Now, update with new lineup data...
+      //   // NOTE: This should probably be a transaction!!!
+      //   foreach (UserPlayer player in model.Players
+      //      .Where(p => p.Slot_NoDH != 0 || p.Posn_NoDH != 0 || p.Slot_DH != 0 || p.Posn_DH != 0)) {
+      //      sql = $"EXEC SetLineup '{user}', '{team}', '{player.PlayerId}'";
+      //      using (SqlCommand cmd = new SqlCommand(sql, con1)) {
+      //         cmd.ExecuteNonQuery();
+      //      }  
+      //   }
+      //}
 
    }
-
 }
-

@@ -6,6 +6,8 @@ using System.Web.Mvc;
 using BcxbTeamBldr.DataLayer;
 using BcxbTeamBldr.Models;
 
+using DBAccess3;
+
 
 namespace BcxbTeamBldr.Controllers {
 
@@ -34,9 +36,9 @@ namespace BcxbTeamBldr.Controllers {
       }
 
 
-      public ActionResult TeamList(string user, DbInfo info) {
+      public ActionResult TeamList(string user) {
          // ----------------------------------------
-         var view = new TeamListVM(user, info);
+         var view = new TeamListVM(user);
 
          return View(view);
 
@@ -69,7 +71,7 @@ namespace BcxbTeamBldr.Controllers {
             }
             else {
                dbinfo.AddNewTeam(team.UserName, team.TeamName, team.UsesDh);
-               var view = new TeamListVM(team.UserName, dbinfo);
+               var view = new TeamListVM(team.UserName);
                return View("TeamList", view);
             }
 
