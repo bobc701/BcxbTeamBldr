@@ -12,7 +12,7 @@ namespace BcxbTeamBldr.DataLayer {
       public string PlayerId { get; set; } //Source table: UserPlayer & MlbPlayer
 
       public string PlayerName { get; set; }  //Source table: MlbPlayer
-      public char PlayerType { get; set; }    //Source table: MlbPlayer
+      public string PlayerType { get; set; }    //Source table: MlbPlayer Note: Linq to Entities can't deal w/ char.
       public string FieldingString { get; set; }  //Source table: MlbPlayer
       public int Year { get; set; }               //Source table: MlbPlayer
       public string MlbTeam { get; set; }         //Source table: MlbPlayer

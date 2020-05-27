@@ -252,7 +252,7 @@ namespace BcxbTeamBldr.DataLayer {
                   var player = new CUserPlayer();
                   player.PlayerId = rdr["PlayerId"].ToString();
                   player.PlayerName = rdr["PlayerName"].ToString();
-                  player.PlayerType = rdr["PlayerType"].ToString()[0];
+                  player.PlayerType = rdr["PlayerType"].ToString();
                   player.FieldingString = rdr["FieldingString"].ToString();
                   player.Year = (int)rdr["Year"];
                   player.MlbTeam = rdr["MlbTeam"].ToString();

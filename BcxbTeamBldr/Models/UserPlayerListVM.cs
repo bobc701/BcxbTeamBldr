@@ -19,7 +19,7 @@ namespace BcxbTeamBldr.Models {
       public UserPlayerListVM(string user, string team, DbInfo info) {
       // ---------------------------------------------
          UserTeam = new CUserTeam { UserName = user, TeamName = team };
-         Players = info.GetUserPlayerList(user, team).OrderBy(p => p.PlayerType).ThenBy(p => p.PlayerName).ToList();
+         Players = DbInfoEF.GetUserPlayerList(user, team).OrderBy(p => p.PlayerType).ThenBy(p => p.PlayerName).ToList();
       }
 
 

@@ -307,7 +307,7 @@ namespace BcxbTeamBldr.DataLayer {
                select new CUserPlayer {
                   PlayerId = mp.PlayerId,
                   PlayerName = mp.PlayerName,
-                  PlayerType = mp.PlayerType[0],
+                  PlayerType = mp.PlayerType,
                   FieldingString = mp.FieldingString,
                   Year = (int)mp.Year,
                   MlbTeam = mp.MlbTeam,
