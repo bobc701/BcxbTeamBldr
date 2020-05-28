@@ -34,7 +34,6 @@
          <option>cf</option>
          <option>rf</option>
          <option>of</option>
-         <option>dh</option>
       </select>
 
       <p /><button id="btnSearch" class="btn button1">Search</button>
@@ -79,7 +78,7 @@
          $('#btnSearch').click(function () {
             //var crit1 = $(this).attr('id');
             //$('#errMsg').css('display','none');
-            let critName1 = $('#txtName').val();
+            let critName1 = $('#txtName').val(); if (critName1 == "") critName1 = "All";
             let critTeam1 = $('#selTeam').val();
             let critYear1 = $('#selYear').val();
             let critPosn1 = $('#selPosn').val();

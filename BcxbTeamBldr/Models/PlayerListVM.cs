@@ -17,12 +17,12 @@ namespace BcxbTeamBldr.Models {
          Players = info.GetPlayerList(user, team);
       }
 
-      public PlayerListVM(string user, string team, DbInfo info, int option) {
+      public PlayerListVM(string user, string team, int option) {
       // ---------------------------------------------
          UserTeam = new CUserTeam { UserName = user, TeamName = team };
          Players = option switch {
             0 => null,
-            _ => info.GetPlayerList(user, team)
+            _ => DbInfoEF.GetPlayerList(user, team)
          };
       }
 

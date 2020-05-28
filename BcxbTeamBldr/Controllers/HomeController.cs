@@ -235,7 +235,7 @@ namespace BcxbTeamBldr.Controllers {
 
       public ActionResult SearchMulti(string user, string team) {
          //  ------------------------------------------
-         var model = new PlayerListVM(user, team, dbinfo, 0);
+         var model = new PlayerListVM(user, team, 0);
          return View(model);
       }
 
@@ -250,7 +250,7 @@ namespace BcxbTeamBldr.Controllers {
 
       public JsonResult searchMultiJson(string critName, string critTeam, string critYear, string critPosn) {
       // -------------------------------------------------------------------------------------
-         List<CMlbPlayer> py = dbinfo.SearchPlayersMulti(critName, critTeam, critYear, critPosn);
+         List<CMlbPlayer> py = DbInfoEF.SearchPlayersMulti(critName, critTeam, critYear, critPosn);
          var s = Json(py, JsonRequestBehavior.AllowGet);
          return Json(py, JsonRequestBehavior.AllowGet);
 

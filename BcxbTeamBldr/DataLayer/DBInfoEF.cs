@@ -230,7 +230,7 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
-      public static List<MlbPlayer> GetPlayerList(string user, string team) {
+      public static List<CMlbPlayer> GetPlayerList(string user, string team) {
          // ---------------------------------------------------------------------
 
          //  SELECT up.PlayerId, mp.PlayerName, mp.MlbTeam, mp.MlbLeague, mp.Year, mp.FieldingString, mp.PlayerType,
@@ -248,20 +248,20 @@ namespace BcxbTeamBldr.DataLayer {
             //   .Select(p => p.PlayerId)
             //   .ToList();
 
-            List<MlbPlayer> mps2 =
+            List<CMlbPlayer> mps2 =
               (from mp in ctx.MlbPlayers
                join up in ctx.UserPlayers.Where(up => up.UserName == user && up.TeamName == team)
                on mp.PlayerId equals up.PlayerId
-               select mp).ToList();
+               select MapMlbPlayer(mp)).ToList();
 
             mps2[0].PlayerName = "Smith";
 
-            List<MlbPlayer> mps = ctx.MlbPlayers
+            List<CMlbPlayer> mps = ctx.MlbPlayers
                .Join(
                   ctx.UserPlayers.Where(up => up.UserName == user && up.TeamName == team),
                   mp => mp.PlayerId,
                   up => up.PlayerId,
-                  (mp, up) => mp)
+                  (mp, up) => MapMlbPlayer(mp))
                .ToList();
 
             return mps;
@@ -291,6 +291,22 @@ namespace BcxbTeamBldr.DataLayer {
 
       }
 
+
+      public static CMlbPlayer MapMlbPlayer(MlbPlayer p1) {
+         // -----------------------------------------------------------------
+         // This is an object mapping function.
+
+         var p2 = new CMlbPlayer {
+            PlayerId = p1.PlayerId,
+            PlayerName = p1.PlayerName,
+            PlayerType = p1.PlayerType[0],
+            FieldingString = p1.FieldingString,
+            Year = (int)p1.Year,
+            MlbTeam = p1.MlbTeam,
+            MlbLeague = p1.MlbLeague
+         };
+         return p2;
+      }
 
       public static List<CUserPlayer> GetUserPlayerList(string user, string team) {
       // ---------------------------------------------------------------------
@@ -354,6 +370,8 @@ namespace BcxbTeamBldr.DataLayer {
 
       public List<MlbPlayer> SearchPlayers(string crit) {
          // ---------------------------------------------------------------------
+         // NOTE: I don't think this is ever used.
+
          var list = new List<MlbPlayer>();
          string sql = $"EXEC SearchPlayers '{crit}'";
          using (var cmd = new SqlCommand(sql, con1)) {
@@ -379,75 +397,157 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
-      public List<MlbPlayer> SearchPlayersMulti(string critName, string critTeam, string critYear, string critPosn) {
+      public static List<CMlbPlayer> SearchPlayersMulti(string critName, string critTeam, string critYear, string critPosn) {
          // ---------------------------------------------------------------------
-         var list = new List<MlbPlayer>();
 
-         // Build search string for SQL select...
-         string crit = "", delim = "";
-         if (critName != "All") { crit = $"PlayerName LIKE '%{critName}%'"; delim = " AND "; }
-         if (critTeam != "All") { crit += delim + $"MlbTeam LIKE '%{critTeam}%'"; delim = " AND "; } // EG: 'NYA2019' LIKE '%NYA%'
-         if (critYear != "All") { crit += delim + $"Year = '{critYear}'"; delim = " AND "; }
+         var list2 = new List<CMlbPlayer>();
+         var list1 = new List<MlbPlayer>();
 
-         switch (critPosn) {
-            case "p": crit += delim + "SUBSTRING(FieldingString,1,1) != '-'"; break;
-            case "c": crit += delim + "SUBSTRING(FieldingString,2,1) != '-'"; break;
-            case "1b": crit += delim + "SUBSTRING(FieldingString,3,1) != '-'"; break;
-            case "2b": crit += delim + "SUBSTRING(FieldingString,4,1) != '-'"; break;
-            case "3b": crit += delim + "SUBSTRING(FieldingString,5,1) != '-'"; break;
-            case "ss": crit += delim + "SUBSTRING(FieldingString,6,1) != '-'"; break;
-            case "lf": crit += delim + "SUBSTRING(FieldingString,7,1) != '-'"; break;
-            case "cf": crit += delim + "SUBSTRING(FieldingString,8,1) != '-'"; break;
-            case "rf": crit += delim + "SUBSTRING(FieldingString,9,1) != '-'"; break;
-            case "of":
-               crit += delim +
-                  "(SUBSTRING(FieldingString,7,1) != '-' OR SUBSTRING(FieldingString,8,1) != '-' OR SUBSTRING(FieldingString,9,1) != '-')";
-               break;
+         int ix = 0;
+         var s = new string[] { "All", "p", "c", "1b", "2b", "3b", "ss", "lf", "cf", "rf", "of" };
+         for (int i=0; i<=s.Length-1; i++) if (s[i] == critPosn) { ix = i; break; }
+         int? year = critYear == "All" ? 0 : int.Parse(critYear);
+
+      // Check for no selection, return empty list if so...
+         if (ix == 0 && year == 0 && critName == "All" && critTeam == "All") return list2;
+
+         using (var ctx = new DBAccess3.DB_133455_bcxbteambldrEntities()) {
+
+            if (ix > 0 && ix < 10) // Filtereing on position 1..9...
+               list1 =
+                  ctx.MlbPlayers
+                     .Where(p => critName == "All" || p.PlayerName.Contains(critName))
+                     .Where(p => critTeam == "All" || p.MlbTeam.Contains(critTeam))
+                     .Where(p => year == 0 || p.Year == year)
+                     .Where(p => p.FieldingString.Substring(ix-1, 1) != "-") //Can't use index [] with LinqToEntities
+                     .ToList();
+
+            else if (ix == 10) //Filtering on 'of' = 7,8,9...
+               list1 =
+                  ctx.MlbPlayers
+                     .Where(p => critName == "All" || p.PlayerName.Contains(critName))
+                     .Where(p => critTeam == "All" || p.MlbTeam.Contains(critTeam))
+                     .Where(p => year == 0 || p.Year == year)
+                     .Where(p =>
+                        p.FieldingString.Substring(6, 1) != "-" ||
+                        p.FieldingString.Substring(7, 1) != "-" ||
+                        p.FieldingString.Substring(8, 1) != "-")
+                     .ToList();
+
+            else // Not filtering on posn...
+               list1 =
+                  ctx.MlbPlayers
+                     .Where(p => critName == "All" || p.PlayerName.Contains(critName))
+                     .Where(p => critTeam == "All" || p.MlbTeam.Contains(critTeam))
+                     .Where(p => year == 0 || p.Year == year)
+                     .ToList();
+
+            // Map result from MlbPlayer to CMlbPlayer...
+            list2 =
+               list1
+                  .Select(p1 => new CMlbPlayer {
+                     PlayerId = p1.PlayerId,
+                     PlayerName = p1.PlayerName,
+                     PlayerType = p1.PlayerType[0],
+                     FieldingString = p1.FieldingString,
+                     Year = (int)p1.Year,
+                     MlbTeam = p1.MlbTeam,
+                     MlbLeague = p1.MlbLeague
+                  }).ToList();
+
          }
 
-         string sql = $"SELECT * FROM MlbPlayers WHERE {crit}";
-         //string sql = $"EXEC SearchPlayers '{crit}'";
-         using (var cmd = new SqlCommand(sql, con1)) {
+         return list2;
 
-            using (SqlDataReader rdr = cmd.ExecuteReader()) {
-               while (rdr.Read()) {
-                  var player = new MlbPlayer();
-                  player.PlayerId = rdr["PlayerId"].ToString();
-                  player.PlayerName = rdr["PlayerName"].ToString();
-                  //player.PlayerType = rdr["PlayerType"].ToString()[0];
-                  player.FieldingString = rdr["FieldingString"].ToString();
-                  player.Year = (int)rdr["Year"];
-                  player.MlbTeam = rdr["MlbTeam"].ToString();
-                  player.MlbLeague = rdr["MlbLeague"].ToString();
 
-                  list.Add(player);
-               }
+         //   // Build search string for SQL select...
+         //   string crit = "", delim = "";
+         //if (critName != "All") { crit = $"PlayerName LIKE '%{critName}%'"; delim = " AND "; }
+         //if (critTeam != "All") { crit += delim + $"MlbTeam LIKE '%{critTeam}%'"; delim = " AND "; } // EG: 'NYA2019' LIKE '%NYA%'
+         //if (critYear != "All") { crit += delim + $"Year = '{critYear}'"; delim = " AND "; }
 
-            }
-         }
-         return list;
+         //switch (critPosn) {
+         //   case "p": crit += delim + "SUBSTRING(FieldingString,1,1) != '-'"; break;
+         //   case "c": crit += delim + "SUBSTRING(FieldingString,2,1) != '-'"; break;
+         //   case "1b": crit += delim + "SUBSTRING(FieldingString,3,1) != '-'"; break;
+         //   case "2b": crit += delim + "SUBSTRING(FieldingString,4,1) != '-'"; break;
+         //   case "3b": crit += delim + "SUBSTRING(FieldingString,5,1) != '-'"; break;
+         //   case "ss": crit += delim + "SUBSTRING(FieldingString,6,1) != '-'"; break;
+         //   case "lf": crit += delim + "SUBSTRING(FieldingString,7,1) != '-'"; break;
+         //   case "cf": crit += delim + "SUBSTRING(FieldingString,8,1) != '-'"; break;
+         //   case "rf": crit += delim + "SUBSTRING(FieldingString,9,1) != '-'"; break;
+         //   case "of":
+         //      crit += delim +
+         //         "(SUBSTRING(FieldingString,7,1) != '-' OR SUBSTRING(FieldingString,8,1) != '-' OR SUBSTRING(FieldingString,9,1) != '-')";
+         //      break;
+         //}
+
+         //string sql = $"SELECT * FROM MlbPlayers WHERE {crit}";
+         ////string sql = $"EXEC SearchPlayers '{crit}'";
+         //using (var cmd = new SqlCommand(sql, con1)) {
+
+         //   using (SqlDataReader rdr = cmd.ExecuteReader()) {
+         //      while (rdr.Read()) {
+         //         var player = new MlbPlayer();
+         //         player.PlayerId = rdr["PlayerId"].ToString();
+         //         player.PlayerName = rdr["PlayerName"].ToString();
+         //         //player.PlayerType = rdr["PlayerType"].ToString()[0];
+         //         player.FieldingString = rdr["FieldingString"].ToString();
+         //         player.Year = (int)rdr["Year"];
+         //         player.MlbTeam = rdr["MlbTeam"].ToString();
+         //         player.MlbLeague = rdr["MlbLeague"].ToString();
+
+         //         list.Add(player);
+         //      }
+
+         //   }
+         //}
+         //return list;
 
       }
 
+         static bool CritSingle(MlbPlayer player, string critName, string critTeam, string critYear, string critPosn) {
+         // --------------------------------------------------------------------------------
+            bool ok1 = true, ok2 = true, ok3 = true, ok4 = true;
+            ok1 = critName == "All" || player.PlayerName.Contains(critName);
+            if (ok1) ok2 = (critTeam == "All" || player.MlbTeam == critTeam);
+            if (ok2) ok3 = (critYear == "All" || player.Year == int.Parse(critYear));
+            if (ok3) ok4 = critPosn switch
+            {
+               "p" => player.FieldingString[0] != '-',
+               "c" => player.FieldingString[1] != '-',
+               "1b" => player.FieldingString[2] != '-',
+               "2b" => player.FieldingString[3] != '-',
+               "3b" => player.FieldingString[4] != '-',
+               "ss" => player.FieldingString[5] != '-',
+               "lf" => player.FieldingString[6] != '-',
+               "cf" => player.FieldingString[7] != '-',
+               "rf" => player.FieldingString[8] != '-',
+               "of" =>
+                  player.FieldingString[6] != '-' || player.FieldingString[7] != '-' || player.FieldingString[8] != '-'
+            };
+            return ok1 && ok2 && ok3 && ok4;
+         }
 
-      //public void SetLineup(string user, string team, Models.UserPlayerListVM model) {
-      //   // ---------------------------------------------------------------------------------
-      //   // First, delete all existing lineup data...
-      //   string sql = $"EXEC ClearLineup '{user}', '{team}'";
-      //   using (var cmd = new SqlCommand(sql, con1)) {
-      //      cmd.ExecuteNonQuery();
-      //   }
 
-      //   // Now, update with new lineup data...
-      //   // NOTE: This should probably be a transaction!!!
-      //   foreach (UserPlayer player in model.Players
-      //      .Where(p => p.Slot_NoDH != 0 || p.Posn_NoDH != 0 || p.Slot_DH != 0 || p.Posn_DH != 0)) {
-      //      sql = $"EXEC SetLineup '{user}', '{team}', '{player.PlayerId}'";
-      //      using (SqlCommand cmd = new SqlCommand(sql, con1)) {
-      //         cmd.ExecuteNonQuery();
-      //      }  
-      //   }
-      //}
+         //public void SetLineup(string user, string team, Models.UserPlayerListVM model) {
+         //   // ---------------------------------------------------------------------------------
+         //   // First, delete all existing lineup data...
+         //   string sql = $"EXEC ClearLineup '{user}', '{team}'";
+         //   using (var cmd = new SqlCommand(sql, con1)) {
+         //      cmd.ExecuteNonQuery();
+         //   }
 
+         //   // Now, update with new lineup data...
+         //   // NOTE: This should probably be a transaction!!!
+         //   foreach (UserPlayer player in model.Players
+         //      .Where(p => p.Slot_NoDH != 0 || p.Posn_NoDH != 0 || p.Slot_DH != 0 || p.Posn_DH != 0)) {
+         //      sql = $"EXEC SetLineup '{user}', '{team}', '{player.PlayerId}'";
+         //      using (SqlCommand cmd = new SqlCommand(sql, con1)) {
+         //         cmd.ExecuteNonQuery();
+         //      }  
+         //   }
+         //}
+
+      }
    }
-}
