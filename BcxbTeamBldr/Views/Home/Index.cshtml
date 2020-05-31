@@ -1,9 +1,5 @@
 ﻿
 
-@{
-   TempData.Keep("dbinfo");
-}
-
 <h2>Welcome to Zeemerix PlayByPlay Team Builder</h2>
 @*<div>
        @Html.ActionLink("List Teams", "TeamList", new { user = "bobc@4bcx.com" })
@@ -24,7 +20,7 @@
 <button id="btnSignUp" class="button1" style="width:150px;">Sign Up</button>
 
 <p />
-<input id="errMsg" style="border:none; color:red; font-size:larger; font-weight:bold; width:600px;" value="" />
+<input id="errMsg" class="ErrorMsg" value="" />
 
 <p /><span style="font-size:x-large;">Or Log in... </span>
 <p />
@@ -34,7 +30,7 @@
 <br />
 <button id="btnLogIn" class="button1" style="width:150px;">Log In</button>
 
-<p /><textarea id="errMsg2" style="border:none; color:red; font-size:larger; font-weight:bold; width:800px; height:60px;" value=""></textarea>
+<p /><textarea id="errMsg2" class="ErrorMsg" value=""></textarea>
 
 
 @section Scripting {

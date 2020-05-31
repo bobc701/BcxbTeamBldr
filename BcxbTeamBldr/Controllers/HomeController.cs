@@ -46,14 +46,17 @@ namespace BcxbTeamBldr.Controllers {
 
       public ActionResult AddTeam(string user) {
       // ------------------------------------------
-         ViewBag.UserName = user;
-         return View(new DataLayer.CUserTeam() { UserName = user });
+         ViewBag.Msg = "";
+         return View(new DataLayer.CUserTeam { UserName = user });
 
       }
 
       [HttpPost]
       public ActionResult AddTeam(CUserTeam team) {
-      // ------------------------------------------
+         // ------------------------------------------
+
+         //if (!ModelState.IsValid) return View(team);
+
          try {
             ViewBag.Msg = "";
             if (team.TeamName == "" || team.TeamName == null) {
@@ -63,14 +66,14 @@ namespace BcxbTeamBldr.Controllers {
                ViewBag.Msg = "Team name is too long (30 characters max)";
             }
             else {
-               bool exists = dbinfo.TeamNameExists(team.UserName, team.TeamName);
+               bool exists = DbInfoEF.TeamNameExists(team.UserName, team.TeamName);
                if (exists) ViewBag.Msg = "You already have a team named " + team.TeamName;
             }
             if (ViewBag.Msg != "") {
                return View(team);
             }
             else {
-               dbinfo.AddNewTeam(team.UserName, team.TeamName, team.UsesDh);
+               DbInfoEF.AddNewTeam(team.UserName, team.TeamName, team.UsesDh);
                var view = new TeamListVM(team.UserName);
                return View("TeamList", view);
             }
@@ -118,14 +121,14 @@ namespace BcxbTeamBldr.Controllers {
          try {
             ViewBag.Msg = "";
             var aIdList = idList.Split(',');
+            var pids = DbInfoEF.GetPlayerIdList(user, team);
             foreach (var pid in aIdList) {
-               var already = dbinfo.GetPlayerList(user, team).Exists(p => p.PlayerId == pid);
+               bool already = pids.Exists(id => id == pid);
                if (!already) { //Player already on team
-                  dbinfo.AddPlayerToTeam(user, team, pid);
+                  DbInfoEF.AddPlayerToTeam(user, team, pid);
                }
             }
-            //var roster = new PlayerListVM(user, team);
-            var roster = new UserPlayerListVM(user, team, dbinfo);
+            var roster = new UserPlayerListVM(user, team);
             return View("EditTeam", roster);
          }
          catch (Exception ex) {
@@ -161,7 +164,7 @@ namespace BcxbTeamBldr.Controllers {
 
       public ActionResult EditTeam(string user, string team) {
       // -----------------------------------------------------
-         var roster = new UserPlayerListVM(user, team, dbinfo);
+         var roster = new UserPlayerListVM(user, team);
 
          return View(roster);
       }
@@ -179,7 +182,7 @@ namespace BcxbTeamBldr.Controllers {
          // Otherwise, shoot off an update for each with lineups. 
             dbinfo.UpdateLineups(user, team, model.Players);
 
-            return View("EditTeam", new UserPlayerListVM(user, team, dbinfo));
+            return View("EditTeam", new UserPlayerListVM(user, team));
 
          }
          catch (Exception ex) {
@@ -208,7 +211,7 @@ namespace BcxbTeamBldr.Controllers {
 
       public ActionResult EditLineup(string user, string team) {
          // -----------------------------------------------------
-         var roster = new UserPlayerListVM(user, team, dbinfo);
+         var roster = new UserPlayerListVM(user, team);
          return View(roster);
       }
 
@@ -274,7 +277,7 @@ namespace BcxbTeamBldr.Controllers {
       public ContentResult AddNewUser(string user, string pwd) {
          // --------------------------------------------------------------
          try {
-            int retval = dbinfo.AddNewUser(user, pwd);
+            int retval = DbInfoEF.AddNewUser(user, pwd);
             switch (retval) {
                case 0: return Content("ok");
                case 1: return Content($"'{user}' is already in use");
@@ -291,7 +294,7 @@ namespace BcxbTeamBldr.Controllers {
       public ContentResult LogIn(string user, string pwd) {
          // --------------------------------------------------------------
          try {
-            int retval = dbinfo.Login(user, pwd);
+            int retval = DbInfoEF.Login(user, pwd);
             switch (retval) {
                case 0: return Content("ok");
                case 1: return Content("User name or password is not valid");

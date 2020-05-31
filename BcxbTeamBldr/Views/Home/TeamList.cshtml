@@ -2,7 +2,7 @@
 
    <h2>Team List for @Model.UserName.Split(new char[] { '@' })[0]</h2>
    <div>
-      @if (Model.UserName.Length == 0) {
+      @if (Model.UserTeamList.Count == 0) { 
          <div style="color:red;">
             <text>Click 'Add new team' to add your first team </text>
          </div>

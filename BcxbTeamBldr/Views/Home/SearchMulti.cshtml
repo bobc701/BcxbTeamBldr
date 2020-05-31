@@ -4,7 +4,7 @@
    <h2>Search for player to add to @Model.UserTeam.TeamName</h2>
 
    First few characters of player's last name...
-   <input type="text" id="txtName" />
+   <input type="text" id="txtName"  placeholder="All"/>
    <chec>
       <p />Team:
       <select id="selTeam" name="selTeam">
@@ -85,6 +85,11 @@
             let user1 = $('#hdnUserName').val();
             let team1 = $('#hdnTeamName').val();
             //alert('criteria=' + critName1 + ' bc.routePrefix=' + bc.routePrefix);
+
+            if (critName1 == "All" && critTeam1 == "All" && critPosn1 == "All") {
+               alert("You must specify at least name, team or position");
+               return;
+            }
 
             $.ajax({
                url: bc.routePrefix + 'Home/SearchMultiJson', type: "GET", dataType: "json",

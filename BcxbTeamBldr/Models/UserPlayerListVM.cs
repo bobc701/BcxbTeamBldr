@@ -16,7 +16,7 @@ namespace BcxbTeamBldr.Models {
       public string[] SlotToStr { get; } = { "-", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
       
 
-      public UserPlayerListVM(string user, string team, DbInfo info) {
+      public UserPlayerListVM(string user, string team) {
       // ---------------------------------------------
          UserTeam = new CUserTeam { UserName = user, TeamName = team };
          Players = DbInfoEF.GetUserPlayerList(user, team).OrderBy(p => p.PlayerType).ThenBy(p => p.PlayerName).ToList();

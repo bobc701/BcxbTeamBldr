@@ -56,74 +56,110 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
-      public void AddNewTeam(string user, string team, bool dh) {
-         // ---------------------------------------------------------------------
-         string sql = $"EXEC AddNewTeam '{user}', '{team}', {(dh ? '1' : '0')}";
-         using (var cmd = new SqlCommand(sql, con1)) {
-            cmd.ExecuteNonQuery();
+      public static void AddNewTeam(string user, string team, bool dh) {
+      // ---------------------------------------------------------------------
+
+         var uTeam = new UserTeam { UserName = user, TeamName = team, UsesDh = dh };
+         using (var ctx = new DBAccess3.DB_133455_bcxbteambldrEntities()) {
+            ctx.UserTeams.Add(uTeam);
+            ctx.SaveChanges();
          }
-         //GetUserTeamList(user);
 
-      }
-
-
-      public int AddNewUser(string user, string pwd) {
-         // ----------------------------------------------------------
-         int n;
-         //string sql = $"EXEC AddNewUser '{user}', '{pwd}'";
-
+         // -------------------------------------------------------------------------- orig
+         //string sql = $"EXEC AddNewTeam '{user}', '{team}', {(dh ? '1' : '0')}";
          //using (var cmd = new SqlCommand(sql, con1)) {
-         using (SqlCommand cmd = new SqlCommand("u196491_BcxbUser.AddNewUser", con1)) {
-            cmd.CommandType = CommandType.StoredProcedure;
-
-            // Add parameter for return value...
-            SqlParameter returnValue = new SqlParameter();
-            returnValue.Direction = ParameterDirection.ReturnValue;
-            cmd.Parameters.Add(returnValue);
-
-            // Add input parameters...
-            cmd.Parameters.AddWithValue("@user", user);
-            cmd.Parameters.AddWithValue("@pwd", pwd);
-
-            cmd.ExecuteNonQuery();
-            n = (int)returnValue.Value;
-         }
-         return n;
+         //   cmd.ExecuteNonQuery();
+         //}
+         ////GetUserTeamList(user);
 
       }
 
-      public int Login(string user, string pwd) {
-         // ----------------------------------------------------------
-         int n;
 
+      public static int AddNewUser(string user, string pwd) {
+      // ----------------------------------------------------------
+
+         using (var ctx = new DBAccess3.DB_133455_bcxbteambldrEntities()) {
+            bool exists = ctx.Users.Count(u => u.UserName == user) > 0;
+            if (exists)
+               return 1;
+            else {
+               var newUser = new User { UserName = user, pwd = pwd };
+               ctx.Users.Add(newUser);
+               ctx.SaveChanges();
+               return 0;
+            }
+         }
+
+         // ------------------------------------------------------------------------------- orig
+         //using (SqlCommand cmd = new SqlCommand("u196491_BcxbUser.AddNewUser", con1)) {
+         //   cmd.CommandType = CommandType.StoredProcedure;
+
+         //   // Add parameter for return value...
+         //   SqlParameter returnValue = new SqlParameter();
+         //   returnValue.Direction = ParameterDirection.ReturnValue;
+         //   cmd.Parameters.Add(returnValue);
+
+         //   // Add input parameters...
+         //   cmd.Parameters.AddWithValue("@user", user);
+         //   cmd.Parameters.AddWithValue("@pwd", pwd);
+
+         //   cmd.ExecuteNonQuery();
+         //   n = (int)returnValue.Value;
+         //}
+         // return n;
+
+      }
+
+      public static int Login(string user, string pwd) {
+      // ----------------------------------------------------------
+         bool exists;
+         using (var ctx = new DBAccess3.DB_133455_bcxbteambldrEntities()) {
+            exists = ctx.Users.Count(u => u.UserName == user && u.pwd == pwd) > 0;
+         }
+         return exists ? 0 : 1;
+
+
+         // ------------------------------------------------------------- orig
+         //using (SqlCommand cmd = new SqlCommand("Login", con1)) {
+         //   cmd.CommandType = CommandType.StoredProcedure;
+
+         //   // Add parameter for return value...
+         //   SqlParameter loginResult = new SqlParameter();
+         //   loginResult.Direction = ParameterDirection.ReturnValue;
+         //   cmd.Parameters.Add(loginResult);
+
+         //   // Add input parameters...
+         //   cmd.Parameters.AddWithValue("@user", user);
+         //   cmd.Parameters.AddWithValue("@pwd", pwd);
+
+         //   cmd.ExecuteNonQuery();
+         //   n = (int)loginResult.Value;
+         //}
+         //return n;
+
+      }
+
+
+
+      public static void AddPlayerToTeam(string user, string team, string id) {
+      // --------------------------------------------------------------------
+      // Task: Add one new record to UserPlayer
+      // Note: We've already validated hat player is not already on team.
+
+         using (var ctx = new DBAccess3.DB_133455_bcxbteambldrEntities()) {
+
+            var userPlayer = new UserPlayer { PlayerId = id, UserName = user, TeamName = team };
+            ctx.UserPlayers.Add(userPlayer);
+            ctx.SaveChanges();
+         }
+
+
+         // ----------------------------------------------------------------- orig
+         //string sql = $"EXEC AddPlayerToTeam '{user}', '{team}', '{id}'";
          //using (var cmd = new SqlCommand(sql, con1)) {
-         using (SqlCommand cmd = new SqlCommand("Login", con1)) {
-            cmd.CommandType = CommandType.StoredProcedure;
+         //   cmd.ExecuteNonQuery();
+         //}
 
-            // Add parameter for return value...
-            SqlParameter loginResult = new SqlParameter();
-            loginResult.Direction = ParameterDirection.ReturnValue;
-            cmd.Parameters.Add(loginResult);
-
-            // Add input parameters...
-            cmd.Parameters.AddWithValue("@user", user);
-            cmd.Parameters.AddWithValue("@pwd", pwd);
-
-            cmd.ExecuteNonQuery();
-            n = (int)loginResult.Value;
-         }
-         return n;
-
-      }
-
-
-
-      public void AddPlayerToTeam(string user, string team, string id) {
-         // --------------------------------------------------------------------
-         string sql = $"EXEC AddPlayerToTeam '{user}', '{team}', '{id}'";
-         using (var cmd = new SqlCommand(sql, con1)) {
-            cmd.ExecuteNonQuery();
-         }
       }
 
 
@@ -216,12 +252,13 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
-      public bool TeamNameExists(string user, string team) {
+      public static bool TeamNameExists(string user, string team) {
          // ------------------------------------------------------------------
          using (var ctx = new DB_133455_bcxbteambldrEntities()) {
             UserTeam team1 = ctx.UserTeams.FirstOrDefault(t => t.UserName == user && t.TeamName == team);
             return (team1 != null);
 
+         // ------------------------------------------------------------- orig
             //string sql = $"EXEC TeamNameExists '{user}', '{team}'";
             //using (var cmd = new SqlCommand(sql, con1)) {
             //return (int)cmd.ExecuteScalar() == 1 ? true : false;
@@ -230,44 +267,61 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
+      public static List<string> GetPlayerIdList(string user, string team) {
+         // ---------------------------------------------------------------------
+         // Task: Just return a list of Player ID's for players on team
+
+         List<string> pids;
+         using (var ctx = new DB_133455_bcxbteambldrEntities()) {
+            pids = ctx.UserPlayers
+               .Where(p => p.UserName == user && p.TeamName == team)
+               .Select(p => p.PlayerId)
+               .ToList();
+         }
+         return pids;
+         
+      }
+
+
       public static List<CMlbPlayer> GetPlayerList(string user, string team) {
          // ---------------------------------------------------------------------
 
+         //  Orig sql...
          //  SELECT up.PlayerId, mp.PlayerName, mp.MlbTeam, mp.MlbLeague, mp.Year, mp.FieldingString, mp.PlayerType,
-         //mp.Stats, mp.LgStats, up.Slot_NoDH, up.Posn_NoDH, up.Slot_DH, up.Posn_DH
+         //  mp.Stats, mp.LgStats, up.Slot_NoDH, up.Posn_NoDH, up.Slot_DH, up.Posn_DH
          //  FROM UserPlayers up
          //  JOIN MlbPlayers mp ON mp.PlayerId = up.PlayerId
          //  WHERE up.UserName = @user AND up.TeamName = @team
 
-
-
          using (var ctx = new DB_133455_bcxbteambldrEntities()) {
-
-            //List<string> pids = ctx.UserPlayers
-            //   .Where(p => p.UserName == user && p.TeamName == team)
-            //   .Select(p => p.PlayerId)
-            //   .ToList();
 
             List<CMlbPlayer> mps2 =
               (from mp in ctx.MlbPlayers
                join up in ctx.UserPlayers.Where(up => up.UserName == user && up.TeamName == team)
                on mp.PlayerId equals up.PlayerId
-               select MapMlbPlayer(mp)).ToList();
+               select new CMlbPlayer {
+                  PlayerId = mp.PlayerId,
+                  PlayerName = mp.PlayerName,
+                  PlayerType = mp.PlayerType[0],
+                  FieldingString = mp.FieldingString,
+                  Year = (int)mp.Year,
+                  MlbTeam = mp.MlbTeam,
+                  MlbLeague = mp.MlbLeague
+               }
+            ).ToList();
 
-            mps2[0].PlayerName = "Smith";
+            //List<CMlbPlayer> mps = ctx.MlbPlayers
+            //   .Join(
+            //      ctx.UserPlayers.Where(up => up.UserName == user && up.TeamName == team),
+            //      mp => mp.PlayerId,
+            //      up => up.PlayerId,
+            //      (mp, up) => MapMlbPlayer(mp))
+            //   .ToList();
 
-            List<CMlbPlayer> mps = ctx.MlbPlayers
-               .Join(
-                  ctx.UserPlayers.Where(up => up.UserName == user && up.TeamName == team),
-                  mp => mp.PlayerId,
-                  up => up.PlayerId,
-                  (mp, up) => MapMlbPlayer(mp))
-               .ToList();
-
-            return mps;
+            return mps2;
          }
 
-
+         // ------------------------------------------------------------- orig
          //   string sql = $"EXEC GetPlayerList '{user}', '{team}'";
          //   using (var cmd = new SqlCommand(sql, con1)) {
 
@@ -295,6 +349,7 @@ namespace BcxbTeamBldr.DataLayer {
       public static CMlbPlayer MapMlbPlayer(MlbPlayer p1) {
          // -----------------------------------------------------------------
          // This is an object mapping function.
+         // Unfortuneatly such a function can't be used in Linq-to-Entities!
 
          var p2 = new CMlbPlayer {
             PlayerId = p1.PlayerId,

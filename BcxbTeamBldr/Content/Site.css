@@ -25,14 +25,15 @@ textarea {
     width: 200px; /* Override this in <style> if nec. */
 }
 
-/*.button1 {
-    margin: 5px 0px 5px 25px;
-    padding: 10px;
-    font-size: large;
-    border-radius: 10px;
-}*/
-
-
+/* This is invisible, but shows bold-red when you set its value to something */
+/* You might want to set color and/or width locally */
+.ErrorMsg {
+    border:none;
+    color:red; 
+    font-size:larger; 
+    font-weight:bold; 
+    width:600px;
+}
 
 /*----------------------------------*/
 /*From my 'Rudamentary CSS' input EN*/
