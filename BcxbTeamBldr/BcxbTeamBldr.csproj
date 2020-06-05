@@ -140,7 +140,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="DataLayer\CUserTeam.cs" />
-    <Compile Include="ViewModels\PlayerListVM.cs" />
+    <Compile Include="ViewModels\MlbPlayerListVM.cs" />
     <Compile Include="ViewModels\TeamListVM.cs" />
     <Compile Include="ViewModels\UserTeamVM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

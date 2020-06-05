@@ -101,7 +101,7 @@ namespace BcxbTeamBldr.Controllers {
             }
             else {
                dbinfo.AddPlayerToTeam(user, team, pid);
-               var roster = new PlayerListVM(user, team, 1);
+               var roster = new MlbPlayerListVM(user, team, 1);
                return View("EditTeam", roster);
             }
          }
@@ -148,7 +148,7 @@ namespace BcxbTeamBldr.Controllers {
          try {
             ViewBag.Msg = ""; 
             dbinfo.RemovePlayerFromTeam(user, team, id);
-            var roster = new PlayerListVM(user, team, 1);
+            var roster = new MlbPlayerListVM(user, team, 1);
             return View("EditTeam", roster);
          }
          catch (Exception ex) {
@@ -257,7 +257,7 @@ namespace BcxbTeamBldr.Controllers {
 
       public ActionResult SearchMulti(string user, string team) {
       //  ------------------------------------------
-         var model = new PlayerListVM(user, team, 0);
+         var model = new MlbPlayerListVM(user, team, 0);
          return View(model);
       }
 

@@ -1,69 +1,76 @@
 ﻿@model BcxbTeamBldr.ViewModels.TeamListVM
 
-   <h2>Team List for @Model.UserName.Split(new char[] { '@' })[0]</h2>
-   <div>
-      @if (Model.UserTeamList.Count == 0) { 
-         <div style="color:red;">
-            <text>Click 'Add new team' to add your first team </text>
-         </div>
-      }
-      else {
-         <table class="bordered-table1">
-            <tr>
-               <th>Team</th>
-               <th>Batters</th>
-               <th>Pitchers</th>
-               <th>Uses DH</th>
-               <th></th>
-               <th></th>
-            </tr>
-            @foreach (var rec in Model.UserTeamList) {
-               <tr>
-                  <td>@rec.TeamName</td>
-                  <td>@rec.NumPos.ToString()</td>
-                  <td>@rec.NumPit.ToString()</td>
-                  <td>@(rec.UsesDh ? "Yes" : "No") </td>
-                  <td>@Html.ActionLink("Edit", "EditTeam", new { user = Model.UserName, team = @rec.TeamName }) </td>
-                  <td>@Html.ActionLink("Delete", "DeleteTeam", 
-                     new { user = Model.UserName, team = @rec.TeamName },
-                     new { @class = "DeleteLink" }) 
-                     <input class="team" type="hidden" value="@rec.TeamName" />
-                     <input class="user" type="hidden" value="@Model.UserName" />
-                  </td>
-               </tr>
-            }
-         </table>
-      }
-
-      <div>
-         <p /><p/>
-         @Html.ActionLink("Add new team", "AddTeam",
-            new { user = Model.UserName },
-            new { @class = "btn button1" })
+<h2>Team List for @Model.UserName.Split(new char[] { '@' })[0]</h2>
+<div>
+   @if (Model.UserTeamList.Count == 0) {
+      <div style="color:red;">
+         <text>Click 'Add new team' to add your first team </text>
       </div>
+   }
+   else {
+      <table class="bordered-table1">
+         <tr>
+            <th>Team</th>
+            <th>Batters</th>
+            <th>Pitchers</th>
+            <th>Uses DH</th>
+            <th></th>
+            <th></th>
+         </tr>
+         @foreach (var rec in Model.UserTeamList) {
+            <tr>
+               <td>@rec.TeamName</td>
+               <td>@rec.NumPos.ToString()</td>
+               <td>@rec.NumPit.ToString()</td>
+               <td>@(rec.UsesDh ? "Yes" : "No") </td>
+               <td>@Html.ActionLink("Edit", "EditTeam", new { user = Model.UserName, team = @rec.TeamName }) </td>
+               <td>
+                  @*@Html.ActionLink("Delete", "DeleteTeam",
+                     new { user = Model.UserName, team = @rec.TeamName },
+                     new { @class = "DeleteLink" })*@
+                  <a class="DeleteLink" href="#">Delete</a>
+                  <input class="team" type="hidden" value="@rec.TeamName" />
+                  <input class="user" type="hidden" value="@Model.UserName" />
+               </td>
+            </tr>
+         }
+      </table>
+   }
 
+   <div>
+      <p /><p />
+      @Html.ActionLink("Add new team", "AddTeam",
+         new { user = Model.UserName },
+         new { @class = "btn button1" })
    </div>
 
+</div>
+
+
+@section Scripting {
 
    <script>
       $(document).ready(
-         //alert("In Index document.ready"),
-         $(".DeleteLink").on("click",
-            function () {
-               // 'this' is the <a> tag...
-               // parent() is the enclosing <td>...
-               // parent() (again) is the <tr>, so that the hidden .team & .user are within
-               // scope of the .find().
-               let teamName = $(this).parent().parent().find(".team").val().trim().replace(" ", "%20");
-               let userName = $(this).parent().parent().find(".user").val().trim().replace(" ", "%20");
-               if (confirm(`OK to delete ${teamName}?`)) {
-                  let url = `/Home/DeleteTeam?userName=${userName}&amp;teamname=${teamName}`;
-                  alert("url=" + url);
-                  window.location.href = url;
-               }
-            })
-      )
-      
-
+         function () {
+            alert("In document.ready in TeamList view");
+            $(".DeleteLink").on("click",
+               function () {
+                  alert("In DeleteLink handler");
+                  // 'this' is the <a> tag...
+                  // parent() is the enclosing <td>...
+                  // parent() (again) is the <tr>, so that the hidden .team & .user are within
+                  // scope of the .find().
+                  let teamName = $(this).parent().parent().find(".team").val().trim().replace(" ", "%20");
+                  let userName = $(this).parent().parent().find(".user").val().trim().replace(" ", "%20");
+                  if (confirm(`OK to delete ${teamName}?`)) {
+                     let url = `/Home/DeleteTeam?userName=${userName}&amp;teamname=${teamName}`;
+                     alert("url=" + url);
+                     window.location.href = url;
+                  }
+               });
+         }
+      );
 
    </script>
+
+}

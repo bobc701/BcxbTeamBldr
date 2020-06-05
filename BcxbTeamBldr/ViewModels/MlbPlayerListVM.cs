@@ -6,7 +6,7 @@ using BcxbTeamBldr.DataLayer;
 
 namespace BcxbTeamBldr.ViewModels {
 
-   public class PlayerListVM {
+   public class MlbPlayerListVM {
 
       public CUserTeam UserTeam { get; set; }
       public List<CMlbPlayer> Players { get; set; }
@@ -17,7 +17,7 @@ namespace BcxbTeamBldr.ViewModels {
       //   Players = DbInfoEF.GetPlayerList(user, team);
       //}
 
-      public PlayerListVM(string user, string team, int option = 0) {
+      public MlbPlayerListVM(string user, string team, int option = 0) {
       // ---------------------------------------------
          UserTeam = new CUserTeam { UserName = user, TeamName = team };
          Players = option switch {
