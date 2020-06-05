@@ -37,7 +37,7 @@
 
    <script>
       $(document).ready(function () {
-         alert("In document.ready");
+         //alert("In document.ready");
 
          $("#btnSignUp").on("click", function () {
             //  -------------------------------------
@@ -48,7 +48,7 @@
             let msg = "";
             let user1 = $("#txtUser").val(); //document.getElementById("txtUser");
             let pwd1;
-            alert(`user=${user1}`);
+            //alert(`user=${user1}`);
             user1 = user1.trim();
             if (user1 == "") msg = "You must enter User name";
             else if (user1.length > 30) msg = "User name is too long. Must be 30 or less";
@@ -56,14 +56,14 @@
             //  Validate the (new) password...
             if (msg == "") {
                pwd1 = $("#txtPwd").val();
-               alert(`pwd=${pwd1}`);
+               //alert(`pwd=${pwd1}`);
                if (pwd1 == "") msg = "You must enter a password";
                else if (pwd1.length > 30) msg = "Password must be between 8 and 30 characters";
                else if (pwd1.length < 8) msg = "Password must be between 8 and 30 characters";
                else if (pwd1.indexOf(" ") != -1) msg = "Password cannot include spaces";
                else {
                   let pwd2 = $("#txtConfirm").val();
-                  alert(`pwd2=${pwd2}`);
+                  //alert(`pwd2=${pwd2}`);
                   if (pwd1 != pwd2) msg = "Passwords do not match";
                }
             }
@@ -73,6 +73,7 @@
                //  No errors...
                //  Use ajax to call a method to insert into db, and return "ok" or errorMsg.
                //  If ok is returned, the Go to Team List.
+               //alert("About to call .get()");
                $.get(
                   bc.routePrefix + "Home/AddNewUser",
                   { user: user1, pwd: pwd1 },
@@ -80,13 +81,13 @@
                      //alert(`On return to get, msg=${msgReturned}`);
                      if (msgReturned != "ok") {
                         //  Error adding user to the database...
-                        alert('msg=' + msgReturned);
+                        //alert('msg=' + msgReturned);
                         $('#errMsg').val(msgReturned);
                      }
                      else {
                         //  User sign up ok, go to (empty) team list...
                         url = bc.routePrefix + "Home/TeamList?user=" + user1.trim().replace(" ", "%20");
-                        alert(url);
+                        //alert(url);
                         window.location.href = url;
                      }
                   },
@@ -131,7 +132,7 @@
                   bc.routePrefix + "Home/Login",
                   { user: user1, pwd: pwd1 },
                   function (msg) {
-                     alert(`On return to get, msg=${msg}`);
+                     //alert(`On return to get, msg=${msg}`);
                      if (msg != "ok") {
                         //  Error validating credentials vs db...
                         $('#errMsg2').val(msg);
@@ -139,7 +140,7 @@
                      else {
                         //  Credentials validated ok, go to team list...
                         url = bc.routePrefix + "Home/TeamList?user=" + user1.trim().replace(" ", "%20");
-                        alert(url);
+                        //alert(url);
                         window.location.href = url;
                      }
                   },

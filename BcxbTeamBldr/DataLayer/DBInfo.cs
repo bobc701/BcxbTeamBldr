@@ -7,7 +7,7 @@ using System.Data.SqlClient;
 using System.Configuration;
 using System.Diagnostics;
 
-using BcxbTeamBldr.Models;
+using BcxbTeamBldr.ViewModels;
 
 namespace BcxbTeamBldr.DataLayer {
 
@@ -124,8 +124,7 @@ namespace BcxbTeamBldr.DataLayer {
 
 
       public void UpdateLineups(string user, string team, List<CUserPlayer> roster) {
-         // ----------------------------------------------------------------------------
-
+      // --------------------------------------------------------------------------------
          SqlTransaction sqlTran = null;
          try {
             
@@ -140,7 +139,7 @@ namespace BcxbTeamBldr.DataLayer {
             cmd2.Transaction = sqlTran;
 
             foreach (CUserPlayer player in roster) {
-               if (player.Remove) {
+               if (player.RemoveFromTeam) {
                // Player is flagged for removal...
                   cmd1.Parameters.Clear();
                   cmd1.Parameters.AddWithValue("@user", user);
@@ -351,7 +350,7 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
-      public void SetLineup(string user, string team, Models.UserPlayerListVM model) {
+      public void SetLineup(string user, string team, ViewModels.UserTeamVM model) {
       // ---------------------------------------------------------------------------------
       // First, delete all existing lineup data...
          string sql = $"EXEC ClearLineup '{user}', '{team}'";

@@ -11,6 +11,9 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 
 using DBAccess3;
+using System.Data.Entity;
+using System.Web.ModelBinding;
+
 
 
 namespace BcxbTeamBldr.DataLayer {
@@ -163,63 +166,116 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
-      public void UpdateLineups(string user, string team, List<UserPlayer> roster) {
+      public static void UpdateLineups(string user, string team, List<CUserPlayer> roster) {
+         // ----------------------------------------------------------------------------
+         // Task: Foreach in roster, if flagged for delete (in player.remove), then delete it from the 
+         // UserPlayers. For the others, update their lineup fields (even if no change - we don't know!)
          // ----------------------------------------------------------------------------
 
-         SqlTransaction sqlTran = null;
-         try {
+         using var ctx = new DBAccess3.DB_133455_bcxbteambldrEntities();
+         UserPlayer userPlayer;
+         foreach (CUserPlayer player in roster) {
 
-            sqlTran = con1.BeginTransaction();
-
-            using SqlCommand cmd1 = new SqlCommand("RemovePlayerFromTeam", con1);
-            cmd1.CommandType = CommandType.StoredProcedure;
-            cmd1.Transaction = sqlTran;
-
-            using SqlCommand cmd2 = new SqlCommand("UpdateLineups", con1);
-            cmd2.CommandType = CommandType.StoredProcedure;
-            cmd2.Transaction = sqlTran;
-
-            foreach (UserPlayer player in roster) {
-               if (true) { //if (player.Remove) {
-                  // Player is flagged for removal...
-                  cmd1.Parameters.Clear();
-                  cmd1.Parameters.AddWithValue("@user", user);
-                  cmd1.Parameters.AddWithValue("@team", team);
-                  cmd1.Parameters.AddWithValue("@pid", player.PlayerId);
-                  cmd1.ExecuteNonQuery();
-               }
-               else {
-                  // Player not flagged, so update lineups (NoDh & Dh)...
-                  cmd2.Parameters.Clear();
-                  cmd2.Parameters.AddWithValue("@user", user);
-                  cmd2.Parameters.AddWithValue("@team", team);
-                  cmd2.Parameters.AddWithValue("@pid", player.PlayerId);
-                  cmd2.Parameters.AddWithValue("@slotNoDh", player.Slot_NoDH);
-                  cmd2.Parameters.AddWithValue("@posnNoDh", player.Posn_NoDH);
-                  cmd2.Parameters.AddWithValue("@slotDh", player.Slot_DH);
-                  cmd2.Parameters.AddWithValue("@posnDh", player.Posn_DH);
-                  cmd2.ExecuteNonQuery();
-               }
+            if (player.RemoveFromTeam) {
+               // Delete record from UserTeams... 
+               userPlayer = ctx.UserPlayers.Find(user, team, player.PlayerId);
+               ctx.UserPlayers.Remove(userPlayer);
             }
-            sqlTran.Commit();
-            Debug.WriteLine("Both records were written to database.");
+            else {
+               // Update lineup data in UserPlayers...
+               userPlayer = new UserPlayer {
+                  PlayerId = player.PlayerId,
+                  UserName = user,
+                  TeamName = team,
+                  Slot_NoDH = player.Slot_NoDH,
+                  Slot_DH = player.Slot_DH,
+                  Posn_NoDH = player.Posn_NoDH,
+                  Posn_DH = player.Posn_DH
+               };
+               ctx.Entry(userPlayer).State = EntityState.Modified;
+            }
+
          }
-         catch (Exception ex) {
-            Debug.WriteLine(ex.Message);
+         ctx.SaveChanges();
 
-            try {
-               sqlTran.Rollback();
-               throw ex;
-            }
-            catch (Exception exRollback) {
-               // Throws an InvalidOperationException if the connection 
-               // is closed or the transaction has already been rolled 
-               // back on the server.
-               Console.WriteLine(exRollback.Message);
-               throw exRollback;
 
-            }
+
+         // -------------------------------------------- orig
+
+         //SqlTransaction sqlTran = null;
+         //try {
+
+         //   sqlTran = con1.BeginTransaction();
+
+         //   using SqlCommand cmd1 = new SqlCommand("RemovePlayerFromTeam", con1);
+         //   cmd1.CommandType = CommandType.StoredProcedure;
+         //   cmd1.Transaction = sqlTran;
+
+         //   using SqlCommand cmd2 = new SqlCommand("UpdateLineups", con1);
+         //   cmd2.CommandType = CommandType.StoredProcedure;
+         //   cmd2.Transaction = sqlTran;
+
+         //   foreach (UserPlayer player in roster) {
+         //      if (true) { //if (player.Remove) {
+         //         // Player is flagged for removal...
+         //         cmd1.Parameters.Clear();
+         //         cmd1.Parameters.AddWithValue("@user", user);
+         //         cmd1.Parameters.AddWithValue("@team", team);
+         //         cmd1.Parameters.AddWithValue("@pid", player.PlayerId);
+         //         cmd1.ExecuteNonQuery();
+         //      }
+         //      else {
+         //         // Player not flagged, so update lineups (NoDh & Dh)...
+         //         cmd2.Parameters.Clear();
+         //         cmd2.Parameters.AddWithValue("@user", user);
+         //         cmd2.Parameters.AddWithValue("@team", team);
+         //         cmd2.Parameters.AddWithValue("@pid", player.PlayerId);
+         //         cmd2.Parameters.AddWithValue("@slotNoDh", player.Slot_NoDH);
+         //         cmd2.Parameters.AddWithValue("@posnNoDh", player.Posn_NoDH);
+         //         cmd2.Parameters.AddWithValue("@slotDh", player.Slot_DH);
+         //         cmd2.Parameters.AddWithValue("@posnDh", player.Posn_DH);
+         //         cmd2.ExecuteNonQuery();
+         //      }
+         //   }
+         //   sqlTran.Commit();
+         //   Debug.WriteLine("Both records were written to database.");
+         //}
+         //catch (Exception ex) {
+         //   Debug.WriteLine(ex.Message);
+
+         //   try {
+         //      sqlTran.Rollback();
+         //      throw ex;
+         //   }
+         //   catch (Exception exRollback) {
+         //      // Throws an InvalidOperationException if the connection 
+         //      // is closed or the transaction has already been rolled 
+         //      // back on the server.
+         //      Console.WriteLine(exRollback.Message);
+         //      throw exRollback;
+
+         //   }
+         //}
+
+      }
+
+
+      public static void DeleteTeam(string userName, string teamName) {
+      // ----------------------------------------------------------
+      // Task: Delete all records for this user & team, 
+      // from 1) UserTeams table, 2) UserPlayers table.
+      // ----------------------------------------------------------
+         using var ctx = new DB_133455_bcxbteambldrEntities();
+
+         UserTeam userTeam = ctx.UserTeams.Find(userName, teamName);
+         ctx.UserTeams.Remove(userTeam);
+
+         List<UserPlayer> roster = ctx.UserPlayers.Where(p => p.UserName == userName && p.TeamName == teamName).ToList();
+         foreach (var userPlayer in roster) {
+            ctx.UserPlayers.Remove(userPlayer);
          }
+
+         ctx.SaveChanges();
 
       }
 
@@ -377,6 +433,8 @@ namespace BcxbTeamBldr.DataLayer {
                on mp.PlayerId equals up.PlayerId
                select new CUserPlayer {
                   PlayerId = mp.PlayerId,
+                  UserName = user,
+                  TeamName = team,
                   PlayerName = mp.PlayerName,
                   PlayerType = mp.PlayerType,
                   FieldingString = mp.FieldingString,

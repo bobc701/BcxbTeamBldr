@@ -6,7 +6,7 @@ using BcxbTeamBldr.DataLayer;
 
 using DBAccess3;
 
-namespace BcxbTeamBldr.Models {
+namespace BcxbTeamBldr.ViewModels {
 
    public class TeamListVM {
 

@@ -140,9 +140,9 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="DataLayer\CUserTeam.cs" />
-    <Compile Include="Models\PlayerListVM.cs" />
-    <Compile Include="Models\TeamListVM.cs" />
-    <Compile Include="Models\UserPlayerListVM.cs" />
+    <Compile Include="ViewModels\PlayerListVM.cs" />
+    <Compile Include="ViewModels\TeamListVM.cs" />
+    <Compile Include="ViewModels\UserTeamVM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -154,7 +154,6 @@
     <Content Include="Views\Home\AddTeam.cshtml" />
     <Content Include="Views\Home\ErrorView.cshtml" />
     <Content Include="Views\Shared\LayoutOld.txt" />
-    <Content Include="Views\Home\EditTeam_obs.cshtml" />
     <None Include="Properties\PublishProfiles\FileSystemProfile.pubxml" />
     <None Include="Properties\PublishProfiles\FTPProfile.pubxml" />
     <Content Include="Views\Home\SearchPlayers.cshtml" />
@@ -164,7 +163,6 @@
     <Content Include="Views\Home\EditTeam.cshtml" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\DummyView.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -174,6 +172,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="BusinessLogic\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DBAccess3\DBAccess3.csproj">

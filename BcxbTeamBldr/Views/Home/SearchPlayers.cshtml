@@ -33,7 +33,7 @@
                         function (msg) {
                             //alert(msg);
                             if (msg != "ok") {
-                                alert('msg=' + msg);
+                                //alert('msg=' + msg);
                                 $('#errMsg').val(msg);
                             }
                             else {
@@ -41,7 +41,7 @@
                                 //alert("url=>" + url);
 
                                 url = bc.routePrefix + "Home/AddPlayerToTeam?user=' + user1 + '&team=' + team1 + '&pid=' + pid1;
-                                alert(`url=${url}`);
+                                //alert(`url=${url}`);
                                 window.location.href = url;
                             }
                         },
@@ -57,13 +57,13 @@
                 let crit1 = $('#txtName').val();
                 let user1 = $('#hdnUserName').val();
                 let team1 = $('#hdnTeamName').val();
-                alert('criteria=' + crit1 + ' bc.routePrefix=' + bc.routePrefix);
+                 //alert('criteria=' + crit1 + ' bc.routePrefix=' + bc.routePrefix);
 
                 $.ajax({
                     url: bc.routePrefix + 'Home/detailasjson', type: "GET", dataType: "json",
                     data: { crit: crit1 }, //This becomes the arg to the Action method.
                     success: function (data) {
-                        alert(JSON.stringify(data));
+                         //alert(JSON.stringify(data));
                         //alert(JSON.stringify({ test: 'hello', quant: 12 })); So can be any object not just Json!
                         //alert(data[0].PlayerName);
                         content = '<h3>Matching Players...</h3>';

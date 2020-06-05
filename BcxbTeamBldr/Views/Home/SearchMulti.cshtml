@@ -1,4 +1,4 @@
-﻿@model BcxbTeamBldr.Models.PlayerListVM
+﻿@model BcxbTeamBldr.ViewModels.PlayerListVM
 
 <div>
    <h2>Search for player to add to @Model.UserTeam.TeamName</h2>
@@ -101,7 +101,7 @@
                   critPosn: critPosn1
                },
                success: function (data) {
-                  alert(JSON.stringify(data));
+                  //alert(JSON.stringify(data));
                   //alert(JSON.stringify({ test: 'hello', quant: 12 })); So can be any object not just Json!
                   //alert(data[0].PlayerName);
                   content = '<h3>Matching Players...</h3>';

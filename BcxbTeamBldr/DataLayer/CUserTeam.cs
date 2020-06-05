@@ -18,6 +18,5 @@ namespace BcxbTeamBldr.DataLayer {
       public int NumPit { get; set; }
       public bool UsesDh { get; set; }
 
-
    }
 }

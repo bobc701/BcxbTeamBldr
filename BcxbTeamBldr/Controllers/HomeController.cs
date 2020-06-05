@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using BcxbTeamBldr.DataLayer;
-using BcxbTeamBldr.Models;
+using BcxbTeamBldr.ViewModels;
 
 using DBAccess3;
 
@@ -24,7 +24,7 @@ namespace BcxbTeamBldr.Controllers {
          //dbinfo = TempData.Peek["dbinfo"] as DbInfo;
          //TempData.Keep("dbinfo");
 
-         dbinfo = new DbInfo();
+         //dbinfo = new DbInfo();
       }
 
 
@@ -101,7 +101,7 @@ namespace BcxbTeamBldr.Controllers {
             }
             else {
                dbinfo.AddPlayerToTeam(user, team, pid);
-               var roster = new PlayerListVM(user, team, dbinfo);
+               var roster = new PlayerListVM(user, team, 1);
                return View("EditTeam", roster);
             }
          }
@@ -128,7 +128,7 @@ namespace BcxbTeamBldr.Controllers {
                   DbInfoEF.AddPlayerToTeam(user, team, pid);
                }
             }
-            var roster = new UserPlayerListVM(user, team);
+            var roster = new UserTeamVM(user, team);
             return View("EditTeam", roster);
          }
          catch (Exception ex) {
@@ -148,7 +148,7 @@ namespace BcxbTeamBldr.Controllers {
          try {
             ViewBag.Msg = ""; 
             dbinfo.RemovePlayerFromTeam(user, team, id);
-            var roster = new PlayerListVM(user, team, dbinfo);
+            var roster = new PlayerListVM(user, team, 1);
             return View("EditTeam", roster);
          }
          catch (Exception ex) {
@@ -164,14 +164,14 @@ namespace BcxbTeamBldr.Controllers {
 
       public ActionResult EditTeam(string user, string team) {
       // -----------------------------------------------------
-         var roster = new UserPlayerListVM(user, team);
+         var roster = new UserTeamVM(user, team);
 
          return View(roster);
       }
 
 
       [HttpPost]
-      public ActionResult EditTeam(UserPlayerListVM model) {
+      public ActionResult EditTeam(UserTeamVM model) {
       // -----------------------------------------------------
          try {
             string team = model.UserTeam.TeamName;
@@ -180,9 +180,11 @@ namespace BcxbTeamBldr.Controllers {
          // Loop over player list, 
          // If they are marked'Remove', shoot off a delete.
          // Otherwise, shoot off an update for each with lineups. 
-            dbinfo.UpdateLineups(user, team, model.Players);
+            DbInfoEF.UpdateLineups(user, team, model.Players);
 
-            return View("EditTeam", new UserPlayerListVM(user, team));
+            ModelState.Clear();
+
+            return View("EditTeam", new UserTeamVM(user, team));
 
          }
          catch (Exception ex) {
@@ -192,6 +194,23 @@ namespace BcxbTeamBldr.Controllers {
          }
 
       }
+
+
+      public ActionResult DeleteTeam(string userName, string teamName) {
+         // --------------------------------------------------------------
+         try {
+            DbInfoEF.DeleteTeam(userName, teamName);
+            return RedirectToAction("TeamList", new { userName = userName, teamName = teamName });
+         }
+         catch (Exception ex) {
+            ViewBag.ErrorMsg =
+               $"There was an error deleting the team in the database:\r\n{ex.Message}";
+            return View("ErrorView");
+         }
+
+
+      }
+
 
 
       //[HttpPost]
@@ -211,7 +230,7 @@ namespace BcxbTeamBldr.Controllers {
 
       public ActionResult EditLineup(string user, string team) {
          // -----------------------------------------------------
-         var roster = new UserPlayerListVM(user, team);
+         var roster = new UserTeamVM(user, team);
          return View(roster);
       }
 
@@ -237,7 +256,7 @@ namespace BcxbTeamBldr.Controllers {
 
 
       public ActionResult SearchMulti(string user, string team) {
-         //  ------------------------------------------
+      //  ------------------------------------------
          var model = new PlayerListVM(user, team, 0);
          return View(model);
       }
