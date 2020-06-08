@@ -63,7 +63,7 @@
                   let teamName = $(this).parent().parent().find(".team").val().trim().replace(" ", "%20");
                   let userName = $(this).parent().parent().find(".user").val().trim().replace(" ", "%20");
                   if (confirm(`OK to delete ${teamName}?`)) {
-                     let url = `/Home/DeleteTeam?userName=${userName}&amp;teamname=${teamName}`;
+                     let url = `/Home/DeleteTeam?userName=${userName}&teamName=${teamName}`;
                      alert("url=" + url);
                      window.location.href = url;
                   }

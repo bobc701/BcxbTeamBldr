@@ -200,7 +200,7 @@ namespace BcxbTeamBldr.Controllers {
          // --------------------------------------------------------------
          try {
             DbInfoEF.DeleteTeam(userName, teamName);
-            return RedirectToAction("TeamList", new { userName = userName, teamName = teamName });
+            return RedirectToAction("TeamList", new { user = userName });
          }
          catch (Exception ex) {
             ViewBag.ErrorMsg =
