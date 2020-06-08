@@ -117,7 +117,7 @@ namespace BcxbTeamBldr.DataLayer {
       // ----------------------------------------------------------
          bool exists;
          using (var ctx = new DBAccess3.DB_133455_bcxbteambldrEntities()) {
-            exists = ctx.Users.Count(u => u.UserName == user && u.pwd == pwd) > 0;
+            exists = ctx.Users.Count(u => u.UserName.ToLower() == user.ToLower() && u.pwd == pwd) > 0;
          }
          return exists ? 0 : 1;
 

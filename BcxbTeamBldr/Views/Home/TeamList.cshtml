@@ -56,10 +56,10 @@
             $(".DeleteLink").on("click",
                function () {
                   alert("In DeleteLink handler");
-                  // 'this' is the <a> tag...
-                  // parent() is the enclosing <td>...
-                  // parent() (again) is the <tr>, so that the hidden .team & .user are within
-                  // scope of the .find().
+               // 'this' is the <a> tag...
+               // parent() is the enclosing <td>...
+               // parent() (again) is the <tr>, so that the hidden .team & .user are within
+               // scope of the .find().
                   let teamName = $(this).parent().parent().find(".team").val().trim().replace(" ", "%20");
                   let userName = $(this).parent().parent().find(".user").val().trim().replace(" ", "%20");
                   if (confirm(`OK to delete ${teamName}?`)) {
@@ -67,7 +67,7 @@
                      alert("url=" + url);
                      window.location.href = url;
                   }
-               });
+               })
          }
       );
 
