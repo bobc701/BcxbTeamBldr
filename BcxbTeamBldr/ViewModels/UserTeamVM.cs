@@ -47,9 +47,8 @@ namespace BcxbTeamBldr.ViewModels {
 
          /* ------------------------------------------------------------
           * Rules:
-          * Must have 10 to 15 'B' players
-          * Must have 1 to 10 'P' player
-          * Must have 25 or less total players
+          * Must have 10 to 25 total players
+          * Must have 1 to 11 'P' player
           * Slot_NoDH must have 1..9
           * Posn_NoDH must have 1..9, same as Slot_DH
           * Slot_DH must have 1..9
@@ -62,15 +61,31 @@ namespace BcxbTeamBldr.ViewModels {
             int totAll = totB + totP;
             string msg = "";
 
-            //var slot = new int[10] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-            //int[] posn = new int[10] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-            //foreach (var p in Players) {
-            //   if (p.Slot_NoDH != 0 && p.Posn_NoDH == 0) { msg = $"{p.PlayerType} has slot but no position"; break; }
-            //   if (p.Slot_NoDH == 0 && p.Posn_NoDH != 0) { msg = $"{p.PlayerType} has position but no slot"; break; }
-            //   slot[p.Slot_NoDH]++;
-            //   posn[p.Posn_DH]++;
+            if (totB + totP == 0) msg = "Team has no players";
+            if (totB + totP > 25) msg = "Team must have 25 or fewer oalyers");
+            if (totP > 11) msg = "Team must have 11 or fewer pitchers";
 
-            //}
+            if (msg != "") return msg;
+
+            int[] slot_NoDH = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            int[] posn_NoDH = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            int[] slot_DH =   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            int[] posn_DH =   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+            foreach (var p in Players) {
+               if (p.Slot_NoDH != 0 && p.Posn_NoDH == 0) { msg = $"{p.PlayerName} has slot but no position"; break; }
+               if (p.Slot_NoDH == 0 && p.Posn_NoDH != 0) { msg = $"{p.PlayerName} has position but no slot"; break; }
+               if(p.Slot_DH == )
+
+               slot[p.Slot_NoDH]++;
+               posn[p.Posn_NoDH]++;
+               slot[p.Slot_DH]++;
+               posn[p.Posn_DH]++;
+
+
+            }
+
+            for (int i = 1; i++; i<=9) if ((slot_NoDH[i] == 0)
 
             return true;
 
