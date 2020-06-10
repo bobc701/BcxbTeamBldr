@@ -1,6 +1,7 @@
 ﻿@model BcxbTeamBldr.ViewModels.TeamListVM
 
 <h2>Team List for @Model.UserName.Split(new char[] { '@' })[0]</h2>
+
 <div>
    @if (Model.UserTeamList.Count == 0) {
       <div style="color:red;">

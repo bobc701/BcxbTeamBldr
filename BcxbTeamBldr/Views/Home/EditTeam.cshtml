@@ -3,6 +3,7 @@
 @{
    string teamName = @Model.UserTeam.TeamName;
    string userName = @Model.UserTeam.UserName;
+   string readyState = Model.Ready;
 }
 @using (Html.BeginForm("EditTeam", "Home", FormMethod.Post)) {
 
@@ -10,6 +11,8 @@
    <h3>
       User: @Html.TextBoxFor(m => m.UserTeam.UserName, new { @readonly = "readonly" })
       <br />Team: @Html.TextBoxFor(m => m.UserTeam.TeamName, new { @readonly = "readonly" })
+      <br>/>Ready: @Html.CheckBoxFor(m => m.Ready == "") @Html.DisplayFor(m => m.Ready == "" ? "Ready" : m.Ready)
+
    </h3>
 
    <div class="bordered-div1">
