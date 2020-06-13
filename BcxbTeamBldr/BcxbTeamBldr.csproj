@@ -116,6 +116,8 @@
     <None Include="Properties\PublishProfiles\BcxbTeamBldrApp - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
+    <Content Include="Images\checkBox_checked2.png" />
+    <Content Include="Images\checkBox_unchecked2.png" />
     <Content Include="Scripts\bc-global.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -173,7 +175,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="BusinessLogic\" />
-    <Folder Include="Images\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DBAccess3\DBAccess3.csproj">

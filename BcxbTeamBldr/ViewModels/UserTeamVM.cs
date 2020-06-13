@@ -60,6 +60,7 @@ namespace BcxbTeamBldr.ViewModels {
             string msg = "";
 
          // Check totals of players...
+            if (totB + totP == 0) return (false, "No players yet!");
             if (totB + totP < 11) return (false, "Team must have at least 11 players (including 1 pitcher)");
             if (totB + totP > 25) return (false, "Team can't have more than 25 players");
             if (totB < 10) return (false, "Team must have at least 10 position players plus DH's");
