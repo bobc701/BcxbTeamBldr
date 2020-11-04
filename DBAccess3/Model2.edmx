@@ -1,0 +1,277 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="DB_133455_mlbhistoryModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="UserPlayers">
+          <Key>
+            <PropertyRef Name="UserName" />
+            <PropertyRef Name="TeamName" />
+            <PropertyRef Name="ZPlayerID" />
+            <PropertyRef Name="yearID" />
+          </Key>
+          <Property Name="UserName" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="TeamName" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="ZPlayerID" Type="int" Nullable="false" />
+          <Property Name="yearID" Type="int" Nullable="false" />
+          <Property Name="playerID" Type="nvarchar" MaxLength="10" />
+          <Property Name="Slot_NoDH" Type="int" Nullable="false" />
+          <Property Name="Slot_DH" Type="int" Nullable="false" />
+          <Property Name="Posn_NoDH" Type="int" Nullable="false" />
+          <Property Name="Posn_DH" Type="int" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'DB_133455_mlbhistory.dbo.Users' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="Users">
+          <Key>
+            <PropertyRef Name="UserName" />
+            <PropertyRef Name="pwd" />
+          </Key>
+          <Property Name="UserName" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="pwd" Type="varchar" MaxLength="12" Nullable="false" />
+        </EntityType>
+        <EntityType Name="UserTeams">
+          <Key>
+            <PropertyRef Name="UserName" />
+            <PropertyRef Name="TeamName" />
+          </Key>
+          <Property Name="UserName" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="TeamName" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="NumPos" Type="int" />
+          <Property Name="NumPit" Type="int" />
+          <Property Name="UsesDh" Type="bit" Nullable="false" />
+          <Property Name="IsComplete" Type="bit" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'DB_133455_mlbhistory.dbo.MultiSearchView' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="MultiSearchView">
+          <Key>
+            <PropertyRef Name="ZPlayerId" />
+            <PropertyRef Name="playerID" />
+            <PropertyRef Name="yearID" />
+            <PropertyRef Name="teamID" />
+            <PropertyRef Name="lgID" />
+            <PropertyRef Name="G_all" />
+          </Key>
+          <Property Name="nameLast" Type="nvarchar" MaxLength="50" />
+          <Property Name="ZPlayerId" Type="int" Nullable="false" />
+          <Property Name="playerID" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="yearID" Type="int" Nullable="false" />
+          <Property Name="teamID" Type="nvarchar" MaxLength="6" Nullable="false" />
+          <Property Name="lgID" Type="nvarchar" MaxLength="3" Nullable="false" />
+          <Property Name="PAEst" Type="int" />
+          <Property Name="BFP" Type="int" />
+          <Property Name="G_c" Type="int" />
+          <Property Name="G_1b" Type="int" />
+          <Property Name="G_2b" Type="int" />
+          <Property Name="G_3b" Type="int" />
+          <Property Name="G_ss" Type="int" />
+          <Property Name="G_lf" Type="int" />
+          <Property Name="G_cf" Type="int" />
+          <Property Name="G_rf" Type="int" />
+          <Property Name="G_of" Type="int" />
+          <Property Name="G_p" Type="int" />
+          <Property Name="G_all" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityContainer Name="DB_133455_mlbhistoryModelStoreContainer">
+          <EntitySet Name="UserPlayers" EntityType="Self.UserPlayers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserTeams" EntityType="Self.UserTeams" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Users" EntityType="Self.Users" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [Users].[UserName] AS [UserName], 
+    [Users].[pwd] AS [pwd]
+    FROM [dbo].[Users] AS [Users]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="MultiSearchView" EntityType="Self.MultiSearchView" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [MultiSearchView].[nameLast] AS [nameLast], 
+    [MultiSearchView].[ZPlayerId] AS [ZPlayerId], 
+    [MultiSearchView].[playerID] AS [playerID], 
+    [MultiSearchView].[yearID] AS [yearID], 
+    [MultiSearchView].[teamID] AS [teamID], 
+    [MultiSearchView].[lgID] AS [lgID], 
+    [MultiSearchView].[PAEst] AS [PAEst], 
+    [MultiSearchView].[BFP] AS [BFP], 
+    [MultiSearchView].[G_c] AS [G_c], 
+    [MultiSearchView].[G_1b] AS [G_1b], 
+    [MultiSearchView].[G_2b] AS [G_2b], 
+    [MultiSearchView].[G_3b] AS [G_3b], 
+    [MultiSearchView].[G_ss] AS [G_ss], 
+    [MultiSearchView].[G_lf] AS [G_lf], 
+    [MultiSearchView].[G_cf] AS [G_cf], 
+    [MultiSearchView].[G_rf] AS [G_rf], 
+    [MultiSearchView].[G_of] AS [G_of], 
+    [MultiSearchView].[G_p] AS [G_p], 
+    [MultiSearchView].[G_all] AS [G_all]
+    FROM [dbo].[MultiSearchView] AS [MultiSearchView]</DefiningQuery>
+          </EntitySet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="DB_133455_mlbhistoryModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="UserPlayer">
+          <Key>
+            <PropertyRef Name="UserName" />
+            <PropertyRef Name="TeamName" />
+            <PropertyRef Name="ZPlayerID" />
+            <PropertyRef Name="yearID" />
+          </Key>
+          <Property Name="UserName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="TeamName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ZPlayerID" Type="Int32" Nullable="false" />
+          <Property Name="yearID" Type="Int32" Nullable="false" />
+          <Property Name="playerID" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="Slot_NoDH" Type="Int32" Nullable="false" />
+          <Property Name="Slot_DH" Type="Int32" Nullable="false" />
+          <Property Name="Posn_NoDH" Type="Int32" Nullable="false" />
+          <Property Name="Posn_DH" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="UserTeam">
+          <Key>
+            <PropertyRef Name="UserName" />
+            <PropertyRef Name="TeamName" />
+          </Key>
+          <Property Name="UserName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="TeamName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="NumPos" Type="Int32" />
+          <Property Name="NumPit" Type="Int32" />
+          <Property Name="UsesDh" Type="Boolean" Nullable="false" />
+          <Property Name="IsComplete" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="UserName" />
+            <PropertyRef Name="pwd" />
+          </Key>
+          <Property Name="UserName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="pwd" Type="String" MaxLength="12" FixedLength="false" Unicode="false" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MultiSearchView">
+          <Key>
+            <PropertyRef Name="ZPlayerId" />
+            <PropertyRef Name="playerID" />
+            <PropertyRef Name="yearID" />
+            <PropertyRef Name="teamID" />
+            <PropertyRef Name="lgID" />
+            <PropertyRef Name="G_all" />
+          </Key>
+          <Property Name="nameLast" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ZPlayerId" Type="Int32" Nullable="false" />
+          <Property Name="playerID" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="yearID" Type="Int32" Nullable="false" />
+          <Property Name="teamID" Type="String" MaxLength="6" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="lgID" Type="String" MaxLength="3" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="PAEst" Type="Int32" />
+          <Property Name="BFP" Type="Int32" />
+          <Property Name="G_c" Type="Int32" />
+          <Property Name="G_1b" Type="Int32" />
+          <Property Name="G_2b" Type="Int32" />
+          <Property Name="G_3b" Type="Int32" />
+          <Property Name="G_ss" Type="Int32" />
+          <Property Name="G_lf" Type="Int32" />
+          <Property Name="G_cf" Type="Int32" />
+          <Property Name="G_rf" Type="Int32" />
+          <Property Name="G_of" Type="Int32" />
+          <Property Name="G_p" Type="Int32" />
+          <Property Name="G_all" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityContainer Name="DB_133455_mlbhistoryEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="UserPlayers" EntityType="Self.UserPlayer" />
+          <EntitySet Name="UserTeams" EntityType="Self.UserTeam" />
+          <EntitySet Name="Users" EntityType="Self.User" />
+          <EntitySet Name="MultiSearchViews" EntityType="Self.MultiSearchView" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="DB_133455_mlbhistoryModelStoreContainer" CdmEntityContainer="DB_133455_mlbhistoryEntities">
+          <EntitySetMapping Name="UserPlayers">
+            <EntityTypeMapping TypeName="DB_133455_mlbhistoryModel.UserPlayer">
+              <MappingFragment StoreEntitySet="UserPlayers">
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="TeamName" ColumnName="TeamName" />
+                <ScalarProperty Name="ZPlayerID" ColumnName="ZPlayerID" />
+                <ScalarProperty Name="yearID" ColumnName="yearID" />
+                <ScalarProperty Name="playerID" ColumnName="playerID" />
+                <ScalarProperty Name="Slot_NoDH" ColumnName="Slot_NoDH" />
+                <ScalarProperty Name="Slot_DH" ColumnName="Slot_DH" />
+                <ScalarProperty Name="Posn_NoDH" ColumnName="Posn_NoDH" />
+                <ScalarProperty Name="Posn_DH" ColumnName="Posn_DH" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserTeams">
+            <EntityTypeMapping TypeName="DB_133455_mlbhistoryModel.UserTeam">
+              <MappingFragment StoreEntitySet="UserTeams">
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="TeamName" ColumnName="TeamName" />
+                <ScalarProperty Name="NumPos" ColumnName="NumPos" />
+                <ScalarProperty Name="NumPit" ColumnName="NumPit" />
+                <ScalarProperty Name="UsesDh" ColumnName="UsesDh" />
+                <ScalarProperty Name="IsComplete" ColumnName="IsComplete" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="DB_133455_mlbhistoryModel.User">
+              <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="pwd" ColumnName="pwd" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MultiSearchViews">
+            <EntityTypeMapping TypeName="DB_133455_mlbhistoryModel.MultiSearchView">
+              <MappingFragment StoreEntitySet="MultiSearchView">
+                <ScalarProperty Name="nameLast" ColumnName="nameLast" />
+                <ScalarProperty Name="ZPlayerId" ColumnName="ZPlayerId" />
+                <ScalarProperty Name="playerID" ColumnName="playerID" />
+                <ScalarProperty Name="yearID" ColumnName="yearID" />
+                <ScalarProperty Name="teamID" ColumnName="teamID" />
+                <ScalarProperty Name="lgID" ColumnName="lgID" />
+                <ScalarProperty Name="PAEst" ColumnName="PAEst" />
+                <ScalarProperty Name="BFP" ColumnName="BFP" />
+                <ScalarProperty Name="G_c" ColumnName="G_c" />
+                <ScalarProperty Name="G_1b" ColumnName="G_1b" />
+                <ScalarProperty Name="G_2b" ColumnName="G_2b" />
+                <ScalarProperty Name="G_3b" ColumnName="G_3b" />
+                <ScalarProperty Name="G_ss" ColumnName="G_ss" />
+                <ScalarProperty Name="G_lf" ColumnName="G_lf" />
+                <ScalarProperty Name="G_cf" ColumnName="G_cf" />
+                <ScalarProperty Name="G_rf" ColumnName="G_rf" />
+                <ScalarProperty Name="G_of" ColumnName="G_of" />
+                <ScalarProperty Name="G_p" ColumnName="G_p" />
+                <ScalarProperty Name="G_all" ColumnName="G_all" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

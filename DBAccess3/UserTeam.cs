@@ -16,8 +16,9 @@ namespace DBAccess3
     {
         public string UserName { get; set; }
         public string TeamName { get; set; }
-        public int NumPos { get; set; }
-        public int NumPit { get; set; }
+        public Nullable<int> NumPos { get; set; }
+        public Nullable<int> NumPit { get; set; }
         public bool UsesDh { get; set; }
+        public bool IsComplete { get; set; }
     }
 }

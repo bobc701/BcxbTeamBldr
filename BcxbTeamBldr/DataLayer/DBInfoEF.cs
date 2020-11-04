@@ -31,7 +31,7 @@ namespace BcxbTeamBldr.DataLayer {
          // Purpose: Retrieve from database, a list of all teams for this user.
 
          List<UserTeam> list;
-         using (var ctx = new DB_133455_bcxbteambldrEntities()) {
+         using (var ctx = new DB_133455_mlbhistoryEntities()) {
             list = ctx.UserTeams.Where(t => t.UserName == user).ToList();
             list = (from t in ctx.UserTeams where t.UserName == user select t).ToList();
          }
@@ -63,7 +63,7 @@ namespace BcxbTeamBldr.DataLayer {
       // ---------------------------------------------------------------------
 
          var uTeam = new UserTeam { UserName = user, TeamName = team, UsesDh = dh };
-         using (var ctx = new DBAccess3.DB_133455_bcxbteambldrEntities()) {
+         using (var ctx = new DBAccess3.DB_133455_mlbhistoryEntities()) {
             ctx.UserTeams.Add(uTeam);
             ctx.SaveChanges();
          }
@@ -81,7 +81,7 @@ namespace BcxbTeamBldr.DataLayer {
       public static int AddNewUser(string user, string pwd) {
       // ----------------------------------------------------------
 
-         using (var ctx = new DBAccess3.DB_133455_bcxbteambldrEntities()) {
+         using (var ctx = new DBAccess3.DB_133455_mlbhistoryEntities()) {
             bool exists = ctx.Users.Count(u => u.UserName == user) > 0;
             if (exists)
                return 1;
@@ -116,7 +116,7 @@ namespace BcxbTeamBldr.DataLayer {
       public static int Login(string user, string pwd) {
       // ----------------------------------------------------------
          bool exists;
-         using (var ctx = new DBAccess3.DB_133455_bcxbteambldrEntities()) {
+         using (var ctx = new DBAccess3.DB_133455_mlbhistoryEntities()) {
             exists = ctx.Users.Count(u => u.UserName.ToLower() == user.ToLower() && u.pwd == pwd) > 0;
          }
          return exists ? 0 : 1;
@@ -149,7 +149,7 @@ namespace BcxbTeamBldr.DataLayer {
       // Task: Add one new record to UserPlayer
       // Note: We've already validated hat player is not already on team.
 
-         using (var ctx = new DBAccess3.DB_133455_bcxbteambldrEntities()) {
+         using (var ctx = new DBAccess3.DB_133455_mlbhistoryEntities()) {
 
             var userPlayer = new UserPlayer { PlayerId = id, UserName = user, TeamName = team };
             ctx.UserPlayers.Add(userPlayer);
@@ -172,7 +172,7 @@ namespace BcxbTeamBldr.DataLayer {
          // UserPlayers. For the others, update their lineup fields (even if no change - we don't know!)
          // ----------------------------------------------------------------------------
 
-         using var ctx = new DBAccess3.DB_133455_bcxbteambldrEntities();
+         using var ctx = new DBAccess3.DB_133455_mlbhistoryEntities();
          UserPlayer userPlayer;
          foreach (CUserPlayer player in roster) {
 
@@ -265,7 +265,7 @@ namespace BcxbTeamBldr.DataLayer {
       // Task: Delete all records for this user & team, 
       // from 1) UserTeams table, 2) UserPlayers table.
       // ----------------------------------------------------------
-         using var ctx = new DB_133455_bcxbteambldrEntities();
+         using var ctx = new DB_133455_mlbhistoryEntities();
 
          UserTeam userTeam = ctx.UserTeams.Find(userName, teamName);
          ctx.UserTeams.Remove(userTeam);
@@ -282,7 +282,7 @@ namespace BcxbTeamBldr.DataLayer {
 
       public void RemovePlayerFromTeam(string user, string team, string id) {
          // --------------------------------------------------------------------
-         using (var ctx = new DB_133455_bcxbteambldrEntities()) {
+         using (var ctx = new DB_133455_mlbhistoryEntities()) {
             UserPlayer userPlayer = ctx.UserPlayers.FirstOrDefault(
                p => p.UserName == user && p.TeamName == team && p.PlayerId == id);
             ctx.UserPlayers.Remove(userPlayer);
@@ -310,7 +310,7 @@ namespace BcxbTeamBldr.DataLayer {
 
       public static bool TeamNameExists(string user, string team) {
          // ------------------------------------------------------------------
-         using (var ctx = new DB_133455_bcxbteambldrEntities()) {
+         using (var ctx = new DB_133455_mlbhistoryEntities()) {
             UserTeam team1 = ctx.UserTeams.FirstOrDefault(t => t.UserName == user && t.TeamName == team);
             return (team1 != null);
 
@@ -328,7 +328,7 @@ namespace BcxbTeamBldr.DataLayer {
          // Task: Just return a list of Player ID's for players on team
 
          List<string> pids;
-         using (var ctx = new DB_133455_bcxbteambldrEntities()) {
+         using (var ctx = new DB_133455_mlbhistoryEntities()) {
             pids = ctx.UserPlayers
                .Where(p => p.UserName == user && p.TeamName == team)
                .Select(p => p.PlayerId)
@@ -349,7 +349,7 @@ namespace BcxbTeamBldr.DataLayer {
          //  JOIN MlbPlayers mp ON mp.PlayerId = up.PlayerId
          //  WHERE up.UserName = @user AND up.TeamName = @team
 
-         using (var ctx = new DB_133455_bcxbteambldrEntities()) {
+         using (var ctx = new DB_133455_mlbhistoryEntities()) {
 
             List<CMlbPlayer> mps2 =
               (from mp in ctx.MlbPlayers
@@ -426,7 +426,7 @@ namespace BcxbTeamBldr.DataLayer {
          //SELECT up.PlayerId, mp.PlayerName, mp.MlbTeam, mp.MlbLeague, mp.Year, mp.FieldingString, mp.PlayerType,
          // mp.Stats, mp.LgStats, up.Slot_NoDH, up.Posn_NoDH, up.Slot_DH, up.Posn_DH
 
-         using (var ctx = new DB_133455_bcxbteambldrEntities()) {
+         using (var ctx = new DB_133455_mlbhistoryEntities()) {
             List<CUserPlayer> mps2 =
               (from mp in ctx.MlbPlayers
                join up in ctx.UserPlayers.Where(up => up.UserName == user && up.TeamName == team)
@@ -524,14 +524,22 @@ namespace BcxbTeamBldr.DataLayer {
       // Check for no selection, return empty list if so...
          if (ix == 0 && year == 0 && critName == "All" && critTeam == "All") return list2;
 
-         using (var ctx = new DBAccess3.DB_133455_bcxbteambldrEntities()) {
+         using (var ctx = new DBAccess3.DB_133455_mlbhistoryEntities()) {
+
+            list1 =
+               ctx.MultiSearchViews
+                  .Where(p => critName == "All" || p.nameLast.Contains(critName))
+                  .Where(p => critTeam == "All" || p.teamID == critTeam)
+                  .Where(p => year == 0 || p.yearID == year)
+                  .ToList();
+
 
             if (ix > 0 && ix < 10) // Filtereing on position 1..9...
                list1 =
-                  ctx.MlbPlayers
-                     .Where(p => critName == "All" || p.PlayerName.Contains(critName))
-                     .Where(p => critTeam == "All" || p.MlbTeam.Contains(critTeam))
-                     .Where(p => year == 0 || p.Year == year)
+                  ctx.MultiSearchViews
+                     .Where(p => critName == "All" || p.nameLast.Contains(critName))
+                     .Where(p => critTeam == "All" || p.teamID == critTeam)
+                     .Where(p => year == 0 || p.yearID == year)
                      .Where(p => p.FieldingString.Substring(ix-1, 1) != "-") //Can't use index [] with LinqToEntities
                      .ToList();
 

@@ -16,7 +16,9 @@ namespace DBAccess3
     {
         public string UserName { get; set; }
         public string TeamName { get; set; }
-        public string PlayerId { get; set; }
+        public int ZPlayerID { get; set; }
+        public int yearID { get; set; }
+        public string playerID { get; set; }
         public int Slot_NoDH { get; set; }
         public int Slot_DH { get; set; }
         public int Posn_NoDH { get; set; }
