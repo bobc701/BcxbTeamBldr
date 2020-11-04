@@ -1,3 +1,7 @@
+10/03'20
+branch: b6 (from b5)
+Start changes for using all years and mlbhistory
+
 05/22'20
 Working on pages with syling using BS + site.css
 
