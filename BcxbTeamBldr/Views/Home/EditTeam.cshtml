@@ -190,11 +190,11 @@
 
                <div>
                   <p /><p />
-                  @*@Html.ActionLink(
+                  @Html.ActionLink(
                      "Add players", "SearchMulti",
                      new { user = userName, team = teamName },
                      new { id = "btnAddPlayers0", @class = "btn button1" }
-                  )*@
+                  )
 
                   <button type="button" id="btnAddPlayers" class="btn button1">Add players</button>
 
@@ -228,7 +228,7 @@
                            let user1 = $("#hdnUserName").val().trim().replace(" ", "%20");;
                            let team1 = $("#hdnTeamName").val().trim().replace(" ", "%20");;
                            let url = bc.routePrefix + `Home/SearchMulti?user=${user1}&team=${team1}`;
-                           //alert('url=' + url);
+                           alert('url=' + url);
                            window.location.href = url;
                         });
 

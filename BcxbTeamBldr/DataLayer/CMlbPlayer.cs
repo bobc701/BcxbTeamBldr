@@ -9,14 +9,15 @@ namespace BcxbTeamBldr.DataLayer {
    public class CMlbPlayer {
 
       public string PlayerId{ get; set; }
+      public int ZPlayerID { get; set; }
       public string PlayerName { get; set; }
-      public string MlbTeam { get; set; }
+      public string MlbTeam { get; set; }  // like: 'New York Yankees'
       public string MlbLeague { get; set; }
       public int Year { get; set; }
       public string FieldingString { get; set; }
-      public char PlayerType { get; set; }
-      public string Ver { get; set; }
-      public string Stats { get; set; }
+      public char PlayerType { get; set; }  // 'B' or 'P'
+      //ublic string Ver { get; set; }
+      //public string Stats { get; set; }
 
       public bool Selected { get; set; } = false;  // For use with SearchMulti view
 

@@ -12,17 +12,15 @@ namespace DBAccess3
     using System;
     using System.Collections.Generic;
     
-    public partial class UserPlayer
+    public partial class ZTeam
     {
-        public string UserName { get; set; }
-        public string TeamName { get; set; }
-        public int ZPlayerID { get; set; }
         public int yearID { get; set; }
-        public string playerID { get; set; }
-        public int Slot_NoDH { get; set; }
-        public int Slot_DH { get; set; }
-        public int Posn_NoDH { get; set; }
-        public int Posn_DH { get; set; }
         public string teamID { get; set; }
+        public string ZTeam1 { get; set; }
+        public string lgID { get; set; }
+        public string LineName { get; set; }
+        public string City { get; set; }
+        public string NickName { get; set; }
+        public bool UsesDH { get; set; }
     }
 }

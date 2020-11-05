@@ -4,19 +4,21 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="DB_133455_mlbhistoryModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="DB_133455_mlbhistoryModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="UserPlayers">
           <Key>
             <PropertyRef Name="UserName" />
             <PropertyRef Name="TeamName" />
-            <PropertyRef Name="ZPlayerID" />
             <PropertyRef Name="yearID" />
+            <PropertyRef Name="teamID" />
+            <PropertyRef Name="playerID" />
           </Key>
           <Property Name="UserName" Type="varchar" MaxLength="30" Nullable="false" />
           <Property Name="TeamName" Type="varchar" MaxLength="30" Nullable="false" />
           <Property Name="ZPlayerID" Type="int" Nullable="false" />
           <Property Name="yearID" Type="int" Nullable="false" />
-          <Property Name="playerID" Type="nvarchar" MaxLength="10" />
+          <Property Name="teamID" Type="nvarchar" MaxLength="6" Nullable="false" />
+          <Property Name="playerID" Type="nvarchar" MaxLength="10" Nullable="false" />
           <Property Name="Slot_NoDH" Type="int" Nullable="false" />
           <Property Name="Slot_DH" Type="int" Nullable="false" />
           <Property Name="Posn_NoDH" Type="int" Nullable="false" />
@@ -44,6 +46,20 @@ warning 6002: The table/view 'DB_133455_mlbhistory.dbo.Users' does not have a pr
           <Property Name="UsesDh" Type="bit" Nullable="false" />
           <Property Name="IsComplete" Type="bit" Nullable="false" />
         </EntityType>
+        <EntityType Name="ZTeams">
+          <Key>
+            <PropertyRef Name="yearID" />
+            <PropertyRef Name="teamID" />
+          </Key>
+          <Property Name="yearID" Type="int" Nullable="false" />
+          <Property Name="teamID" Type="varchar" MaxLength="6" Nullable="false" />
+          <Property Name="ZTeam" Type="varchar" MaxLength="6" Nullable="false" />
+          <Property Name="lgID" Type="varchar" MaxLength="6" Nullable="false" />
+          <Property Name="LineName" Type="varchar" MaxLength="6" Nullable="false" />
+          <Property Name="City" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="NickName" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="UsesDH" Type="bit" Nullable="false" />
+        </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'DB_133455_mlbhistory.dbo.MultiSearchView' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="MultiSearchView">
@@ -52,6 +68,7 @@ warning 6002: The table/view 'DB_133455_mlbhistory.dbo.MultiSearchView' does not
             <PropertyRef Name="playerID" />
             <PropertyRef Name="yearID" />
             <PropertyRef Name="teamID" />
+            <PropertyRef Name="teamName" />
             <PropertyRef Name="lgID" />
             <PropertyRef Name="G_all" />
           </Key>
@@ -60,6 +77,7 @@ warning 6002: The table/view 'DB_133455_mlbhistory.dbo.MultiSearchView' does not
           <Property Name="playerID" Type="nvarchar" MaxLength="10" Nullable="false" />
           <Property Name="yearID" Type="int" Nullable="false" />
           <Property Name="teamID" Type="nvarchar" MaxLength="6" Nullable="false" />
+          <Property Name="teamName" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="lgID" Type="nvarchar" MaxLength="3" Nullable="false" />
           <Property Name="PAEst" Type="int" />
           <Property Name="BFP" Type="int" />
@@ -78,6 +96,7 @@ warning 6002: The table/view 'DB_133455_mlbhistory.dbo.MultiSearchView' does not
         <EntityContainer Name="DB_133455_mlbhistoryModelStoreContainer">
           <EntitySet Name="UserPlayers" EntityType="Self.UserPlayers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserTeams" EntityType="Self.UserTeams" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ZTeams" EntityType="Self.ZTeams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Users" EntityType="Self.Users" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [Users].[UserName] AS [UserName], 
@@ -91,6 +110,7 @@ warning 6002: The table/view 'DB_133455_mlbhistory.dbo.MultiSearchView' does not
     [MultiSearchView].[playerID] AS [playerID], 
     [MultiSearchView].[yearID] AS [yearID], 
     [MultiSearchView].[teamID] AS [teamID], 
+    [MultiSearchView].[teamName] AS [teamName], 
     [MultiSearchView].[lgID] AS [lgID], 
     [MultiSearchView].[PAEst] AS [PAEst], 
     [MultiSearchView].[BFP] AS [BFP], 
@@ -108,8 +128,7 @@ warning 6002: The table/view 'DB_133455_mlbhistory.dbo.MultiSearchView' does not
     FROM [dbo].[MultiSearchView] AS [MultiSearchView]</DefiningQuery>
           </EntitySet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="DB_133455_mlbhistoryModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -119,16 +138,18 @@ warning 6002: The table/view 'DB_133455_mlbhistory.dbo.MultiSearchView' does not
             <PropertyRef Name="TeamName" />
             <PropertyRef Name="ZPlayerID" />
             <PropertyRef Name="yearID" />
+            <PropertyRef Name="teamID" />
           </Key>
           <Property Name="UserName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="TeamName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="ZPlayerID" Type="Int32" Nullable="false" />
           <Property Name="yearID" Type="Int32" Nullable="false" />
-          <Property Name="playerID" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="playerID" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Slot_NoDH" Type="Int32" Nullable="false" />
           <Property Name="Slot_DH" Type="Int32" Nullable="false" />
           <Property Name="Posn_NoDH" Type="Int32" Nullable="false" />
           <Property Name="Posn_DH" Type="Int32" Nullable="false" />
+          <Property Name="teamID" Type="String" Nullable="false" MaxLength="6" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="UserTeam">
           <Key>
@@ -158,6 +179,7 @@ warning 6002: The table/view 'DB_133455_mlbhistory.dbo.MultiSearchView' does not
             <PropertyRef Name="teamID" />
             <PropertyRef Name="lgID" />
             <PropertyRef Name="G_all" />
+            <PropertyRef Name="teamName" />
           </Key>
           <Property Name="nameLast" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="ZPlayerId" Type="Int32" Nullable="false" />
@@ -178,13 +200,29 @@ warning 6002: The table/view 'DB_133455_mlbhistory.dbo.MultiSearchView' does not
           <Property Name="G_of" Type="Int32" />
           <Property Name="G_p" Type="Int32" />
           <Property Name="G_all" Type="Int32" Nullable="false" />
+          <Property Name="teamName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityContainer Name="DB_133455_mlbhistoryEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="UserPlayers" EntityType="Self.UserPlayer" />
           <EntitySet Name="UserTeams" EntityType="Self.UserTeam" />
           <EntitySet Name="Users" EntityType="Self.User" />
           <EntitySet Name="MultiSearchViews" EntityType="Self.MultiSearchView" />
+          <EntitySet Name="ZTeams" EntityType="DB_133455_mlbhistoryModel.ZTeam" />
         </EntityContainer>
+        <EntityType Name="ZTeam">
+          <Key>
+            <PropertyRef Name="yearID" />
+            <PropertyRef Name="teamID" />
+          </Key>
+          <Property Name="yearID" Type="Int32" Nullable="false" />
+          <Property Name="teamID" Type="String" Nullable="false" MaxLength="6" FixedLength="false" Unicode="false" />
+          <Property Name="ZTeam1" Type="String" Nullable="false" MaxLength="6" FixedLength="false" Unicode="false" />
+          <Property Name="lgID" Type="String" Nullable="false" MaxLength="6" FixedLength="false" Unicode="false" />
+          <Property Name="LineName" Type="String" Nullable="false" MaxLength="6" FixedLength="false" Unicode="false" />
+          <Property Name="City" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="NickName" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="UsesDH" Type="Boolean" Nullable="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -194,6 +232,7 @@ warning 6002: The table/view 'DB_133455_mlbhistory.dbo.MultiSearchView' does not
           <EntitySetMapping Name="UserPlayers">
             <EntityTypeMapping TypeName="DB_133455_mlbhistoryModel.UserPlayer">
               <MappingFragment StoreEntitySet="UserPlayers">
+                <ScalarProperty Name="teamID" ColumnName="teamID" />
                 <ScalarProperty Name="UserName" ColumnName="UserName" />
                 <ScalarProperty Name="TeamName" ColumnName="TeamName" />
                 <ScalarProperty Name="ZPlayerID" ColumnName="ZPlayerID" />
@@ -229,6 +268,7 @@ warning 6002: The table/view 'DB_133455_mlbhistory.dbo.MultiSearchView' does not
           <EntitySetMapping Name="MultiSearchViews">
             <EntityTypeMapping TypeName="DB_133455_mlbhistoryModel.MultiSearchView">
               <MappingFragment StoreEntitySet="MultiSearchView">
+                <ScalarProperty Name="teamName" ColumnName="teamName" />
                 <ScalarProperty Name="nameLast" ColumnName="nameLast" />
                 <ScalarProperty Name="ZPlayerId" ColumnName="ZPlayerId" />
                 <ScalarProperty Name="playerID" ColumnName="playerID" />
@@ -248,6 +288,20 @@ warning 6002: The table/view 'DB_133455_mlbhistory.dbo.MultiSearchView' does not
                 <ScalarProperty Name="G_of" ColumnName="G_of" />
                 <ScalarProperty Name="G_p" ColumnName="G_p" />
                 <ScalarProperty Name="G_all" ColumnName="G_all" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ZTeams">
+            <EntityTypeMapping TypeName="DB_133455_mlbhistoryModel.ZTeam">
+              <MappingFragment StoreEntitySet="ZTeams">
+                <ScalarProperty Name="UsesDH" ColumnName="UsesDH" />
+                <ScalarProperty Name="NickName" ColumnName="NickName" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="LineName" ColumnName="LineName" />
+                <ScalarProperty Name="lgID" ColumnName="lgID" />
+                <ScalarProperty Name="ZTeam1" ColumnName="ZTeam" />
+                <ScalarProperty Name="teamID" ColumnName="teamID" />
+                <ScalarProperty Name="yearID" ColumnName="yearID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

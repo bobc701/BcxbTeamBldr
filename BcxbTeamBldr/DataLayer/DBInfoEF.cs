@@ -151,7 +151,7 @@ namespace BcxbTeamBldr.DataLayer {
 
          using (var ctx = new DBAccess3.DB_133455_mlbhistoryEntities()) {
 
-            var userPlayer = new UserPlayer { PlayerId = id, UserName = user, TeamName = team };
+            var userPlayer = new UserPlayer { playerID = id, UserName = user, TeamName = team };
             ctx.UserPlayers.Add(userPlayer);
             ctx.SaveChanges();
          }
@@ -184,7 +184,7 @@ namespace BcxbTeamBldr.DataLayer {
             else {
                // Update lineup data in UserPlayers...
                userPlayer = new UserPlayer {
-                  PlayerId = player.PlayerId,
+                  playerID = player.PlayerId,
                   UserName = user,
                   TeamName = team,
                   Slot_NoDH = player.Slot_NoDH,
@@ -284,7 +284,7 @@ namespace BcxbTeamBldr.DataLayer {
          // --------------------------------------------------------------------
          using (var ctx = new DB_133455_mlbhistoryEntities()) {
             UserPlayer userPlayer = ctx.UserPlayers.FirstOrDefault(
-               p => p.UserName == user && p.TeamName == team && p.PlayerId == id);
+               p => p.UserName == user && p.TeamName == team && p.playerID == id);
             ctx.UserPlayers.Remove(userPlayer);
             ctx.SaveChanges();
          }
@@ -331,7 +331,7 @@ namespace BcxbTeamBldr.DataLayer {
          using (var ctx = new DB_133455_mlbhistoryEntities()) {
             pids = ctx.UserPlayers
                .Where(p => p.UserName == user && p.TeamName == team)
-               .Select(p => p.PlayerId)
+               .Select(p => p.playerID)
                .ToList();
          }
          return pids;
@@ -351,53 +351,48 @@ namespace BcxbTeamBldr.DataLayer {
 
          using (var ctx = new DB_133455_mlbhistoryEntities()) {
 
-            List<CMlbPlayer> mps2 =
-              (from mp in ctx.MlbPlayers
-               join up in ctx.UserPlayers.Where(up => up.UserName == user && up.TeamName == team)
-               on mp.PlayerId equals up.PlayerId
+            //List<CMlbPlayer> mps2 =
+            //  (from mp in ctx.MultiSearchViews
+            //   join up in ctx.UserPlayers.Where(up => up.UserName == user && up.TeamName == team)
+            //   on mp.playerID equals up.playerID
+            //   select new CMlbPlayer {
+            //      PlayerId = mp.playerID,
+            //      PlayerName = mp.nameLast,
+            //      PlayerType = mp.BFP == null ? 'P' : 'B',
+            //      FieldingString = GetFieldingString(mp),
+            //      Year = (int)mp.yearID,
+            //      MlbTeam = mp.teamID,
+            //      MlbLeague = mp.lgID
+            //   }
+            //).ToList();
+
+
+            List<CMlbPlayer> cmpList =
+              (from up in ctx.UserPlayers.Where(up => up.UserName == user && up.TeamName == team)
                select new CMlbPlayer {
-                  PlayerId = mp.PlayerId,
-                  PlayerName = mp.PlayerName,
-                  PlayerType = mp.PlayerType[0],
-                  FieldingString = mp.FieldingString,
-                  Year = (int)mp.Year,
-                  MlbTeam = mp.MlbTeam,
-                  MlbLeague = mp.MlbLeague
-               }
-            ).ToList();
+                  PlayerId = up.playerID,
+                  //PlayerName = mp.nameLast,
+                  //PlayerType = mp.BFP == null ? 'P' : 'B',
+                  //FieldingString = GetFieldingString(mp),
+                  Year = up.yearID,
+                  MlbTeam = up.teamID
+                  //MlbLeague = mp.lgID
+               }).ToList();
 
-            //List<CMlbPlayer> mps = ctx.MlbPlayers
-            //   .Join(
-            //      ctx.UserPlayers.Where(up => up.UserName == user && up.TeamName == team),
-            //      mp => mp.PlayerId,
-            //      up => up.PlayerId,
-            //      (mp, up) => MapMlbPlayer(mp))
-            //   .ToList();
+            foreach (CMlbPlayer cmp in cmpList) {
+               MultiSearchView msv = ctx.MultiSearchViews.First(m =>
+                  m.playerID == cmp.PlayerId &&
+                  m.yearID == cmp.Year &&
+                  m.teamID == cmp.MlbTeam);
+               cmp.PlayerName = msv.nameLast;
+               cmp.PlayerType = msv.BFP == null ? 'P' : 'B';
+               cmp.FieldingString = GetFieldingString(msv);
+               cmp.MlbLeague = msv.lgID;
+            }
 
-            return mps2;
+            return cmpList;
          }
 
-         // ------------------------------------------------------------- orig
-         //   string sql = $"EXEC GetPlayerList '{user}', '{team}'";
-         //   using (var cmd = new SqlCommand(sql, con1)) {
-
-         //   using (SqlDataReader rdr = cmd.ExecuteReader()) {
-         //      while (rdr.Read()) {
-         //         var player = new CMlbPlayer();
-         //         player.PlayerId = rdr["PlayerId"].ToString();
-         //         player.PlayerName = rdr["PlayerName"].ToString();
-         //         player.PlayerType = rdr["PlayerType"].ToString()[0];
-         //         player.FieldingString = rdr["FieldingString"].ToString();
-         //         player.Year = (int)rdr["Year"];
-         //         player.MlbTeam = rdr["MlbTeam"].ToString();
-         //         player.MlbLeague = rdr["MlbLeague"].ToString();
-
-         //         list.Add(player);
-         //      }
-
-         //   }
-         //}
-         //return list;
 
       }
 
@@ -426,57 +421,64 @@ namespace BcxbTeamBldr.DataLayer {
          //SELECT up.PlayerId, mp.PlayerName, mp.MlbTeam, mp.MlbLeague, mp.Year, mp.FieldingString, mp.PlayerType,
          // mp.Stats, mp.LgStats, up.Slot_NoDH, up.Posn_NoDH, up.Slot_DH, up.Posn_DH
 
+         //using (var ctx = new DB_133455_mlbhistoryEntities()) {
+         //   List<CUserPlayer> mps2 =
+         //     (from mp in ctx.MultiSearchViews
+         //      join up in ctx.UserPlayers.Where(up => up.UserName == user && up.TeamName == team)
+         //      on mp.playerID equals up.playerID
+         //      select new CUserPlayer {
+         //         PlayerId = mp.playerID,
+         //         UserName = user,
+         //         TeamName = team,
+         //         PlayerName = mp.nameLast,
+         //         PlayerType = mp.BFP == null ? "P" : "B",
+         //         FieldingString = GetFieldingString(mp),
+         //         Year = (int)mp.yearID,
+         //         MlbTeam = mp.teamID,
+         //         MlbLeague = mp.lgID,
+         //         Slot_NoDH = up.Slot_NoDH,
+         //         Posn_NoDH = up.Posn_NoDH,
+         //         Slot_DH = up.Slot_DH,
+         //         Posn_DH = up.Posn_DH
+         //      }).ToList();
+
+         //   //return mps2;
+         //}
+
          using (var ctx = new DB_133455_mlbhistoryEntities()) {
-            List<CUserPlayer> mps2 =
-              (from mp in ctx.MlbPlayers
-               join up in ctx.UserPlayers.Where(up => up.UserName == user && up.TeamName == team)
-               on mp.PlayerId equals up.PlayerId
+            List<CUserPlayer> cupList =
+              (from up in ctx.UserPlayers.Where(up => up.UserName == user && up.TeamName == team)
                select new CUserPlayer {
-                  PlayerId = mp.PlayerId,
+                  PlayerId = up.playerID,
                   UserName = user,
                   TeamName = team,
-                  PlayerName = mp.PlayerName,
-                  PlayerType = mp.PlayerType,
-                  FieldingString = mp.FieldingString,
-                  Year = (int)mp.Year,
-                  MlbTeam = mp.MlbTeam,
-                  MlbLeague = mp.MlbLeague,
+                  //PlayerName = mp.nameLast,
+                  //PlayerType = mp.BFP == null ? "P" : "B",
+                  //FieldingString = GetFieldingString(mp),
+                  Year = (int)up.yearID,
+                  MlbTeam = up.teamID,
+                  //MlbLeague = up.lgID,
                   Slot_NoDH = up.Slot_NoDH,
                   Posn_NoDH = up.Posn_NoDH,
                   Slot_DH = up.Slot_DH,
                   Posn_DH = up.Posn_DH
                }).ToList();
 
-            return mps2;
+            //return mps2;
+
+            foreach (CUserPlayer cup in cupList) {
+               MultiSearchView msv = ctx.MultiSearchViews.First(m => 
+                  m.playerID == cup.PlayerId && 
+                  m.yearID == cup.Year && 
+                  m.teamID == cup.MlbTeam);
+               cup.PlayerName = msv.nameLast;
+               cup.PlayerType = msv.BFP == null ? "P" : "B";
+               cup.FieldingString = GetFieldingString(msv);
+               cup.MlbLeague = msv.lgID;
+            }
+            
+            return cupList;
          }
-
-
-         //var list = new List<CUserPlayer>();
-         //string sql = $"EXEC GetPlayerList '{user}', '{team}'";
-         //using (var cmd = new SqlCommand(sql, con1)) {
-
-         //   using (SqlDataReader rdr = cmd.ExecuteReader()) {
-         //      while (rdr.Read()) {
-         //         var player = new UserPlayer();
-         //         player.PlayerId = rdr["PlayerId"].ToString();
-         //         //player.PlayerName = rdr["PlayerName"].ToString();
-         //         //player.PlayerType = rdr["PlayerType"].ToString()[0];
-         //         //player.FieldingString = rdr["FieldingString"].ToString();
-         //         //player.Year = (int)rdr["Year"];
-         //         //player.MlbTeam = rdr["MlbTeam"].ToString();
-         //         //player.MlbLeague = rdr["MlbLeague"].ToString();
-
-         //         player.Slot_NoDH = (int)rdr["Slot_NoDH"];
-         //         player.Posn_NoDH = (int)rdr["Posn_NoDH"];
-         //         player.Slot_DH = (int)rdr["Slot_DH"];
-         //         player.Posn_DH = (int)rdr["Posn_DH"];
-
-         //         list.Add(player);
-         //      }
-
-         //   }
-         //}
-         //return list;
 
       }
 
@@ -510,11 +512,33 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
-      public static List<CMlbPlayer> SearchPlayersMulti(string critName, string critTeam, string critYear, string critPosn) {
-         // ---------------------------------------------------------------------
+      private static string GetFieldingString(MultiSearchView p) {
+      // --------------------------------------------------
+         string s = "";
+         const int fMin = 10;
 
+         string del = "";
+         if (p.G_p >= fMin) s += del + "p"; del = ",";
+         if (p.G_c >= fMin) s += del + "c"; del = ",";
+         if (p.G_1b >= fMin) s += del + "1b"; del = ",";
+         if (p.G_2b >= fMin) s += del + "2b"; del = ",";
+         if (p.G_3b >= fMin) s += del + "3b"; del = ",";
+         if (p.G_ss >= fMin) s += del + "ss"; del = ",";
+         if (p.G_lf >= fMin) s += del + "lf"; del = ",";
+         if (p.G_cf >= fMin) s += del + "cf"; del = ",";
+         if (p.G_rf >= fMin) s += del + "rf"; del = ",";
+
+         return s;
+
+      }
+
+
+      public static List<CMlbPlayer> SearchPlayersMulti(string critName, string critTeam, string critYear, string critPosn) {
+      // ---------------------------------------------------------------------
+
+         const int fMin = 10;
          var list2 = new List<CMlbPlayer>();
-         var list1 = new List<MlbPlayer>();
+         var list1 = new List<MultiSearchView>();
 
          int ix = 0;
          var s = new string[] { "All", "p", "c", "1b", "2b", "3b", "ss", "lf", "cf", "rf", "of" };
@@ -533,47 +557,36 @@ namespace BcxbTeamBldr.DataLayer {
                   .Where(p => year == 0 || p.yearID == year)
                   .ToList();
 
+            if (critPosn != "All") 
+               list1 = list1.Where(p =>
+                  critPosn switch { 
+                     "p"  => p.G_p >= fMin,
+                     "c"  => p.G_c >= fMin,
+                     "1b" => p.G_1b >= fMin,
+                     "2b" => p.G_2b >= fMin,
+                     "3b" => p.G_3b >= fMin,
+                     "ss" => p.G_ss >= fMin,
+                     "lf" => p.G_lf >= fMin,
+                     "cf" => p.G_cf >= fMin,
+                     "rf" => p.G_rf >= fMin,
+                     "of" => p.G_lf >= fMin || p.G_cf >= fMin || p.G_rf >= fMin,
+                     _ => false
+                  }
+               ).ToList();
 
-            if (ix > 0 && ix < 10) // Filtereing on position 1..9...
-               list1 =
-                  ctx.MultiSearchViews
-                     .Where(p => critName == "All" || p.nameLast.Contains(critName))
-                     .Where(p => critTeam == "All" || p.teamID == critTeam)
-                     .Where(p => year == 0 || p.yearID == year)
-                     .Where(p => p.FieldingString.Substring(ix-1, 1) != "-") //Can't use index [] with LinqToEntities
-                     .ToList();
 
-            else if (ix == 10) //Filtering on 'of' = 7,8,9...
-               list1 =
-                  ctx.MlbPlayers
-                     .Where(p => critName == "All" || p.PlayerName.Contains(critName))
-                     .Where(p => critTeam == "All" || p.MlbTeam.Contains(critTeam))
-                     .Where(p => year == 0 || p.Year == year)
-                     .Where(p =>
-                        p.FieldingString.Substring(6, 1) != "-" ||
-                        p.FieldingString.Substring(7, 1) != "-" ||
-                        p.FieldingString.Substring(8, 1) != "-")
-                     .ToList();
-
-            else // Not filtering on posn...
-               list1 =
-                  ctx.MlbPlayers
-                     .Where(p => critName == "All" || p.PlayerName.Contains(critName))
-                     .Where(p => critTeam == "All" || p.MlbTeam.Contains(critTeam))
-                     .Where(p => year == 0 || p.Year == year)
-                     .ToList();
-
-            // Map result from MlbPlayer to CMlbPlayer...
+            // Map result from MultiSearchView to CMlbPlayer...
             list2 =
                list1
                   .Select(p1 => new CMlbPlayer {
-                     PlayerId = p1.PlayerId,
-                     PlayerName = p1.PlayerName,
-                     PlayerType = p1.PlayerType[0],
-                     FieldingString = p1.FieldingString,
-                     Year = (int)p1.Year,
-                     MlbTeam = p1.MlbTeam,
-                     MlbLeague = p1.MlbLeague
+                     PlayerId = p1.playerID,
+                     ZPlayerID = p1.ZPlayerId,
+                     PlayerName = p1.nameLast,
+                     PlayerType = p1.BFP == null ? 'B' : 'P',
+                     FieldingString = GetFieldingString(p1),
+                     Year = (int)p1.yearID,
+                     MlbTeam = p1.teamName,
+                     MlbLeague = p1.lgID
                   }).ToList();
 
          }

@@ -9,6 +9,7 @@
         <EntityTypeShape EntityType="DB_133455_mlbhistoryModel.UserTeam" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="DB_133455_mlbhistoryModel.User" Width="1.5" PointX="2.75" PointY="3.75" IsExpanded="true" />
         <EntityTypeShape EntityType="DB_133455_mlbhistoryModel.MultiSearchView" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DB_133455_mlbhistoryModel.ZTeam" Width="1.5" PointX="0.875" PointY="4.25" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -149,6 +149,9 @@
     <Compile Include="UserTeam.cs">
       <DependentUpon>Model2.tt</DependentUpon>
     </Compile>
+    <Compile Include="ZTeam.cs">
+      <DependentUpon>Model2.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EntityDeploy Include="Model1.edmx">

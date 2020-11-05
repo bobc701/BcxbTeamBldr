@@ -33,5 +33,6 @@ namespace DBAccess3
         public Nullable<int> G_of { get; set; }
         public Nullable<int> G_p { get; set; }
         public int G_all { get; set; }
+        public string teamName { get; set; }
     }
 }

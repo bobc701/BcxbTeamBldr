@@ -29,5 +29,6 @@ namespace DBAccess3
         public virtual DbSet<UserTeam> UserTeams { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<MultiSearchView> MultiSearchViews { get; set; }
+        public virtual DbSet<ZTeam> ZTeams { get; set; }
     }
 }
