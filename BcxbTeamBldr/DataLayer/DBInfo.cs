@@ -30,8 +30,7 @@ namespace BcxbTeamBldr.DataLayer {
          // Purpose: Retrieve from database, a list of all teams for this user.
 
          var list = new List<CUserTeam>();
-         //string sql = $"SELECT * FROM UserTeams WHERE UserName = '{user}'";
-         string sql = $"EXEC GetUserTeamList '{user}'";
+         string sql = $"SELECT * FROM UserTeams WHERE UserName = '{user}'";
          using (var cmd = new SqlCommand(sql, con1)) {
 
             using (SqlDataReader rdr = cmd.ExecuteReader()) {
@@ -144,7 +143,7 @@ namespace BcxbTeamBldr.DataLayer {
                   cmd1.Parameters.Clear();
                   cmd1.Parameters.AddWithValue("@user", user);
                   cmd1.Parameters.AddWithValue("@team", team);
-                  cmd1.Parameters.AddWithValue("@pid", player.PlayerId);
+                  cmd1.Parameters.AddWithValue("@pid", player.playerId);
                   cmd1.ExecuteNonQuery();
                }
                else {
@@ -152,7 +151,7 @@ namespace BcxbTeamBldr.DataLayer {
                   cmd2.Parameters.Clear();
                   cmd2.Parameters.AddWithValue("@user", user);
                   cmd2.Parameters.AddWithValue("@team", team);
-                  cmd2.Parameters.AddWithValue("@pid", player.PlayerId);
+                  cmd2.Parameters.AddWithValue("@pid", player.playerId);
                   cmd2.Parameters.AddWithValue("@slotNoDh", player.Slot_NoDH);
                   cmd2.Parameters.AddWithValue("@posnNoDh", player.Posn_NoDH);
                   cmd2.Parameters.AddWithValue("@slotDh", player.Slot_DH);
@@ -241,33 +240,44 @@ namespace BcxbTeamBldr.DataLayer {
 
 
       public List<CUserPlayer> GetUserPlayerList(string user, string team) {
-         // ---------------------------------------------------------------------
+      // ---------------------------------------------------------------------
          var list = new List<CUserPlayer>();
-         string sql = $"EXEC GetPlayerList '{user}', '{team}'";
-         using (var cmd = new SqlCommand(sql, con1)) {
+         string sql =
+            @$"SELECT up.*, msv. 
+               FROM UserPlayers up WHERE UserName = '{user}' AND Teamname = '{team}'
+               JOIN MultiSearchView msv
+                  ON msv.PlayerID = up.PlayerID
+                  AND msv.teamID = up.teamID
+                  AND msv.yearID = up.YearID
+               WHERE up.UserName = '{user}' AND up.Teamname = '{team}'";
 
-            using (SqlDataReader rdr = cmd.ExecuteReader()) {
-               while (rdr.Read()) {
-                  var player = new CUserPlayer();
-                  player.PlayerId = rdr["PlayerId"].ToString();
-                  player.PlayerName = rdr["PlayerName"].ToString();
-                  player.PlayerType = rdr["PlayerType"].ToString();
-                  player.FieldingString = rdr["FieldingString"].ToString();
-                  player.Year = (int)rdr["Year"];
-                  player.MlbTeam = rdr["MlbTeam"].ToString();
-                  player.MlbLeague = rdr["MlbLeague"].ToString();
+         using (SqlCommand cmd = new SqlCommand(sql, con1)) 
+         using (SqlDataReader rdr = cmd.ExecuteReader()) 
 
-                  player.Slot_NoDH = (int)rdr["Slot_NoDH"];
-                  player.Posn_NoDH = (int)rdr["Posn_NoDH"];
-                  player.Slot_DH = (int)rdr["Slot_DH"];
-                  player.Posn_DH = (int)rdr["Posn_DH"];
+         while (rdr.Read()) {
+            var player = new CUserPlayer();
 
-                  list.Add(player);
-               }
+            player.UserName = user;
+            player.TeamName = team;
+            player.playerId = rdr["PlayerId"].ToString();
+            player.ZPlayerID = rdr["ZPlayerID"].ToString();
+            player.PlayerName = rdr["PlayerName"].ToString();
+            player.PlayerType = rdr["PlayerType"].ToString();
+            player.FieldingString = rdr["FieldingString"].ToString();
+            player.yearID = (int)rdr["yearID"];
+            player.teamID = rdr["teamID"].ToString();
+            player.MlbTeam = rdr["MlbTeam"].ToString();
+            player.MlbLeague = rdr["MlbLeague"].ToString();
 
-            }
+            player.Slot_NoDH = (int)rdr["Slot_NoDH"];
+            player.Posn_NoDH = (int)rdr["Posn_NoDH"];
+            player.Slot_DH = (int)rdr["Slot_DH"];
+            player.Posn_DH = (int)rdr["Posn_DH"];
+
+            list.Add(player);
          }
-         return list;
+
+      return list;
 
       }
 
@@ -362,7 +372,7 @@ namespace BcxbTeamBldr.DataLayer {
       // NOTE: This should probably be a transaction!!!
          foreach (CUserPlayer player in model.Players
             .Where(p => p.Slot_NoDH != 0 || p.Posn_NoDH != 0 || p.Slot_DH != 0 || p.Posn_DH != 0)) { 
-               sql = $"EXEC SetLineup '{user}', '{team}', '{player.PlayerId}'";
+               sql = $"EXEC SetLineup '{user}', '{team}', '{player.playerId}'";
                using var cmd = new SqlCommand(sql, con1);
                cmd.ExecuteNonQuery();
          }

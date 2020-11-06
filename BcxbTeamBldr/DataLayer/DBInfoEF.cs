@@ -178,13 +178,13 @@ namespace BcxbTeamBldr.DataLayer {
 
             if (player.RemoveFromTeam) {
                // Delete record from UserTeams... 
-               userPlayer = ctx.UserPlayers.Find(user, team, player.PlayerId);
+               userPlayer = ctx.UserPlayers.Find(user, team, player.playerId);
                ctx.UserPlayers.Remove(userPlayer);
             }
             else {
                // Update lineup data in UserPlayers...
                userPlayer = new UserPlayer {
-                  playerID = player.PlayerId,
+                  playerID = player.playerId,
                   UserName = user,
                   TeamName = team,
                   Slot_NoDH = player.Slot_NoDH,
@@ -449,13 +449,13 @@ namespace BcxbTeamBldr.DataLayer {
             List<CUserPlayer> cupList =
               (from up in ctx.UserPlayers.Where(up => up.UserName == user && up.TeamName == team)
                select new CUserPlayer {
-                  PlayerId = up.playerID,
+                  playerId = up.playerID,
                   UserName = user,
                   TeamName = team,
                   //PlayerName = mp.nameLast,
                   //PlayerType = mp.BFP == null ? "P" : "B",
                   //FieldingString = GetFieldingString(mp),
-                  Year = (int)up.yearID,
+                  yearID = (int)up.yearID,
                   MlbTeam = up.teamID,
                   //MlbLeague = up.lgID,
                   Slot_NoDH = up.Slot_NoDH,
@@ -468,8 +468,8 @@ namespace BcxbTeamBldr.DataLayer {
 
             foreach (CUserPlayer cup in cupList) {
                MultiSearchView msv = ctx.MultiSearchViews.First(m => 
-                  m.playerID == cup.PlayerId && 
-                  m.yearID == cup.Year && 
+                  m.playerID == cup.playerId && 
+                  m.yearID == cup.yearID && 
                   m.teamID == cup.MlbTeam);
                cup.PlayerName = msv.nameLast;
                cup.PlayerType = msv.BFP == null ? "P" : "B";

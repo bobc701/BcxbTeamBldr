@@ -138,6 +138,11 @@
     <Compile Include="DataLayer\DBInfo.cs" />
     <Compile Include="DataLayer\DBInfoEF.cs" />
     <Compile Include="DataLayer\DBRepos.cs" />
+    <Compile Include="DbObjects\MultiSearchView.cs" />
+    <Compile Include="DbObjects\User.cs" />
+    <Compile Include="DbObjects\UserPlayer.cs" />
+    <Compile Include="DbObjects\UserTeam.cs" />
+    <Compile Include="DbObjects\ZTeam.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

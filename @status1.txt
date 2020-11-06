@@ -1,5 +1,13 @@
+------------------------------------------------------
+BRANCH: b7
+
+11/05'20
+I plan to use straight ADO not EF
+
+
+-----------------------------------------------------
+BRANCH: b6 (from b5)
 10/03'20
-branch: b6 (from b5)
 Start changes for using all years and mlbhistory
 
 05/22'20
