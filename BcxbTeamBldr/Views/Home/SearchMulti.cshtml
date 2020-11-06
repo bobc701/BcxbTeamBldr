@@ -72,16 +72,16 @@
                         let url;
                         for (let p of data) {
                             content += '<tr>';
-                            content += '<td>' + p.PlayerName + '</td>';
-                            content += '<td>' + p.MlbTeam + '</td>';
-                            content += '<td>' + p.Year + '</td>';
-                            content += '<td>' + p.PosnString + '</td>';
-                            content += `<td><input type="checkbox" class="playerSelection" value="${p.PlayerId}"/></td>`;
-                            //url = '"AddPlayerToTeam?user=' + user1 + '&team=' + team1 + '&pid=' + p.PlayerId + '"';
-                            content += '<td style="visibility:hidden">' + p.PlayerId + '</td>';
+                            content += '<td>' + p.nameLast + '</td>';
+                            content += '<td>' + p.teamName + '</td>';
+                            content += '<td>' + p.yearID + '</td>';
+                            content += '<td>' + p.FieldingString + '</td>';
+                            content += `<td><input type="checkbox" class="playerSelection" value="${p.playerID}"/></td>`;
+                            content += '<td style="visibility:hidden">' + p.playerID + '</td>';
+                            content += '<td style="visibility:hidden">' + p.teamID + '</td>';
+                            content += '<td style="visibility:hidden">' + p.ZPlayerIDD + '</td>';
                             content += '</tr>';
                         }
-
                         content += "</table>";
 
                         //alert(content);

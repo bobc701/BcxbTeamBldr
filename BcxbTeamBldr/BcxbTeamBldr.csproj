@@ -112,6 +112,7 @@
     <Compile Include="DataLayer\CUserPlayer.cs" />
     <Compile Include="DataLayer\DBInfo.cs" />
     <Compile Include="DataLayer\DBRepos.cs" />
+    <Compile Include="DataLayer\MultiSearchView.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

@@ -8,6 +8,7 @@ using System.Configuration;
 using System.Diagnostics;
 
 using BcxbTeamBldr.Models;
+using BcxbTeamBldr.DataLayer;
 
 namespace BcxbTeamBldr.DataLayer {
 
@@ -21,7 +22,7 @@ namespace BcxbTeamBldr.DataLayer {
          string connect = ConfigurationManager.ConnectionStrings["ConnectionString1"].ConnectionString;
          con1 = new SqlConnection(connect);
          con1.Open();
-         
+
       }
 
 
@@ -53,7 +54,7 @@ namespace BcxbTeamBldr.DataLayer {
 
 
       public void AddNewTeam(string user, string team, bool dh) {
-      // ---------------------------------------------------------------------
+         // ---------------------------------------------------------------------
          //string sql = $"EXEC AddNewTeam '{user}', '{team}', {(dh ? '1' : '0')}";
          string sql = $"INSERT INTO UserTeams (UserName, TeamName, UsesDh) VALUES ({user}, {team}, {(dh ? 1 : 0)})";
          using (var cmd = new SqlCommand(sql, con1)) {
@@ -118,7 +119,7 @@ namespace BcxbTeamBldr.DataLayer {
       public void AddPlayerToTeam(string user, string team, string id) {
          // --------------------------------------------------------------------
          //string sql = $"EXEC AddPlayerToTeam '{user}', '{team}', '{id}'";
-         string sql = $"INSERT INTO UserPlayers(UserName, TeamName, PlayerId) VALUES('{user}', '{team}', '{id}')
+         string sql = $"INSERT INTO UserPlayers(UserName, TeamName, PlayerId) VALUES('{user}', '{team}', '{id}')";
 
          using (var cmd = new SqlCommand(sql, con1)) {
             cmd.ExecuteNonQuery();
@@ -131,7 +132,7 @@ namespace BcxbTeamBldr.DataLayer {
 
          SqlTransaction sqlTran = null;
          try {
-            
+
             sqlTran = con1.BeginTransaction();
 
             using SqlCommand cmd1 = new SqlCommand("RemovePlayerFromTeam", con1);
@@ -144,7 +145,7 @@ namespace BcxbTeamBldr.DataLayer {
 
             foreach (CUserPlayer player in roster) {
                if (player.Remove) {
-               // Player is flagged for removal...
+                  // Player is flagged for removal...
                   cmd1.Parameters.Clear();
                   cmd1.Parameters.AddWithValue("@user", user);
                   cmd1.Parameters.AddWithValue("@team", team);
@@ -152,7 +153,7 @@ namespace BcxbTeamBldr.DataLayer {
                   cmd1.ExecuteNonQuery();
                }
                else {
-               // Player not flagged, so update lineups (NoDh & Dh)...
+                  // Player not flagged, so update lineups (NoDh & Dh)...
                   cmd2.Parameters.Clear();
                   cmd2.Parameters.AddWithValue("@user", user);
                   cmd2.Parameters.AddWithValue("@team", team);
@@ -303,11 +304,11 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
-      public List<CMlbPlayer> SearchPlayersMulti(string critName, string critTeam, string critYear, string critPosn) {
+      public List<MultiSearchView> SearchPlayersMulti(string critName, string critTeam, string critYear, string critPosn) {
          // ---------------------------------------------------------------------
-         const string posnMin = 5;
-      
-         var list = new List<CMlbPlayer>();
+         const int posnMin = 5;
+
+         var list = new List<MultiSearchView>();
 
          // Build search string for SQL select...
          string crit = "", delim = "";
@@ -315,8 +316,9 @@ namespace BcxbTeamBldr.DataLayer {
          if (critTeam != "All") { crit += delim + $"MlbTeam LIKE '%{critTeam}%'"; delim = " AND "; } // EG: 'NYA2019' LIKE '%NYA%'
          if (critYear != "All") { crit += delim + $"Year = '{critYear}'"; delim = " AND "; }
 
-         if (critPosn != "All") { 
-            crit += delim + critPosn switch {
+         if (critPosn != "All") {
+            crit += delim + critPosn switch
+            {
                "p" => $"G_p > {posnMin}",
                "c" => $"G_c > {posnMin}",
                "1b" => $"G_1b > {posnMin}",
@@ -329,100 +331,63 @@ namespace BcxbTeamBldr.DataLayer {
                "of" => $"G_of > {posnMin}"
             };
          }
-         
+
          string sql = $"SELECT * FROM MultiSearchView WHERE {crit}";
          //string sql = $"EXEC SearchPlayers '{crit}'";
          using (var cmd = new SqlCommand(sql, con1)) {
 
             using (SqlDataReader rdr = cmd.ExecuteReader()) {
                while (rdr.Read()) {
-                  var player = new CMlbPlayer();
-                  player.PlayerId = rdr["PlayerId"].ToString();
-                  player.PlayerName = rdr["PlayerName"].ToString();
-                  player.PlayerType = rdr["PlayerType"].ToString()[0];
-                  player.FieldingString = GetFieldingString(rdr);
-                  player.Year = (int)rdr["Year"];
-                  player.MlbTeam = rdr["MlbTeam"].ToString();
-                  player.MlbLeague = rdr["MlbLeague"].ToString(); 
+                  var msv = new MultiSearchView();
+                  msv.nameLast = rdr["nameLast"].ToString();
+                  msv.ZPlayerId = (int)rdr["ZPlayerID"];
+                  msv.playerID = rdr["playerId"].ToString();
+                  msv.yearID = (int)rdr["yearID"];
+                  msv.teamID = rdr["teamID"].ToString();
+                  msv.G_p = (int)rdr["G_p"];
+                  msv.G_c = (int)rdr["G_c"];
+                  msv.G_1b = (int)rdr["G_p"];
+                  msv.G_2b = (int)rdr["G_2b"];
+                  msv.G_3b = (int)rdr["G_3b"];
+                  msv.G_ss = (int)rdr["G_ss"];
+                  msv.G_lf = (int)rdr["G_lf"];
+                  msv.G_cf = (int)rdr["G_cf"];
+                  msv.G_rf = (int)rdr["G_rf"];
+                  msv.G_of = (int)rdr["G_of"];
+                  msv.G_all = (int)rdr["G_all"];
+                  msv.lgID = rdr["lgID"].ToString();
 
-                  list.Add(player);
+                  list.Add(msv);
                }
 
             }
          }
          return list;
 
-         string GetFieldingString(SqlDataReader rdr) {
-         // ------------------------------------------------------------
-            const int fMin = 8;
-            string s = "";
-            string del = "";
-            if ((int)rdr["G_p"] >= fMin) { s += del + "p"; del = ","; }
-            if ((int)rdr["G_c"] >= fMin) { s += del + "c"; del = ","; }
-            if ((int)rdr["G_1b"] >= fMin) { s += del + "1b"; del = ","; }
-            if ((int)rdr["G_2b"] >= fMin) { s += del + "2b"; del = ","; }
-            if ((int)rdr["G_3b"] >= fMin) { s += del + "3b"; del = ","; }
-            if ((int)rdr["G_ss"] >= fMin) { s += del + "ss"; del = ","; }
-            if ((int)rdr["G_lf"] >= fMin) { s += del + "lf"; del = ","; }
-            if ((int)rdr["G_cf"] >= fMin) { s += del + "cf"; del = ","; }
-            if ((int)rdr["G_rf"] >= fMin) { s += del + "rf"; del = ","; }
-
-            return s;
-         }
-
       }
 
 
-
-
-   }
-
-
-   private string GetFieldingString() {
-      // ------------------------------------------------------------
-            public string FieldingString {
-         // ----------------------------------------------------
-         get {
-            string s = "";
-            string del = "";
-            if (G_p >= fMin) { s += del + "p"; del = ","; }
-            if (G_c >= fMin) { s += del + "c"; del = ","; }
-            if (G_1b >= fMin) { s += del + "1b"; del = ","; }
-            if (G_2b >= fMin) { s += del + "2b"; del = ","; }
-            if (G_3b >= fMin) { s += del + "3b"; del = ","; }
-            if (G_ss >= fMin) { s += del + "ss"; del = ","; }
-            if (G_lf >= fMin) { s += del + "lf"; del = ","; }
-            if (G_cf >= fMin) { s += del + "cf"; del = ","; }
-            if (G_rf >= fMin) { s += del + "rf"; del = ","; }
-
-            return s;
-         }
-
-      }
-
-
-
-   }
-
-   public void SetLineup(string user, string team, Models.UserPlayerListVM model) {
-      // ---------------------------------------------------------------------------------
-      // First, delete all existing lineup data...
+      public void SetLineup(string user, string team, Models.UserPlayerListVM model) {
+         // ---------------------------------------------------------------------------------
+         // First, delete all existing lineup data...
          string sql = $"EXEC ClearLineup '{user}', '{team}'";
          using (var cmd = new SqlCommand(sql, con1)) {
             cmd.ExecuteNonQuery();
          }
 
-      // Now, update with new lineup data...
-      // NOTE: This should probably be a transaction!!!
+         // Now, update with new lineup data...
+         // NOTE: This should probably be a transaction!!!
          foreach (CUserPlayer player in model.Players
-            .Where(p => p.Slot_NoDH != 0 || p.Posn_NoDH != 0 || p.Slot_DH != 0 || p.Posn_DH != 0)) { 
-               sql = $"EXEC SetLineup '{user}', '{team}', '{player.PlayerId}'";
-               using var cmd = new SqlCommand(sql, con1);
-               cmd.ExecuteNonQuery();
+            .Where(p => p.Slot_NoDH != 0 || p.Posn_NoDH != 0 || p.Slot_DH != 0 || p.Posn_DH != 0)) {
+            sql = $"EXEC SetLineup '{user}', '{team}', '{player.PlayerId}'";
+            using var cmd = new SqlCommand(sql, con1);
+            cmd.ExecuteNonQuery();
          }
       }
 
    }
 
 }
+
+
 

@@ -248,7 +248,7 @@ namespace BcxbTeamBldr.Controllers {
 
       public JsonResult searchMultiJson(string critName, string critTeam, string critYear, string critPosn) {
       // -------------------------------------------------------------------------------------
-         List<CMlbPlayer> py = dbinfo.SearchPlayersMulti(critName, critTeam, critYear, critPosn);
+         List<MultiSearchView> py = dbinfo.SearchPlayersMulti(critName, critTeam, critYear, critPosn);
          var s = Json(py, JsonRequestBehavior.AllowGet);
          return Json(py, JsonRequestBehavior.AllowGet);
 
