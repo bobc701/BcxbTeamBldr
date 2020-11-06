@@ -1,3 +1,21 @@
+
+BRANCH b8 (From b3)
+-------------------------------------------------------------
+b7 had changes for EF, 2 models, etc. and I decided to abandon.
+Decision to use EF was made earlier before I knew of downsides of EF,
+especially as I had all this working with SP's.
+So I reverted to b3 which was basically working.
+
+The main thing for b8 is the switch to mlbhistory. And so
+View, MultiSearchView, replaces MlbPlayers.
+
+11/06'20
+Start b8
+
+
+------------------------------------------------------------
+11/06'20: End b3
+
 12/06'19
 Added new Web API project, BcxbTeamRdr
 
