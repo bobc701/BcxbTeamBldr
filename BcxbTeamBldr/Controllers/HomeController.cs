@@ -86,6 +86,7 @@ namespace BcxbTeamBldr.Controllers {
 
       public ActionResult AddPlayerToTeam(string user, string team, string pid) {
          // ------------------------------------------------------------
+         // This appears to be NOT used 11'20
          try {
             ViewBag.Msg = "";
             var already = dbinfo.GetPlayerList(user, team).Exists(p => p.PlayerId == pid);

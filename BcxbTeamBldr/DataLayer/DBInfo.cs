@@ -53,8 +53,9 @@ namespace BcxbTeamBldr.DataLayer {
 
 
       public void AddNewTeam(string user, string team, bool dh) {
-         // ---------------------------------------------------------------------
-         string sql = $"EXEC AddNewTeam '{user}', '{team}', {(dh ? '1' : '0')}";
+      // ---------------------------------------------------------------------
+         //string sql = $"EXEC AddNewTeam '{user}', '{team}', {(dh ? '1' : '0')}";
+         string sql = $"INSERT INTO UserTeams (UserName, TeamName, UsesDh) VALUES ({user}, {team}, {(dh ? 1 : 0)})";
          using (var cmd = new SqlCommand(sql, con1)) {
             cmd.ExecuteNonQuery();
          }
@@ -69,7 +70,7 @@ namespace BcxbTeamBldr.DataLayer {
          //string sql = $"EXEC AddNewUser '{user}', '{pwd}'";
 
          //using (var cmd = new SqlCommand(sql, con1)) {
-         using (SqlCommand cmd = new SqlCommand("u196491_BcxbUser.AddNewUser", con1)) {
+         using (SqlCommand cmd = new SqlCommand("dbo.AddNewUser", con1)) {
             cmd.CommandType = CommandType.StoredProcedure;
 
             // Add parameter for return value...
@@ -115,8 +116,10 @@ namespace BcxbTeamBldr.DataLayer {
 
 
       public void AddPlayerToTeam(string user, string team, string id) {
-      // --------------------------------------------------------------------
-         string sql = $"EXEC AddPlayerToTeam '{user}', '{team}', '{id}'";
+         // --------------------------------------------------------------------
+         //string sql = $"EXEC AddPlayerToTeam '{user}', '{team}', '{id}'";
+         string sql = $"INSERT INTO UserPlayers(UserName, TeamName, PlayerId) VALUES('{user}', '{team}', '{id}')
+
          using (var cmd = new SqlCommand(sql, con1)) {
             cmd.ExecuteNonQuery();
          }
