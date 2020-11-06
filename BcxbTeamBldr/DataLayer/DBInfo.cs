@@ -305,6 +305,8 @@ namespace BcxbTeamBldr.DataLayer {
 
       public List<CMlbPlayer> SearchPlayersMulti(string critName, string critTeam, string critYear, string critPosn) {
          // ---------------------------------------------------------------------
+         const string posnMin = 5;
+      
          var list = new List<CMlbPlayer>();
 
          // Build search string for SQL select...
@@ -313,23 +315,22 @@ namespace BcxbTeamBldr.DataLayer {
          if (critTeam != "All") { crit += delim + $"MlbTeam LIKE '%{critTeam}%'"; delim = " AND "; } // EG: 'NYA2019' LIKE '%NYA%'
          if (critYear != "All") { crit += delim + $"Year = '{critYear}'"; delim = " AND "; }
 
-         switch (critPosn) {
-            case "p": crit += delim + "SUBSTRING(FieldingString,1,1) != '-'"; break;
-            case "c": crit += delim + "SUBSTRING(FieldingString,2,1) != '-'"; break;
-            case "1b": crit += delim + "SUBSTRING(FieldingString,3,1) != '-'"; break;
-            case "2b": crit += delim + "SUBSTRING(FieldingString,4,1) != '-'"; break;
-            case "3b": crit += delim + "SUBSTRING(FieldingString,5,1) != '-'"; break;
-            case "ss": crit += delim + "SUBSTRING(FieldingString,6,1) != '-'"; break;
-            case "lf": crit += delim + "SUBSTRING(FieldingString,7,1) != '-'"; break;
-            case "cf": crit += delim + "SUBSTRING(FieldingString,8,1) != '-'"; break;
-            case "rf": crit += delim + "SUBSTRING(FieldingString,9,1) != '-'"; break;
-            case "of":
-               crit += delim +
-                  "(SUBSTRING(FieldingString,7,1) != '-' OR SUBSTRING(FieldingString,8,1) != '-' OR SUBSTRING(FieldingString,9,1) != '-')";
-               break;
+         if (critPosn != "All") { 
+            crit += delim + critPosn switch {
+               "p" => $"G_p > {posnMin}",
+               "c" => $"G_c > {posnMin}",
+               "1b" => $"G_1b > {posnMin}",
+               "2b" => $"G_2b > {posnMin}",
+               "3b" => $"G_3b > {posnMin}",
+               "ss" => $"G_ss > {posnMin}",
+               "lf" => $"G_lf > {posnMin}",
+               "cf" => $"G_cf > {posnMin}",
+               "rf" => $"G_rf > {posnMin}",
+               "of" => $"G_of > {posnMin}"
+            };
          }
-
-         string sql = $"SELECT * FROM MlbPlayers WHERE {crit}";
+         
+         string sql = $"SELECT * FROM MultiSearchView WHERE {crit}";
          //string sql = $"EXEC SearchPlayers '{crit}'";
          using (var cmd = new SqlCommand(sql, con1)) {
 
@@ -339,7 +340,7 @@ namespace BcxbTeamBldr.DataLayer {
                   player.PlayerId = rdr["PlayerId"].ToString();
                   player.PlayerName = rdr["PlayerName"].ToString();
                   player.PlayerType = rdr["PlayerType"].ToString()[0];
-                  player.FieldingString = rdr["FieldingString"].ToString();
+                  player.FieldingString = GetFieldingString(rdr);
                   player.Year = (int)rdr["Year"];
                   player.MlbTeam = rdr["MlbTeam"].ToString();
                   player.MlbLeague = rdr["MlbLeague"].ToString(); 
@@ -351,10 +352,59 @@ namespace BcxbTeamBldr.DataLayer {
          }
          return list;
 
+         string GetFieldingString(SqlDataReader rdr) {
+         // ------------------------------------------------------------
+            const int fMin = 8;
+            string s = "";
+            string del = "";
+            if ((int)rdr["G_p"] >= fMin) { s += del + "p"; del = ","; }
+            if ((int)rdr["G_c"] >= fMin) { s += del + "c"; del = ","; }
+            if ((int)rdr["G_1b"] >= fMin) { s += del + "1b"; del = ","; }
+            if ((int)rdr["G_2b"] >= fMin) { s += del + "2b"; del = ","; }
+            if ((int)rdr["G_3b"] >= fMin) { s += del + "3b"; del = ","; }
+            if ((int)rdr["G_ss"] >= fMin) { s += del + "ss"; del = ","; }
+            if ((int)rdr["G_lf"] >= fMin) { s += del + "lf"; del = ","; }
+            if ((int)rdr["G_cf"] >= fMin) { s += del + "cf"; del = ","; }
+            if ((int)rdr["G_rf"] >= fMin) { s += del + "rf"; del = ","; }
+
+            return s;
+         }
+
       }
 
 
-      public void SetLineup(string user, string team, Models.UserPlayerListVM model) {
+
+
+   }
+
+
+   private string GetFieldingString() {
+      // ------------------------------------------------------------
+            public string FieldingString {
+         // ----------------------------------------------------
+         get {
+            string s = "";
+            string del = "";
+            if (G_p >= fMin) { s += del + "p"; del = ","; }
+            if (G_c >= fMin) { s += del + "c"; del = ","; }
+            if (G_1b >= fMin) { s += del + "1b"; del = ","; }
+            if (G_2b >= fMin) { s += del + "2b"; del = ","; }
+            if (G_3b >= fMin) { s += del + "3b"; del = ","; }
+            if (G_ss >= fMin) { s += del + "ss"; del = ","; }
+            if (G_lf >= fMin) { s += del + "lf"; del = ","; }
+            if (G_cf >= fMin) { s += del + "cf"; del = ","; }
+            if (G_rf >= fMin) { s += del + "rf"; del = ","; }
+
+            return s;
+         }
+
+      }
+
+
+
+   }
+
+   public void SetLineup(string user, string team, Models.UserPlayerListVM model) {
       // ---------------------------------------------------------------------------------
       // First, delete all existing lineup data...
          string sql = $"EXEC ClearLineup '{user}', '{team}'";
