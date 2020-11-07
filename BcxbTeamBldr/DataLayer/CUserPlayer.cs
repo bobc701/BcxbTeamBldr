@@ -26,14 +26,14 @@ namespace BcxbTeamBldr.DataLayer {
       public bool Selected { get; set; } = false;  // For use with SearchMulti view
       public bool Remove { get; set; } = false;   // For use with EditTeam
 
-      public string PosnString {
-         // --------------------------------
-         get {
-            string[] posNames = { "p", "c", "1b", "2b", "3b", "ss", "lf", "cf", "rf" };
-            var t = FieldingString.Zip(posNames, (skill, posName) => skill != '-' ? posName : "-").Where(p => p != "-");
-            return String.Join(",", t);
+      //public string PosnString {
+      //   // --------------------------------
+      //   get {
+      //      string[] posNames = { "p", "c", "1b", "2b", "3b", "ss", "lf", "cf", "rf" };
+      //      var t = FieldingString.Zip(posNames, (skill, posName) => skill != '-' ? posName : "-").Where(p => p != "-");
+      //      return String.Join(",", t);
 
-         }
-      }
+      //   }
+      //}
    }
 }

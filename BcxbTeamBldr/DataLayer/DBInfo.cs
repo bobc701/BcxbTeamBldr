@@ -248,34 +248,92 @@ namespace BcxbTeamBldr.DataLayer {
       public List<CUserPlayer> GetUserPlayerList(string user, string team) {
          // ---------------------------------------------------------------------
          var list = new List<CUserPlayer>();
-         string sql = $"EXEC GetPlayerList '{user}', '{team}'";
-         using (var cmd = new SqlCommand(sql, con1)) {
+         //string sql = $"EXEC GetPlayerList '{user}', '{team}'";
+         string sql =
+            $@"SELECT up.PlayerId, msv.nameLast, msv.teamName, msv.lgID, msv.yearID,
+               msv.G_p, msv.G_c, msv.G_1b, msv.G_2b, msv.G_3b, msv.G_ss, msv.G_lf, msv.G_cf, msv.G_rf,
+	            up.Slot_NoDH, up.Posn_NoDH, up.Slot_DH, up.Posn_DH
+               FROM UserPlayers up
+               JOIN MultiSearchView msv 
+	               ON msv.PlayerId = up.PlayerId
+	               AND msv.teamID = up.teamID
+	               AND msv.yearID = up.yearID
+               WHERE up.UserName = '{user}' AND up.TeamName = '{team}'";
+         
+               
+         using (var cmd = new SqlCommand(sql, con1)) 
+         using (SqlDataReader rdr = cmd.ExecuteReader()) 
 
-            using (SqlDataReader rdr = cmd.ExecuteReader()) {
-               while (rdr.Read()) {
-                  var player = new CUserPlayer();
-                  player.PlayerId = rdr["PlayerId"].ToString();
-                  player.PlayerName = rdr["PlayerName"].ToString();
-                  player.PlayerType = rdr["PlayerType"].ToString()[0];
-                  player.FieldingString = rdr["FieldingString"].ToString();
-                  player.Year = (int)rdr["Year"];
-                  player.MlbTeam = rdr["MlbTeam"].ToString();
-                  player.MlbLeague = rdr["MlbLeague"].ToString();
+         while (rdr.Read()) {
+            var player = new CUserPlayer();
+            player.PlayerId = rdr["PlayerId"].ToString();
+            player.PlayerName = rdr["nameLast"].ToString();
+            player.PlayerType = (int)rdr["G_p"] >= 5 ? 'P' : 'B';
+            player.FieldingString = GetFieldingString(rdr);
+               //rdr["G_p"], rdr["G_c"], rdr["G_1b"], rdr["G_2b"], rdr["G_3b"],
+               //rdr["G_ss"], rdr["G_lf"], rdr["G_cf"], rdr["G_rf"]);
 
-                  player.Slot_NoDH = (int)rdr["Slot_NoDH"];
-                  player.Posn_NoDH = (int)rdr["Posn_NoDH"];
-                  player.Slot_DH = (int)rdr["Slot_DH"];
-                  player.Posn_DH = (int)rdr["Posn_DH"];
+            player.Year = (int)rdr["yearID"];
+            player.MlbTeam = rdr["teamName"].ToString();
+            player.MlbLeague = rdr["lgID"].ToString();
 
-                  list.Add(player);
-               }
+            player.Slot_NoDH = (int)rdr["Slot_NoDH"];
+            player.Posn_NoDH = (int)rdr["Posn_NoDH"];
+            player.Slot_DH = (int)rdr["Slot_DH"];
+            player.Posn_DH = (int)rdr["Posn_DH"];
 
-            }
+            list.Add(player);
          }
+
          return list;
 
       }
 
+
+      private string GetFieldingString(SqlDataReader rdr) {
+      // -----------------------------------------------------------------------
+
+         const int fMin = 8; // Min games at posn to be listed in posn string
+         string s = "";
+         string del = "";
+
+         if ((int)rdr["G_p"] >= fMin) { s += del + "p"; del = ","; }
+         if ((int)rdr["G_c"] >= fMin) { s += del + "c"; del = ","; }
+         if ((int)rdr["G_1b"] >= fMin) { s += del + "1b"; del = ","; }
+         if ((int)rdr["G_2b"] >= fMin) { s += del + "2b"; del = ","; }
+         if ((int)rdr["G_3b"] >= fMin) { s += del + "3b"; del = ","; }
+         if ((int)rdr["G_ss"] >= fMin) { s += del + "ss"; del = ","; }
+         if ((int)rdr["G_lf"] >= fMin) { s += del + "lf"; del = ","; }
+         if ((int)rdr["G_cf"] >= fMin) { s += del + "cf"; del = ","; }
+         if ((int)rdr["G_rf"] >= fMin) { s += del + "rf"; del = ","; }
+
+         return s;
+
+      }
+
+
+      private string GetFieldingString0
+         (object p, object c, object b1, object b2, object b3, object ss,
+          object lf, object cf, object rf) {
+      // -----------------------------------------------------------------------
+
+         const int fMin = 8; // Min games at posn to be listed in posn string
+         string s = "";
+         string del = "";
+
+         if ((int)p >= fMin) { s += del + "p"; del = ","; }
+         if ((int)c >= fMin) { s += del + "c"; del = ","; }
+         if ((int)b1 >= fMin) { s += del + "1b"; del = ","; }
+         if ((int)b2 >= fMin) { s += del + "2b"; del = ","; }
+         if ((int)b3 >= fMin) { s += del + "3b"; del = ","; }
+         if ((int)ss >= fMin) { s += del + "ss"; del = ","; }
+         if ((int)lf >= fMin) { s += del + "lf"; del = ","; }
+         if ((int)cf >= fMin) { s += del + "cf"; del = ","; }
+         if ((int)rf >= fMin) { s += del + "rf"; del = ","; }
+
+         return s;
+
+      }
 
       public List<CMlbPlayer> SearchPlayers(string crit) {
          // ---------------------------------------------------------------------
@@ -317,8 +375,7 @@ namespace BcxbTeamBldr.DataLayer {
          if (critYear != "All") { crit += delim + $"Year = '{critYear}'"; delim = " AND "; }
 
          if (critPosn != "All") {
-            crit += delim + critPosn switch
-            {
+            crit += delim + critPosn switch {
                "p" => $"G_p > {posnMin}",
                "c" => $"G_c > {posnMin}",
                "1b" => $"G_1b > {posnMin}",
