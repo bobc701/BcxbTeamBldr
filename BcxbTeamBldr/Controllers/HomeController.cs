@@ -89,14 +89,14 @@ namespace BcxbTeamBldr.Controllers {
          // This appears to be NOT used 11'20
          try {
             ViewBag.Msg = "";
-            var already = dbinfo.GetPlayerList(user, team).Exists(p => p.PlayerId == pid);
+            var already = dbinfo.GetUserPlayerList(user, team).Exists(p => p.PlayerId == pid);
             if (already) { //Player already on team
                ViewBag.Msg = "Player is already on " + team;
                return View("SearchPlayers", new CUserTeam() { UserName = user, TeamName = team });
             }
             else {
                dbinfo.AddPlayerToTeam(user, team, pid);
-               var roster = new PlayerListVM(user, team, dbinfo);
+               var roster = new UserPlayerListVM(user, team, dbinfo);
                return View("EditTeam", roster);
             }
          }
@@ -117,7 +117,7 @@ namespace BcxbTeamBldr.Controllers {
             ViewBag.Msg = "";
             var aIdList = idList.Split(',');
             foreach (var pid in aIdList) {
-               var already = dbinfo.GetPlayerList(user, team).Exists(p => p.PlayerId == pid);
+               var already = dbinfo.GetUserPlayerList(user, team).Exists(p => p.PlayerId == pid);
                if (!already) { //Player already on team
                   dbinfo.AddPlayerToTeam(user, team, pid);
                }
@@ -143,7 +143,7 @@ namespace BcxbTeamBldr.Controllers {
          try {
             ViewBag.Msg = ""; 
             dbinfo.RemovePlayerFromTeam(user, team, id);
-            var roster = new PlayerListVM(user, team, dbinfo);
+            var roster = new UserPlayerListVM(user, team, dbinfo);
             return View("EditTeam", roster);
          }
          catch (Exception ex) {
@@ -233,18 +233,20 @@ namespace BcxbTeamBldr.Controllers {
 
       public ActionResult SearchMulti(string user, string team) {
          //  ------------------------------------------
-         var model = new PlayerListVM(user, team, dbinfo, 0);
-         return View(model);
+         //var model = new PlayerListVM(user, team, dbinfo, 0);
+         ViewData["user"] = user;
+         ViewData["team"] = team;
+         return View();
       }
 
 
-      public JsonResult detailasjson(string crit) {
-      // ----------------------------------------------
-         List<CMlbPlayer> py = dbinfo.SearchPlayers(crit);
-         var s = Json(py, JsonRequestBehavior.AllowGet);
-         return Json(py, JsonRequestBehavior.AllowGet);
+      //public JsonResult detailasjson(string crit) {
+      //// ----------------------------------------------
+      //   List<CMlbPlayer> py = dbinfo.SearchPlayers(crit);
+      //   var s = Json(py, JsonRequestBehavior.AllowGet);
+      //   return Json(py, JsonRequestBehavior.AllowGet);
 
-      }
+      //}
 
       public JsonResult searchMultiJson(string critName, string critTeam, string critYear, string critPosn) {
       // -------------------------------------------------------------------------------------
@@ -258,7 +260,7 @@ namespace BcxbTeamBldr.Controllers {
 
       public ContentResult VerMsgAction(string user, string team, string pid) {
       // --------------------------------------------------------------
-         bool already = dbinfo.GetPlayerList(user, team).Exists(p => p.PlayerId == pid);
+         bool already = dbinfo.GetUserPlayerList(user, team).Exists(p => p.PlayerId == pid);
          if (already) { //Player already on team
             return Content("Player is already on " + team);
          }

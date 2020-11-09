@@ -107,17 +107,14 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="DataLayer\CMlbLeague.cs" />
-    <Compile Include="DataLayer\CMlbPlayer.cs" />
     <Compile Include="DataLayer\CUser.cs" />
     <Compile Include="DataLayer\CUserPlayer.cs" />
     <Compile Include="DataLayer\DBInfo.cs" />
-    <Compile Include="DataLayer\DBRepos.cs" />
     <Compile Include="DataLayer\MultiSearchView.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="DataLayer\CUserTeam.cs" />
-    <Compile Include="Models\PlayerListVM.cs" />
     <Compile Include="Models\TeamListVM.cs" />
     <Compile Include="Models\UserPlayerListVM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

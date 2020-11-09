@@ -190,7 +190,9 @@ namespace BcxbTeamBldr.DataLayer {
 
       public void RemovePlayerFromTeam(string user, string team, string id) {
          // --------------------------------------------------------------------
-         string sql = $"EXEC RemovePlayerFromTeam '{user}', '{team}', '{id}'";
+         //string sql = $"EXEC RemovePlayerFromTeam '{user}', '{team}', '{id}'";
+         string sql = $"DELETE FROM UserPlayers WHERE UserName = '{user}' AND TeamName = '{team}' AND PlayerId = '{id}'";
+
          using (var cmd = new SqlCommand(sql, con1)) {
             cmd.ExecuteNonQuery();
          }
@@ -200,7 +202,8 @@ namespace BcxbTeamBldr.DataLayer {
 
       public void RemoveAllPlayersFromTeam(string user, string team) {
          // --------------------------------------------------------------------
-         string sql = $"EXEC RemoveAllPlayersFromTeam '{user}', '{team}'";
+         //string sql = $"EXEC RemoveAllPlayersFromTeam '{user}', '{team}'";
+         string sql = $"DELETE FROM UserPlayers WHERE UserName = '{user}' AND TeamName = '{team}'";
          using (var cmd = new SqlCommand(sql, con1)) {
             cmd.ExecuteNonQuery();
          }
@@ -218,31 +221,32 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
-      public List<CMlbPlayer> GetPlayerList(string user, string team) {
-         // ---------------------------------------------------------------------
-         var list = new List<CMlbPlayer>();
-         string sql = $"EXEC GetPlayerList '{user}', '{team}'";
-         using (var cmd = new SqlCommand(sql, con1)) {
+      //public List<CMlbPlayer> GetPlayerList(string user, string team) {
+      //   // ---------------------------------------------------------------------
+      //   // Since this returns (obsolete) MlbPlayer, it seems it s/not be used anymore. //11'20
+      //   var list = new List<CMlbPlayer>();
+      //   string sql = $"EXEC GetPlayerList '{user}', '{team}'";
+      //   using (var cmd = new SqlCommand(sql, con1)) {
 
-            using (SqlDataReader rdr = cmd.ExecuteReader()) {
-               while (rdr.Read()) {
-                  var player = new CMlbPlayer();
-                  player.PlayerId = rdr["PlayerId"].ToString();
-                  player.PlayerName = rdr["PlayerName"].ToString();
-                  player.PlayerType = rdr["PlayerType"].ToString()[0];
-                  player.FieldingString = rdr["FieldingString"].ToString();
-                  player.Year = (int)rdr["Year"];
-                  player.MlbTeam = rdr["MlbTeam"].ToString();
-                  player.MlbLeague = rdr["MlbLeague"].ToString();
+      //      using (SqlDataReader rdr = cmd.ExecuteReader()) {
+      //         while (rdr.Read()) {
+      //            var player = new CMlbPlayer();
+      //            player.PlayerId = rdr["PlayerId"].ToString();
+      //            player.PlayerName = rdr["PlayerName"].ToString();
+      //            player.PlayerType = rdr["PlayerType"].ToString()[0];
+      //            player.FieldingString = rdr["FieldingString"].ToString();
+      //            player.Year = (int)rdr["Year"];
+      //            player.MlbTeam = rdr["MlbTeam"].ToString();
+      //            player.MlbLeague = rdr["MlbLeague"].ToString();
 
-                  list.Add(player);
-               }
+      //            list.Add(player);
+      //         }
 
-            }
-         }
-         return list;
+      //      }
+      //   }
+      //   return list;
 
-      }
+      //}
 
 
       public List<CUserPlayer> GetUserPlayerList(string user, string team) {
@@ -335,31 +339,31 @@ namespace BcxbTeamBldr.DataLayer {
 
       }
 
-      public List<CMlbPlayer> SearchPlayers(string crit) {
-         // ---------------------------------------------------------------------
-         var list = new List<CMlbPlayer>();
-         string sql = $"EXEC SearchPlayers '{crit}'";
-         using (var cmd = new SqlCommand(sql, con1)) {
+      //public List<CMlbPlayer> SearchPlayers(string crit) {
+      //   // ---------------------------------------------------------------------
+      //   var list = new List<CMlbPlayer>();
+      //   string sql = $"EXEC SearchPlayers '{crit}'";
+      //   using (var cmd = new SqlCommand(sql, con1)) {
 
-            using (SqlDataReader rdr = cmd.ExecuteReader()) {
-               while (rdr.Read()) {
-                  var player = new CMlbPlayer();
-                  player.PlayerId = rdr["PlayerId"].ToString();
-                  player.PlayerName = rdr["PlayerName"].ToString();
-                  player.PlayerType = rdr["PlayerType"].ToString()[0];
-                  player.FieldingString = rdr["FieldingString"].ToString();
-                  player.Year = (int)rdr["Year"];
-                  player.MlbTeam = rdr["MlbTeam"].ToString();
-                  player.MlbLeague = rdr["MlbLeague"].ToString(); ;
+      //      using (SqlDataReader rdr = cmd.ExecuteReader()) {
+      //         while (rdr.Read()) {
+      //            var player = new CMlbPlayer();
+      //            player.PlayerId = rdr["PlayerId"].ToString();
+      //            player.PlayerName = rdr["PlayerName"].ToString();
+      //            player.PlayerType = rdr["PlayerType"].ToString()[0];
+      //            player.FieldingString = rdr["FieldingString"].ToString();
+      //            player.Year = (int)rdr["Year"];
+      //            player.MlbTeam = rdr["MlbTeam"].ToString();
+      //            player.MlbLeague = rdr["MlbLeague"].ToString(); ;
 
-                  list.Add(player);
-               }
+      //            list.Add(player);
+      //         }
 
-            }
-         }
-         return list;
+      //      }
+      //   }
+      //   return list;
 
-      }
+      //}
 
 
       public List<MultiSearchView> SearchPlayersMulti(string critName, string critTeam, string critYear, string critPosn) {
@@ -370,9 +374,9 @@ namespace BcxbTeamBldr.DataLayer {
 
          // Build search string for SQL select...
          string crit = "", delim = "";
-         if (critName != "All") { crit = $"PlayerName LIKE '%{critName}%'"; delim = " AND "; }
-         if (critTeam != "All") { crit += delim + $"MlbTeam LIKE '%{critTeam}%'"; delim = " AND "; } // EG: 'NYA2019' LIKE '%NYA%'
-         if (critYear != "All") { crit += delim + $"Year = '{critYear}'"; delim = " AND "; }
+         if (critName != "All") { crit = $"nameLast LIKE '%{critName}%'"; delim = " AND "; }
+         if (critTeam != "All") { crit += delim + $"teamID LIKE '%{critTeam}%'"; delim = " AND "; } // EG: 'NYA2019' LIKE '%NYA%'
+         if (critYear != "All") { crit += delim + $"yearID = '{critYear}'"; delim = " AND "; }
 
          if (critPosn != "All") {
             crit += delim + critPosn switch {
@@ -398,7 +402,7 @@ namespace BcxbTeamBldr.DataLayer {
                   var msv = new MultiSearchView();
                   msv.nameLast = rdr["nameLast"].ToString();
                   msv.ZPlayerId = (int)rdr["ZPlayerID"];
-                  msv.playerID = rdr["playerId"].ToString();
+                  msv.playerID = rdr["playerID"].ToString();
                   msv.yearID = (int)rdr["yearID"];
                   msv.teamID = rdr["teamID"].ToString();
                   msv.G_p = (int)rdr["G_p"];

@@ -1,6 +1,4 @@
-﻿@model BcxbTeamBldr.Models.PlayerListVM
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html>
 <head>
@@ -102,7 +100,7 @@
 </head>
 <body>
     <div>
-        <h2>Search for player to add to @Model.UserTeam.TeamName</h2>
+        <h2>Search for player to add to @ViewData["team"]</h2>
 
         First few characters of player's last name...
         <input type="text" id="txtName" />
@@ -144,10 +142,10 @@
         </div>
         <p/><input id="errMsg" style="border:none; color:red; font-size:larger; font-weight:bold; width:600px;" value="" />
         <p/><input id="btnSubmit" type="button" value="Add Selected Players" />
-        <p/>@Html.ActionLink("Close", "EditTeam", new { user = Model.UserTeam.UserName, team = Model.UserTeam.TeamName })
+        <p/>@Html.ActionLink("Close", "EditTeam", new { user = ViewData["user"], team = ViewData["team"] })
     </div>
-    <br /><input id="hdnUserName" type="text" style="visibility:hidden" value="@Model.UserTeam.UserName" />
-    <input id="hdnTeamName" type="text" style="visibility:hidden" value="@Model.UserTeam.TeamName" />
+    <br /><input id="hdnUserName" type="text" style="visibility:hidden" value="@ViewData["user]"]" />
+    <input id="hdnTeamName" type="text" style="visibility:hidden" value="@ViewData["team"]" />
 </body>
 </html>
 
