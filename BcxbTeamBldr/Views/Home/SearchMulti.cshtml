@@ -16,8 +16,12 @@
                   let idList = '', delim = '';
                   $('input.playerSelection:checked').each(
                      function(i, e) {
-                        //alert('element ' + i + ', id=' + e.value);
-                        idList += delim + e.value;
+                        //alert('element ' + i + ', id=' + e.value); var $currText = $tds.eq(0).text();
+                        let yr = e.parent().Find(".selectedYear").first().text();
+                        let tm = e.parent().Find(".selectedTeamr").first().text();;
+                        let id = e.parent().Find(".selectedPlayer").first().text();
+                        idList += delim + `${yr}|${tm}|${id}`;
+                        alert("idList: " + idList);
                         delim = ',';
                      });
                   //alert(`idList=|${idList}|`);
@@ -72,12 +76,12 @@
                             content += '<tr>';
                             content += '<td>' + p.nameLast + '</td>';
                             content += '<td>' + p.teamName + '</td>';
-                            content += '<td>' + p.yearID + '</td>';
+                            content += `<td class="selectedYear"> value="${p.teamID}"` + p.yearID + '</td>';
                             content += '<td>' + p.FieldingString + '</td>';
                             content += `<td><input type="checkbox" class="playerSelection" value="${p.playerID}"/></td>`;
-                            content += '<td style="visibility:hidden">' + p.playerID + '</td>';
-                            content += '<td style="visibility:hidden">' + p.teamID + '</td>';
-                            content += '<td style="visibility:hidden">' + p.ZPlayerIDD + '</td>';
+                            content += `<td class="selectedPlayer" value="${p.playerID}" style="visibility:hidden">` + p.playerID + '</td>';
+                            content += `<td class="selectedTeam" value="${p.teamID}" style="visibility:hidden">` + p.teamID + '</td>';
+                            content += '<td style="visibility:hidden">' + p.ZPlayerID + '</td>';
                             content += '</tr>';
                         }
                         content += "</table>";

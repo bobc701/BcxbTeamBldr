@@ -5,17 +5,15 @@ using System.Web;
 
 namespace BcxbTeamBldr.DataLayer {
 
-   public class CUserPlayer {
+   public class CTeamRoster {
 
       public string UserName { get; set; } //Source table: UserPlayer
       public string TeamName { get; set; } //Source table: UserPlayer
-      public string PlayerId { get; set; } //Source table: UserPlayer & MlbPlayer
+      public CPlayerKey Player { get; set; } //Source table: UserPlayer & MlbPlayer
 
       public string PlayerName { get; set; }  //Source table: MlbPlayer
       public char PlayerType { get; set; }    //Source table: MlbPlayer
       public string FieldingString { get; set; }  //Source table: MlbPlayer
-      public int Year { get; set; }               //Source table: MlbPlayer
-      public string MlbTeam { get; set; }         //Source table: MlbPlayer
       public string MlbLeague { get; set; }       //Source table: MlbPlayer
 
       public int Slot_NoDH { get; set; }  //Source table: UserPlayer

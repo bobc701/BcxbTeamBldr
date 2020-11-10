@@ -84,42 +84,47 @@ namespace BcxbTeamBldr.Controllers {
       }
 
 
-      public ActionResult AddPlayerToTeam(string user, string team, string pid) {
-         // ------------------------------------------------------------
-         // This appears to be NOT used 11'20
-         try {
-            ViewBag.Msg = "";
-            var already = dbinfo.GetUserPlayerList(user, team).Exists(p => p.PlayerId == pid);
-            if (already) { //Player already on team
-               ViewBag.Msg = "Player is already on " + team;
-               return View("SearchPlayers", new CUserTeam() { UserName = user, TeamName = team });
-            }
-            else {
-               dbinfo.AddPlayerToTeam(user, team, pid);
-               var roster = new UserPlayerListVM(user, team, dbinfo);
-               return View("EditTeam", roster);
-            }
-         }
-         catch (Exception ex) {
-            string msg =
-               "An error occurred adding the new team to the database:\r\n" +
-               ex.Message;
-            ViewBag.ErrorMsg = msg;
-            return View("ErrorView");
-         }
+      //public ActionResult AddPlayerToTeam(string user, string team, string pid) {
+      //   // ------------------------------------------------------------
+      //   // This appears to be NOT used 11'20
+      //   try {
+      //      ViewBag.Msg = "";
+      //      var already = dbinfo.GetUserPlayerList(user, team).Exists(p => p.playerID == pid);
+      //      if (already) { //Player already on team
+      //         ViewBag.Msg = "Player is already on " + team;
+      //         return View("SearchPlayers", new CUserTeam() { UserName = user, TeamName = team });
+      //      }
+      //      else {
+      //         dbinfo.AddPlayerToTeam(user, team, pid);
+      //         var roster = new UserPlayerListVM(user, team, dbinfo);
+      //         return View("EditTeam", roster);
+      //      }
+      //   }
+      //   catch (Exception ex) {
+      //      string msg =
+      //         "An error occurred adding the new team to the database:\r\n" +
+      //         ex.Message;
+      //      ViewBag.ErrorMsg = msg;
+      //      return View("ErrorView");
+      //   }
 
-      }
+      //}
 
 
       public ActionResult AddPlayerToTeamMulti(string user, string team, string idList) {
-         // ------------------------------------------------------------
-         try {
+      // ------------------------------------------------------------
+      // Sample idList: "2019|NYY|judgear01,2020|DET|jonesbi01,1901|BRO|stengca01"
+         try{ 
             ViewBag.Msg = "";
             var aIdList = idList.Split(',');
             foreach (var pid in aIdList) {
-               var already = dbinfo.GetUserPlayerList(user, team).Exists(p => p.PlayerId == pid);
+               var player = pid.Split('|');
+               var already = dbinfo.GetUserPlayerList(user, team).Exists(p => 
+                  p.Year == int.Parse(player[0]) && 
+                  p.MlbTeam == player[1] && 
+                  p.playerID == player[2]);
                if (!already) { //Player already on team
-                  dbinfo.AddPlayerToTeam(user, team, pid);
+                  dbinfo.AddPlayerToTeam(user, team, int.Parse(player[0]), player[1], player[2]);
                }
             }
             //var roster = new PlayerListVM(user, team);
@@ -138,7 +143,7 @@ namespace BcxbTeamBldr.Controllers {
 
 
 
-      public ActionResult RemovePlayerFromTeam(string user, string team, string id) {
+      public ActionResult RemovePlayerFromTeam(string user, string team, int yearID, string teamID, string playerID) {
          // ------------------------------------------------------------
          try {
             ViewBag.Msg = ""; 
@@ -260,7 +265,7 @@ namespace BcxbTeamBldr.Controllers {
 
       public ContentResult VerMsgAction(string user, string team, string pid) {
       // --------------------------------------------------------------
-         bool already = dbinfo.GetUserPlayerList(user, team).Exists(p => p.PlayerId == pid);
+         bool already = dbinfo.GetUserPlayerList(user, team).Exists(p => p.playerID == pid);
          if (already) { //Player already on team
             return Content("Player is already on " + team);
          }

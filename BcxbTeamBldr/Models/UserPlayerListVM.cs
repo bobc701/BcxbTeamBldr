@@ -9,7 +9,7 @@ namespace BcxbTeamBldr.Models {
    public class UserPlayerListVM {
 
       public CUserTeam UserTeam { get; set; }
-      public List<CUserPlayer> Players { get; set; }
+      public List<CTeamRoster> Players { get; set; }
 
    // These are used for display values in the view...
       public string[] PosnToStr { get; } = { "-", "p", "c", "1b", "2b", "3b", "ss", "lf", "cf", "rf", "dh" };
