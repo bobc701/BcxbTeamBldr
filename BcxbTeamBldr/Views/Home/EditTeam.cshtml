@@ -46,7 +46,7 @@
    <p />
 
    <div>
-      @if (Model.Players.Count == 0) {
+      @if (Model.Roster.Count == 0) {
          <div style="color:red;">
             @teamName  <text>doesn't have any players yet.</text>
          </div>
@@ -64,16 +64,16 @@
                <th width="70" align="center">Position<br />DH</th>
                <th width="70" align="center">Remove</th>
             </tr>
-            @for (var i = 0; i < Model.Players.Count; i++) {
+            @for (var i = 0; i < Model.Roster.Count; i++) {
                <tr>
-                  <td>@Model.Players[i].PlayerName</td>
+                  <td>@Model.Roster[i].PlayerName</td>
 
-                  <td>@Model.Players[i].MlbTeam</td>
-                  <td align="center">@Model.Players[i].Year</td>
-                  <td>@Model.Players[i].FieldingString</td>
+                  <td>@Model.Roster[i].PlayerKey.teamTag</td>
+                  <td align="center">@Model.Roster[i].PlayerKey.year</td>
+                  <td>@Model.Roster[i].FieldingString</td>
                   <td align="center">
                      @Html.DropDownListFor(
-                        m => m.Players[i].Slot_NoDH,
+                        m => m.Roster[i].Slot_NoDH,
                         new SelectList(
                            //new List<string> { "-", "c", "1b" })
                            new List<SelectListItem>  {
@@ -90,7 +90,7 @@
                            },
                            "Value",
                            "Text",
-                           Model.Players[i].Slot_NoDH
+                           Model.Roster[i].Slot_NoDH
 
                        ),
                        new { @class = "lineupPick" }
@@ -98,8 +98,8 @@
 
                   <td align="center">
                      @Html.DropDownListFor(
-                        m => m.Players[i].Posn_NoDH,
-                        new SelectList(  
+                        m => m.Roster[i].Posn_NoDH,
+                        new SelectList(
                            new List<SelectListItem> {
                               new SelectListItem { Value = "0", Text = "-"},
                               new SelectListItem { Value = "2", Text = "c"},
@@ -114,7 +114,7 @@
                            },
                            "Value",
                            "Text",
-                           Model.Players[i].Posn_NoDH
+                           Model.Roster[i].Posn_NoDH
                         ),
                         new { @class = "lineupPick" }
                      )
@@ -122,8 +122,8 @@
                   </td>
                   <td align="center">
                      @Html.DropDownListFor(
-                        m => m.Players[i].Slot_DH,
-                        new SelectList(  
+                        m => m.Roster[i].Slot_DH,
+                        new SelectList(
                            new List<SelectListItem>  {
                               new SelectListItem { Value = "0", Text = "-"},
                               new SelectListItem { Value = "1", Text = "1"},
@@ -138,14 +138,14 @@
                            },
                            "Value",
                            "Text",
-                           Model.Players[i].Slot_DH
+                           Model.Roster[i].Slot_DH
                         ),
                         new { @class = "lineupPick" }
                      )
                   </td>
                   <td align="center">
                      @Html.DropDownListFor(
-                        m => m.Players[i].Posn_DH,
+                        m => m.Roster[i].Posn_DH,
                         new SelectList(
                            new List<SelectListItem> {
                               new SelectListItem { Value = "0", Text = "-"},
@@ -162,21 +162,21 @@
                            },
                            "Value",
                            "Text",
-                           Model.Players[i].Posn_DH
+                           Model.Roster[i].Posn_DH
                         ),
                         new { @class = "lineupPick" }
                      )
                   </td>
                   <td>
-                     @Html.CheckBoxFor(m => m.Players[i].Remove)
+                     @Html.CheckBoxFor(m => m.Roster[i].Remove)
                      @*@Html.ActionLink("Remove", "RemovePlayerFromTeam",
                         new { user = userName, team = teamName, id = Model.Players[i].PlayerId })*@
                   </td>
                   <td>
                      @*Addl stuff needed on server to update UserPlayer table...*@
-                     @Html.HiddenFor(m => m.Players[i].PlayerId)
-                     @Html.HiddenFor(m => m.Players[i].UserName)
-                     @Html.HiddenFor(m => m.Players[i].TeamName)
+                     @Html.HiddenFor(m => m.Roster[i].PlayerKey.pid)
+                     @Html.HiddenFor(m => m.Roster[i].UserName)
+                     @Html.HiddenFor(m => m.Roster[i].TeamName)
                   </td>
                </tr>
             }

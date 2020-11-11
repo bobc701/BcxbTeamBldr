@@ -5,11 +5,11 @@ using System.Web;
 
 namespace BcxbTeamBldr.DataLayer {
 
-   public class CTeamRoster {
+   public class CUserPlayer {
 
       public string UserName { get; set; } //Source table: UserPlayer
       public string TeamName { get; set; } //Source table: UserPlayer
-      public CPlayerKey Player { get; set; } //Source table: UserPlayer & MlbPlayer
+      public (string pid, string teamTag, int year) PlayerKey { get; set; } //Source table: UserPlayer & MlbPlayer
 
       public string PlayerName { get; set; }  //Source table: MlbPlayer
       public char PlayerType { get; set; }    //Source table: MlbPlayer

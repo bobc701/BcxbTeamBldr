@@ -9,7 +9,7 @@ namespace BcxbTeamBldr.Models {
    public class UserPlayerListVM {
 
       public CUserTeam UserTeam { get; set; }
-      public List<CTeamRoster> Players { get; set; }
+      public List<CUserPlayer> Roster { get; set; }
 
    // These are used for display values in the view...
       public string[] PosnToStr { get; } = { "-", "p", "c", "1b", "2b", "3b", "ss", "lf", "cf", "rf", "dh" };
@@ -19,14 +19,14 @@ namespace BcxbTeamBldr.Models {
       public UserPlayerListVM(string user, string team, DbInfo info) {
       // ---------------------------------------------
          UserTeam = new CUserTeam { UserName = user, TeamName = team };
-         Players = info.GetUserPlayerList(user, team).OrderBy(p => p.PlayerType).ThenBy(p => p.PlayerName).ToList();
+         Roster = info.GetUserPlayerList(user, team).OrderBy(p => p.PlayerType).ThenBy(p => p.PlayerName).ToList();
       }
 
 
       public UserPlayerListVM(string user, string team, DbInfo info, int option) {
       // ---------------------------------------------
          UserTeam = new CUserTeam { UserName = user, TeamName = team };
-         Players = option switch
+         Roster = option switch
          {
             0 => null,
             _ => info.GetUserPlayerList(user, team).OrderBy(p => p.PlayerType).ThenBy(p => p.PlayerName).ToList()

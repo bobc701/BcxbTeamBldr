@@ -111,20 +111,19 @@ namespace BcxbTeamBldr.Controllers {
       //}
 
 
-      public ActionResult AddPlayerToTeamMulti(string user, string team, string idList) {
+      public ActionResult AddPlayerToTeamMulti(string user, string team, string pidList, string tagList, string yearList) {
       // ------------------------------------------------------------
       // Sample idList: "2019|NYY|judgear01,2020|DET|jonesbi01,1901|BRO|stengca01"
          try{ 
             ViewBag.Msg = "";
-            var aIdList = idList.Split(',');
-            foreach (var pid in aIdList) {
-               var player = pid.Split('|');
-               var already = dbinfo.GetUserPlayerList(user, team).Exists(p => 
-                  p.Year == int.Parse(player[0]) && 
-                  p.MlbTeam == player[1] && 
-                  p.playerID == player[2]);
+            var aPidList = pidList.Split(',');
+            var aTagList = tagList.Split(',');
+            var aYearList = yearList.Split(',').Select(y => int.Parse(y)).ToArray();
+            for (int i=0; i<aPidList.Length; i++) {
+               var already = dbinfo.GetUserPlayerList(user, team)
+                  .Exists(p => p.PlayerKey == (aPidList[i], aTagList[i], aYearList[i]));
                if (!already) { //Player already on team
-                  dbinfo.AddPlayerToTeam(user, team, int.Parse(player[0]), player[1], player[2]);
+                  dbinfo.AddPlayerToTeam(user, team, (aPidList[i], aTagList[i], aYearList[i]));
                }
             }
             //var roster = new PlayerListVM(user, team);
@@ -147,7 +146,7 @@ namespace BcxbTeamBldr.Controllers {
          // ------------------------------------------------------------
          try {
             ViewBag.Msg = ""; 
-            dbinfo.RemovePlayerFromTeam(user, team, id);
+            dbinfo.RemovePlayerFromTeam(user, team, (playerID, teamID, yearID));
             var roster = new UserPlayerListVM(user, team, dbinfo);
             return View("EditTeam", roster);
          }
@@ -180,7 +179,7 @@ namespace BcxbTeamBldr.Controllers {
          // Loop over player list, 
          // If they are marked'Remove', shoot off a delete.
          // Otherwise, shoot off an update for each with lineups. 
-            dbinfo.UpdateLineups(user, team, model.Players);
+            dbinfo.UpdateLineups(user, team, model.Roster);
 
             return View("EditTeam", new UserPlayerListVM(user, team, dbinfo));
 
@@ -263,9 +262,9 @@ namespace BcxbTeamBldr.Controllers {
 
 
 
-      public ContentResult VerMsgAction(string user, string team, string pid) {
+      public ContentResult VerMsgAction(string user, string team, string pid, string teamTag, int year) {
       // --------------------------------------------------------------
-         bool already = dbinfo.GetUserPlayerList(user, team).Exists(p => p.playerID == pid);
+         bool already = dbinfo.GetUserPlayerList(user, team).Exists(p => p.PlayerKey == (pid, teamTag, year));
          if (already) { //Player already on team
             return Content("Player is already on " + team);
          }

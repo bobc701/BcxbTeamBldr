@@ -24,7 +24,7 @@
 
    <div>
 
-      @if (Model.Players.Count == 0) {
+      @if (Model.Roster.Count == 0) {
          <div style="color:red;">
             @teamName  <text>doesn't have any players yet.</text>
          </div>
@@ -42,20 +42,24 @@
                <th width="70" align="center">Position<br />DH</th>
                <th width="70"></th>
             </tr>
-            @for (var i = 0; i < Model.Players.Count(); i++) {
+            @for (var i = 0; i < Model.Roster.Count(); i++) {
                <tr>
-                  <td>@Model.Players[i].PlayerName </td>
-                  <td>@Model.Players[i].PlayerType </td>
-                  <td>@Model.Players[i].MlbTeam</td>
-                  <td align="center">@Model.Players[i].Year</td>
-                  <td align="center">@Model.SlotToStr[Model.Players[i].Slot_NoDH] </td>
-                  <td align="center">@Model.PosnToStr[Model.Players[i].Posn_NoDH] </td>
-                  <td align="center">@Model.SlotToStr[Model.Players[i].Slot_DH] </td>
-                  <td align="center">@Model.PosnToStr[Model.Players[i].Posn_DH] </td>
+                  <td>@Model.Roster[i].PlayerName </td>
+                  <td>@Model.Roster[i].PlayerType </td>
+                  <td>@Model.Roster[i].Player.yearID</td>
+                  <td align="center">@Model.Roster[i].Player.yearID</td>
+                  <td align="center">@Model.SlotToStr[Model.Roster[i].Slot_NoDH] </td>
+                  <td align="center">@Model.PosnToStr[Model.Roster[i].Posn_NoDH] </td>
+                  <td align="center">@Model.SlotToStr[Model.Roster[i].Slot_DH] </td>
+                  <td align="center">@Model.PosnToStr[Model.Roster[i].Posn_DH] </td>
 
                   <td>
                      @Html.ActionLink("Remove", "RemovePlayerFromTeam",
-                         new { user = userName, team = teamName, id = Model.Players[i].PlayerId })
+                         new { user = userName, team = teamName, 
+                            year = Model.Roster[i].Player.yearID,
+                            mlbTeam = Model.Roster[i].Player.teamID,
+                            pid = Model.Roster[i].Player.playerID,
+                            })
                   </td>
                </tr>
             }

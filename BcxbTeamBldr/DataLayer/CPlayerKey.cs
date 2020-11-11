@@ -7,8 +7,8 @@ namespace BcxbTeamBldr.DataLayer {
 
    public struct CPlayerKey {
 
-      public int playerID;
-      public string yearID;
+      public string playerID;
+      public int yearID;
       public string teamID;
    }
 
