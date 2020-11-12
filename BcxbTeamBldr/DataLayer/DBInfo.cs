@@ -285,7 +285,7 @@ namespace BcxbTeamBldr.DataLayer {
 
          while (rdr.Read()) {
             var player = new CUserPlayer();
-            player.PlayerKey = (rdr["PlayerId"].ToString(), rdr["teamName"].ToString(), (int)rdr["yearID"]);
+            player.PlayerKey = (rdr["PlayerID"].ToString(), rdr["teamID"].ToString(), (int)rdr["yearID"]);
             player.PlayerName = rdr["nameLast"].ToString();
             player.PlayerType = (int)rdr["G_p"] >= 5 ? 'P' : 'B';
             player.FieldingString = GetFieldingString(rdr);
@@ -418,6 +418,7 @@ namespace BcxbTeamBldr.DataLayer {
                   msv.playerID = rdr["playerID"].ToString();
                   msv.yearID = (int)rdr["yearID"];
                   msv.teamID = rdr["teamID"].ToString();
+                  msv.teamName = rdr["teamName"].ToString();
                   msv.G_p = (int)rdr["G_p"];
                   msv.G_c = (int)rdr["G_c"];
                   msv.G_1b = (int)rdr["G_p"];

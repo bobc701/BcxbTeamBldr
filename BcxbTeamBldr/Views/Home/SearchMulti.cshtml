@@ -12,23 +12,28 @@
         $(document).ready(function () {
 
             $('#btnSubmit').click(
-               function() {
-                  let idList = '', delim = '';
+               function () {
+                  alert('In btnSubmit');
+                  let pidList = '', tagList = '', yearList = '', delim = '';
                   $('input.playerSelection:checked').each(
-                     function(i, e) {
-                        //alert('element ' + i + ', id=' + e.value); var $currText = $tds.eq(0).text();
-                        let yr = e.parent().Find(".selectedYear").first().text();
-                        let tm = e.parent().Find(".selectedTeamr").first().text();;
-                        let id = e.parent().Find(".selectedPlayer").first().text();
-                        idList += delim + `${yr}|${tm}|${id}`;
-                        alert("idList: " + idList);
+                     function() {
+                        //alert('element ' + ', id=' + this.value);
+                        //alert(this.tagName);
+                        //alert($(this).parent().parent().get(0).tagName);
+                        let yr = $(this).parent().parent().find("td.selectedYear").first().text(); alert(yr);
+                        let tm = $(this).parent().parent().find("td.selectedTeam").first().text();;
+                        let id = $(this).parent().parent().find("td.selectedPlayer").first().text();
+                        pidList += delim + id;
+                        tagList += delim + tm;
+                        yearList += delim + yr;
                         delim = ',';
+                        alert(`pidList: ${pidList} tagList: ${tagList} yearList: ${yearList}`);
                      });
                   //alert(`idList=|${idList}|`);
                   let user1 = $('#hdnUserName').val();
                   let team1 = $('#hdnTeamName').val();
-                  let url = bc.routePrefix + 'Home/AddPlayerToTeamMulti?user=' + user1 + '&team=' + team1 + '&idList=' + idList;
-                  //alert(`url=${url}`);
+                  let url = bc.routePrefix + `Home/AddPlayerToTeamMulti?user=${user1}&team=${team1}&pidList=${pidList}&tagList=${tagList}&yearList=${yearList}`;
+                  alert(`url=${url}`);
                   window.location.href = url;
 
                }
@@ -76,11 +81,11 @@
                             content += '<tr>';
                             content += '<td>' + p.nameLast + '</td>';
                             content += '<td>' + p.teamName + '</td>';
-                            content += `<td class="selectedYear"> value="${p.teamID}"` + p.yearID + '</td>';
+                            content += `<td class="selectedYear">` + p.yearID + '</td>';
                             content += '<td>' + p.FieldingString + '</td>';
                             content += `<td><input type="checkbox" class="playerSelection" value="${p.playerID}"/></td>`;
-                            content += `<td class="selectedPlayer" value="${p.playerID}" style="visibility:hidden">` + p.playerID + '</td>';
-                            content += `<td class="selectedTeam" value="${p.teamID}" style="visibility:hidden">` + p.teamID + '</td>';
+                            content += `<td class="selectedPlayer" style="visibility:hidden">` + p.playerID + '</td>';
+                            content += `<td class="selectedTeam" style="visibility:hidden">` + p.teamID + '</td>';
                             content += '<td style="visibility:hidden">' + p.ZPlayerID + '</td>';
                             content += '</tr>';
                         }
@@ -148,7 +153,7 @@
         <p/><input id="btnSubmit" type="button" value="Add Selected Players" />
         <p/>@Html.ActionLink("Close", "EditTeam", new { user = ViewData["user"], team = ViewData["team"] })
     </div>
-    <br /><input id="hdnUserName" type="text" style="visibility:hidden" value="@ViewData["user]"]" />
+    <br /><input id="hdnUserName" type="text" style="visibility:hidden" value="@ViewData["user"]" />
     <input id="hdnTeamName" type="text" style="visibility:hidden" value="@ViewData["team"]" />
 </body>
 </html>
