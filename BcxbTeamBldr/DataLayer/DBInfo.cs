@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using System.Web.Mvc;
 using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
@@ -377,6 +377,32 @@ namespace BcxbTeamBldr.DataLayer {
       //   return list;
 
       //}
+
+
+      public List<SelectListItem> GetTeamsForYear(int yr) {
+      // -------------------------------------------------
+      // This gets a List of dropdown items for the Team dropdown on the search page.
+      // Note: I was using anonymous types passed back as objects.
+      // But I changed my mind, and am using List<SelectListItem>.
+
+         string sql =
+            @$"SELECT teamID, LineName, NickName
+               FROM ZTeams
+               WHERE yearID = {yr}";
+
+         var ret = new List<SelectListItem>();
+         using (var cmd = new SqlCommand(sql, con1))
+         using (SqlDataReader rdr = cmd.ExecuteReader())
+
+         while (rdr.Read()) {
+            ret.Add(new SelectListItem{ 
+               Value = rdr["teamID"].ToString(), 
+               Text = $"{rdr["LineName"]} {rdr["NickName"]}" }); // Eg: "NYY Yankees"
+         }
+         return ret;
+
+
+      }
 
 
       public List<MultiSearchView> SearchPlayersMulti(string critName, string critTeam, string critYear, string critPosn) {

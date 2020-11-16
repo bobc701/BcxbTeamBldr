@@ -1,0 +1,41 @@
+﻿body {
+}
+
+.entry1 {
+    margin: 5px;
+    padding: 7px;
+    font-size: large;
+    background-color: seashell;
+    border-radius: 5px;
+    border: 1px solid;
+}
+
+.entry2 {
+    margin: 0px 0px 0px 5px;
+    padding: 7px;
+    font-size: large;
+    background-color: seashell;
+    border-radius: 5px;
+    border: 1px solid;
+}
+
+
+.button1 {
+    margin: 5px 0px 5px 25px;
+    padding: 10px;
+    font-size: large;
+    border-radius: 10px;
+}
+
+
+/*.btn-primary {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+*/
+
+.label1 {
+    font-size: larger;
+}
+

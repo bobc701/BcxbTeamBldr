@@ -2,135 +2,29 @@
 
 <html>
 <head>
-    <meta name="viewport" content="width=Models.PlayerListVM-width" />
-    <title>Add Multi-players</title>
+   <meta name="viewport" content="width=Models.PlayerListVM-width" />
+   <title>Add Multi-players</title>
 
-    <script src="~/Scripts/jquery-3.4.1.js"></script>
-    <script src="~/Scripts/bc-global.js"></script>
+   <script src="~/Scripts/jquery-3.4.1.js"></script>
+   <script src="~/Scripts/bc-global.js"></script>
 
-    <script>
-        $(document).ready(function () {
+   <body>
+      <div>
+         <h2>Search for player to add to @ViewData["team"]</h2>
 
-            $('#btnSubmit').click(
-               function () {
-                  alert('In btnSubmit');
-                  let pidList = '', tagList = '', yearList = '', delim = '';
-                  $('input.playerSelection:checked').each(
-                     function() {
-                        //alert('element ' + ', id=' + this.value);
-                        //alert(this.tagName);
-                        //alert($(this).parent().parent().get(0).tagName);
-                        let yr = $(this).parent().parent().find("td.selectedYear").first().text(); alert(yr);
-                        let tm = $(this).parent().parent().find("td.selectedTeam").first().text();;
-                        let id = $(this).parent().parent().find("td.selectedPlayer").first().text();
-                        pidList += delim + id;
-                        tagList += delim + tm;
-                        yearList += delim + yr;
-                        delim = ',';
-                        alert(`pidList: ${pidList} tagList: ${tagList} yearList: ${yearList}`);
-                     });
-                  //alert(`idList=|${idList}|`);
-                  let user1 = $('#hdnUserName').val();
-                  let team1 = $('#hdnTeamName').val();
-                  let url = bc.routePrefix + `Home/AddPlayerToTeamMulti?user=${user1}&team=${team1}&pidList=${pidList}&tagList=${tagList}&yearList=${yearList}`;
-                  alert(`url=${url}`);
-                  window.location.href = url;
+         <span class="label1"> First few characters of player's last name...</span>
+         <input type="text" id="txtName" class="entry2"/>
 
-               }
-            );
+         <p class="label1"/>Year: (1901 to 2020, required)
+         <input type="text" id="txtYear" name="txtYear" class="entry2" value="" />
 
-
-            $('#btnSearch').click(function () {
-                //var crit1 = $(this).attr('id');
-                //$('#errMsg').css('display','none');
-                let critName1 = $('#txtName').val();
-                let critTeam1 = $('#selTeam').val();
-                let critYear1 = $('#selYear').val();
-                let critPosn1 = $('#selPosn').val();
-                let user1 = $('#hdnUserName').val();
-                let team1 = $('#hdnTeamName').val();
-                //alert('criteria=' + critName1 + ' bc.routePrefix=' + bc.routePrefix);
-
-                $.ajax({
-                    url: bc.routePrefix + 'Home/SearchMultiJson', type: "GET", dataType: "json",
-                    //These become the arg to the Action method.
-                    data: {
-                        critName: critName1,
-                        critTeam: critTeam1,
-                        critYear: critYear1,
-                        critPosn: critPosn1
-                    }, 
-                    success: function (data) {
-                        alert(JSON.stringify(data));
-                        //alert(JSON.stringify({ test: 'hello', quant: 12 })); So can be any object not just Json!
-                        //alert(data[0].PlayerName);
-                        content = '<h3>Matching Players...</h3>';
-                        content += '<table id="tblMatching" border="1" cellpadding="5" cellspacing="0" width="400px" style="border-collapse:collapse">';
-
-                        content += '<tr>';
-                        content += '<th>Player Name</th>';
-                        content += '<th>MLB Team</th>';
-                        content += '<th>Year</th>';
-                        content += '<th>Positions</th>';
-                        content += '<th>Select</th>';
-                        //content += '<th></th>'; //player id
-                        content += '</tr>'
-
-                        let url;
-                        for (let p of data) {
-                            content += '<tr>';
-                            content += '<td>' + p.nameLast + '</td>';
-                            content += '<td>' + p.teamName + '</td>';
-                            content += `<td class="selectedYear">` + p.yearID + '</td>';
-                            content += '<td>' + p.FieldingString + '</td>';
-                            content += `<td><input type="checkbox" class="playerSelection" value="${p.playerID}"/></td>`;
-                            content += `<td class="selectedPlayer" style="visibility:hidden">` + p.playerID + '</td>';
-                            content += `<td class="selectedTeam" style="visibility:hidden">` + p.teamID + '</td>';
-                            content += '<td style="visibility:hidden">' + p.ZPlayerID + '</td>';
-                            content += '</tr>';
-                        }
-                        content += "</table>";
-
-                        //alert(content);
-                        $('#dvResults').html(content);
-                    },
-                    error: function (xhr, status, error) {
-                        alert(xhr.responseText);
-                        alert(status);
-                        alert(error);
-                    }
-
-                })
-
-            })
-
-        })
-    </script>
-</head>
-<body>
-    <div>
-        <h2>Search for player to add to @ViewData["team"]</h2>
-
-        First few characters of player's last name...
-        <input type="text" id="txtName" />
-        <chec>
-        <p />Team:
-        <select id="selTeam" name="selTeam">
+         <p class="label1"/>Team:
+         <select id="selTeam" name="selTeam" class="entry2">
             <option selected>All</option>
-            <option>NYA</option>
-            <option>BOS</option>
-            <option>KC</option>
-        </select>
+         </select>
 
-        <p />Year:
-        <select id="selYear" name="selYear">
-            <option selected>All</option>
-            <option>2019</option>
-            <option>2018</option>
-        </select>
-
-        <p />Position:
-        <select id="selPosn" name="selPosn">
+         <p class="label1"/>Position:
+         <select id="selPosn" name="selPosn" class="entry2">
             <option selected>All</option>
             <option>p</option>
             <option>c</option>
@@ -143,18 +37,161 @@
             <option>rf</option>
             <option>of</option>
             <option>dh</option>
-        </select>
+         </select>
 
-        <p /><button id="btnSearch">Search</button>
-        <div id="dvResults">
-
-        </div>
-        <p/><input id="errMsg" style="border:none; color:red; font-size:larger; font-weight:bold; width:600px;" value="" />
-        <p/><input id="btnSubmit" type="button" value="Add Selected Players" />
-        <p/>@Html.ActionLink("Close", "EditTeam", new { user = ViewData["user"], team = ViewData["team"] })
-    </div>
-    <br /><input id="hdnUserName" type="text" style="visibility:hidden" value="@ViewData["user"]" />
-    <input id="hdnTeamName" type="text" style="visibility:hidden" value="@ViewData["team"]" />
-</body>
+         <p /><button id="btnSearch" class="button1">Search</button>
+         <div id="dvResults" style="border: none; padding: 10px;">
+            Click 'Search' to find players
+         </div>
+         <p /><input id="errMsg" style="border:none; color:red; font-size:larger; font-weight:bold; width:600px;" value="" />
+         <p /><input id="btnSubmit" type="button" class="button1" value="Add Selected Players" />
+         <p />@Html.ActionLink("Close", "EditTeam", new { user = ViewData["user"], team = ViewData["team"] }, new { style = "font-size: larger;" })
+      </div>
+      <br /><input id="hdnUserName" type="text" style="visibility:hidden" value="@ViewData["user"]" />
+      <input id="hdnTeamName" type="text" style="visibility:hidden" value="@ViewData["team"]" />
+   </body>
 </html>
 
+
+
+<script>
+   $(document).ready(function () {
+
+      $('#btnSubmit').click(
+         function () {
+            alert('In btnSubmit');
+            let pidList = '', tagList = '', yearList = '', delim = '';
+            $('input.playerSelection:checked').each(
+               function () {
+                  //alert('element ' + ', id=' + this.value);
+                  //alert(this.tagName);
+                  //alert($(this).parent().parent().get(0).tagName);
+                  let yr = $(this).parent().parent().find("td.selectedYear").first().text(); alert(yr);
+                  let tm = $(this).parent().parent().find("td.selectedTeam").first().text();;
+                  let id = $(this).parent().parent().find("td.selectedPlayer").first().text();
+                  pidList += delim + id;
+                  tagList += delim + tm;
+                  yearList += delim + yr;
+                  delim = ',';
+                  alert(`pidList: ${pidList} tagList: ${tagList} yearList: ${yearList}`);
+               });
+            //alert(`idList=|${idList}|`);
+            let user1 = $('#hdnUserName').val();
+            let team1 = $('#hdnTeamName').val();
+            let url = bc.routePrefix + `Home/AddPlayerToTeamMulti?user=${user1}&team=${team1}&pidList=${pidList}&tagList=${tagList}&yearList=${yearList}`;
+            alert(`url=${url}`);
+            window.location.href = url;
+
+         }
+      );
+
+
+      $('#txtYear').on('change',
+         function () {
+            console.log('In change event');
+
+            // First, validate the user's entry...
+            let err = false;
+            let yr = $(this).val();
+            if (isNaN(yr))
+               err = true;
+            else {
+               yr = parseInt(yr);
+               if (yr < 1901 || yr > 2020) err = true;
+            }
+            if (err) {
+               alert('Year must be a number between 1901 and 2020');
+               $("#selTeam").html('<option selected value=All>All</option>');
+               return;
+            }
+            console.log('Year is good: ' + yr);
+
+            // Next, use ajax to get the dropdown list for the Team dropdown...
+            $.get(
+               bc.routePrefix + 'Home/GetTeamsForYear',
+               { yr: yr },
+               function (ret) {
+                  console.log('Ajax returned: ' + ret);
+                  let content = '<option selected value=All>All</option>';
+                  for (let t of ret) {
+                     content += `<option value=${t.Value}>${t.Text}</option>`;
+                  }
+                  $("#selTeam").html(content);
+               },
+               "json"
+            );
+         })
+
+
+      $('#btnSearch').click(function () {
+         //var crit1 = $(this).attr('id');
+         //$('#errMsg').css('display','none');
+         let critName1 = $('#txtName').val();
+         let critTeam1 = $('#selTeam').val();
+         let critYear1 = $('#txtYear').val();
+         let critPosn1 = $('#selPosn').val();
+         let user1 = $('#hdnUserName').val();
+         let team1 = $('#hdnTeamName').val();
+         //alert('criteria=' + critName1 + ' bc.routePrefix=' + bc.routePrefix);
+
+         if (critName1 == "All" && critTeam1 == "All" && critPosn1 == "All") {
+            alert("You must specify at least name, team or position");
+            return;
+         }
+
+         $.ajax({
+            url: bc.routePrefix + 'Home/SearchMultiJson', type: "GET", dataType: "json",
+            //These become the arg to the Action method.
+            data: {
+               critName: critName1,
+               critTeam: critTeam1,
+               critYear: critYear1,
+               critPosn: critPosn1
+            },
+            success: function (data) {
+               alert(JSON.stringify(data));
+               //alert(JSON.stringify({ test: 'hello', quant: 12 })); So can be any object not just Json!
+               //alert(data[0].PlayerName);
+               content = '<h3>Matching Players...</h3>';
+               content += '<table id="tblMatching" border="1" cellpadding="5" cellspacing="0" width="400px" style="border-collapse:collapse">';
+
+               content += '<tr>';
+               content += '<th>Player Name</th>';
+               content += '<th>MLB Team</th>';
+               content += '<th>Year</th>';
+               content += '<th>Positions</th>';
+               content += '<th>Select</th>';
+               //content += '<th></th>'; //player id
+               content += '</tr>'
+
+               let url;
+               for (let p of data) {
+                  content += '<tr>';
+                  content += '<td>' + p.nameLast + '</td>';
+                  content += '<td>' + p.teamName + '</td>';
+                  content += `<td class="selectedYear">` + p.yearID + '</td>';
+                  content += '<td>' + p.FieldingString + '</td>';
+                  content += `<td><input type="checkbox" class="playerSelection" value="${p.playerID}"/></td>`;
+                  content += `<td class="selectedPlayer" style="visibility:hidden">` + p.playerID + '</td>';
+                  content += `<td class="selectedTeam" style="visibility:hidden">` + p.teamID + '</td>';
+                  content += '<td style="visibility:hidden">' + p.ZPlayerID + '</td>';
+                  content += '</tr>';
+               }
+               content += "</table>";
+
+               //alert(content);
+               $('#dvResults').html(content);
+            },
+            error: function (xhr, status, error) {
+               alert(xhr.responseText);
+               alert(status);
+               alert(error);
+            }
+
+         })
+
+      })
+
+   })
+</script>
+</head>

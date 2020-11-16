@@ -28,13 +28,15 @@ namespace BcxbTeamBldr.Controllers {
 
       // GET: Home
       public ActionResult Index() {
-      // ---------------------------------------
+         // ---------------------------------------
+         ViewBag.Title = "Login";
          return View();
       }
 
 
       public ActionResult TeamList(string user, DbInfo info) {
          // ----------------------------------------
+         ViewBag.Title = "Team List";
          var view = new TeamListVM(user, info);
 
          return View(view);
@@ -42,7 +44,8 @@ namespace BcxbTeamBldr.Controllers {
       }
 
       public ActionResult AddTeam(string user) {
-      // ------------------------------------------
+         // ------------------------------------------
+         ViewBag.Title = "Add Team";
          ViewBag.UserName = user;
          return View(new DataLayer.CUserTeam() { UserName = user });
 
@@ -134,6 +137,7 @@ namespace BcxbTeamBldr.Controllers {
             string msg =
                "An error occurred adding players to the team:\r\n" +
                ex.Message;
+            ViewBag.Title = "Error";
             ViewBag.ErrorMsg = msg;
             return View("ErrorView");
          }
@@ -162,7 +166,8 @@ namespace BcxbTeamBldr.Controllers {
 
 
       public ActionResult EditTeam(string user, string team) {
-      // -----------------------------------------------------
+         // -----------------------------------------------------
+         ViewBag.Title = "Edit Team";
          var roster = new UserPlayerListVM(user, team, dbinfo);
 
          return View(roster);
@@ -238,6 +243,7 @@ namespace BcxbTeamBldr.Controllers {
       public ActionResult SearchMulti(string user, string team) {
          //  ------------------------------------------
          //var model = new PlayerListVM(user, team, dbinfo, 0);
+         ViewBag.Title = "Search Players";
          ViewData["user"] = user;
          ViewData["team"] = team;
          return View();
@@ -251,6 +257,35 @@ namespace BcxbTeamBldr.Controllers {
       //   return Json(py, JsonRequestBehavior.AllowGet);
 
       //}
+
+
+      public JsonResult GetTeamsForYear(int yr) {
+         // --------------------------------------------------------------------------------------
+         //var ret = new[] { 
+         //   new { teamTag = "NYY", teamName = "NYY Yankees" },
+         //   new { teamTag = "BOS", teamName = "BOS Red Sox" }
+         //};
+         //var ret = new List<object>();
+         //ret.Add(new { teamTag = "NYY", teamName = "NYY Yankees" });
+         //ret.Add(new { teamTag = "BOS", teamName = "BOS Red Sox" });
+         //ret.Add(new { teamTag = "PHI", teamName = "PHI Phillies" });
+
+         try {
+            var ret = dbinfo.GetTeamsForYear(yr);
+
+            string s = Json(ret, JsonRequestBehavior.AllowGet).ToString();
+            return Json(ret, JsonRequestBehavior.AllowGet);
+
+         }
+         catch (Exception ex) {
+            string msg =
+               $"An error occurred retrieving available teams for {yr}:\r\n" +
+               ex.Message;
+            return Json(msg, JsonRequestBehavior.AllowGet);
+         }
+
+
+      }
 
       public JsonResult searchMultiJson(string critName, string critTeam, string critYear, string critPosn) {
       // -------------------------------------------------------------------------------------

@@ -1,82 +1,89 @@
-﻿@{
-   Layout = "~/Views/Shared/_Layout.cshtml";
-}
+﻿
+<h2>Login</h2>
 
-@section HeaderStuff {
-   <meta name="viewport" content="width=device-width" />
-   <title>Index</title>
+<p /><span style="font-size:x-large; ">Sign up... </span>
+<p />
+<input type="text" id="txtUser" placeholder="User name" class="entry1" style="width:200px; " />
+   Up to 30 characters: numbers, letters, spaces, special characters!
 
-   <style>
-      .entry1 {
-         margin: 5px;
-         padding: 10px;
-         font-size: larger;
-         background-color: seashell;
-      }
+<br />
+<input type="password" id="txtPwd" placeholder="Password" class="entry1" style="width:200px;" />
+   8 to 30 characters: numbers, letters, special characters, no spaces!
 
-      .button1 {
-         margin: 5px 0px 5px 25px;
-         padding: 10px;
-         font-size: large;
-         border-radius: 10px;
-      }
-   </style>
-}
+
+<br />
+<input type="password" id="txtConfirm" placeholder="Confirm password" class="entry1" style="width:200px;" />
+<br />
+<button id="btnSignUp" class="button1" style="width:150px;">Sign Up</button>
+
+<p />
+<input id="errMsg" style="border:none; color:red; font-size:larger; font-weight:bold; width:600px;" value="" />
+
+<p /><span style="font-size:x-large;">Or Log in... </span>
+<p />
+<input type="text" id="txtUser2" placeholder="User name" class="entry1" style="width:200px;" />
+<br />
+<input type="password" id="txtPwd2" placeholder="Password" class="entry1" style="width:200px;" />
+<br />
+<button id="btnLogIn" class="button1" style="width:150px;">Log In</button>
+
+<p /><textarea id="errMsg2" style="border:none; color:red; font-size:larger; font-weight:bold; width:800px; height:60px;" value=""></textarea>
+
 
 @section Scripting {
 
    <script>
       $(document).ready(function () {
-         alert("In document.ready");
+         console.log("In document.ready");
 
          $("#btnSignUp").on("click", function () {
-            //  -------------------------------------
-            //  Logic for when use clicks 'Sign Up'...
-            //alert("In btnSignUp");
+         //  -------------------------------------
+         //  Logic for when use clicks 'Sign Up'...
+            console.log("In btnSignUp");
 
-            //  Validate the user name...
+         //  Validate the user name...
             let msg = "";
             let user1 = $("#txtUser").val(); //document.getElementById("txtUser");
             let pwd1;
-            alert(`user=${user1}`);
+            console.log(`user=${user1}`);
             user1 = user1.trim();
             if (user1 == "") msg = "You must enter User name";
             else if (user1.length > 30) msg = "User name is too long. Must be 30 or less";
 
-            //  Validate the (new) password...
+         // Validate the (new) password...
             if (msg == "") {
                pwd1 = $("#txtPwd").val();
-               alert(`pwd=${pwd1}`);
+               console.log(`pwd=${pwd1}`);
                if (pwd1 == "") msg = "You must enter a password";
                else if (pwd1.length > 30) msg = "Password must be between 8 and 30 characters";
                else if (pwd1.length < 8) msg = "Password must be between 8 and 30 characters";
                else if (pwd1.indexOf(" ") != -1) msg = "Password cannot include spaces";
                else {
                   let pwd2 = $("#txtConfirm").val();
-                  alert(`pwd2=${pwd2}`);
+                  console.log(`pwd2=${pwd2}`);
                   if (pwd1 != pwd2) msg = "Passwords do not match";
                }
             }
 
-            //alert(`Final msg = |${msg}| so msg=blank is ${msg == ""}`);
+            console.log(`Final msg = |${msg}| so msg=blank is ${msg == ""}`);
             if (msg == "") {
-               //  No errors...
-               //  Use ajax to call a method to insert into db, and return "ok" or errorMsg.
-               //  If ok is returned, the Go to Team List.
+            //  No errors...
+            //  Use ajax to call a method to insert into db, and return "ok" or errorMsg.
+            //  If ok is returned, the Go to Team List.
                $.get(
                   bc.routePrefix + "Home/AddNewUser",
                   { user: user1, pwd: pwd1 },
                   function (msgReturned) {
-                     //alert(`On return to get, msg=${msgReturned}`);
+                     //console.log(`On return to get, msg=${msgReturned}`);
                      if (msgReturned != "ok") {
                         //  Error adding user to the database...
-                        alert('msg=' + msgReturned);
+                        console.log('msg=' + msgReturned);
                         $('#errMsg').val(msgReturned);
                      }
                      else {
                         //  User sign up ok, go to (empty) team list...
                         url = bc.routePrefix + "Home/TeamList?user=" + user1.trim().replace(" ", "%20");
-                        alert(url);
+                        console.log(url);
                         window.location.href = url;
                      }
                   },
@@ -94,34 +101,34 @@
          });
 
          $("#btnLogIn").on("click", function () {
-            //  --------------------------------------------------------------
-            //  Logic for when user click 'Log in'...
-            //alert("In btnLogin");
+         // --------------------------------------------------------------
+         // Logic for when user click 'Log in'...
+            console.log("In btnLogin");
 
-            //  Validate the user name...
+         //  Validate the user name...
             let msg = "";
             let user1 = $("#txtUser2").val().trim();
             let pwd1;
-            //alert(`user=${user1}`);
+            console.log(`user=${user1}`);
             if (user1 == "") msg = "You must enter User name";
 
-            //  Validate the password...
+         // Validate the password...
             if (msg == "") {
                pwd1 = $("#txtPwd2").val().trim();
-               //alert(`pwd=${pwd1}`);
+               //console.log(`pwd=${pwd1}`);
                if (pwd1 == "") msg = "You must enter the password";
             }
 
             if (msg == "") {
-               //  No errors...
-               //  Use ajax to call a method to validate vs db, and return "ok" or errorMsg.
-               //  If ok is returned, the Go to Team List.
-               //alert(`routePrefix=${bc.routePrefix}`);
+               // No errors...
+               // Use ajax to call a method to validate vs db, and return "ok" or errorMsg.
+               // If ok is returned, the Go to Team List.
+               console.log(`routePrefix=${bc.routePrefix}`);
                $.get(
                   bc.routePrefix + "Home/Login",
                   { user: user1, pwd: pwd1 },
                   function (msg) {
-                     alert(`On return to get, msg=${msg}`);
+                     console.log(`On return to get, msg=${msg}`);
                      if (msg != "ok") {
                         //  Error validating credentials vs db...
                         $('#errMsg2').val(msg);
@@ -129,7 +136,7 @@
                      else {
                         //  Credentials validated ok, go to team list...
                         url = bc.routePrefix + "Home/TeamList?user=" + user1.trim().replace(" ", "%20");
-                        alert(url);
+                        console.log(url);
                         window.location.href = url;
                      }
                   },
@@ -137,7 +144,7 @@
                );
             }
             else {
-               //  Local validation rror... post it...
+               // Local validation rror... post it...
                $('#errMsg2').val(msg);
             }
 
@@ -150,31 +157,3 @@
    </script>
 }
 
-@{ 
-   TempData.Keep("dbinfo");
-}
-
-   <h2>Welcome to Zeemerix PlayByPlay Team Builder</h2>
-   @*<div>
-          @Html.ActionLink("List Teams", "TeamList", new { user = "bobc@4bcx.com" })
-      </div>*@
-
-   <p /><span style="font-size:x-large; ">Sign up... </span>
-   <p /><input type="text" id="txtUser" placeholder="User name" class="entry1" style="width:200px; "/>
-   Up to 30 characters: numbers, letters, spaces, special characters!
-
-   <br /><input type="password" id="txtPwd" placeholder="Password" class="entry1" style="width:200px;"/>
-   8 to 30 characters: numbers, letters, special characters, no spaces!
-
-
-   <br /><input type="password" id="txtConfirm" placeholder="Confirm password" class="entry1" style="width:200px;" />
-   <br /><button id="btnSignUp" class="button1" style="width:150px;">Sign Up</button>
-
-   <p /><input id="errMsg" style="border:none; color:red; font-size:larger; font-weight:bold; width:600px;" value="" />
-
-   <p /><span style="font-size:x-large;">Or Log in... </span>
-   <p /><input type="text" id="txtUser2" placeholder="User name" class="entry1" style="width:200px;"/>
-   <br /><input type="password" id="txtPwd2" placeholder="Password" class="entry1" style="width:200px;"/>
-   <br /><button id="btnLogIn" class="button1" style="width:150px;">Log In</button>
-
-   <p /><textarea id="errMsg2" style="border:none; color:red; font-size:larger; font-weight:bold; width:800px; height:60px;" value="" ></textarea>

@@ -1,16 +1,24 @@
 ﻿@model BcxbTeamBldr.DataLayer.CUserTeam
 
-<!DOCTYPE html>
+   <div>
+      <h2>Search for player to add to @Model.TeamName</h2>
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>AddPlayer</title>
+      Enter first few characters of player's last name...
+      <br /><input type="text" id="txtName" />
+      <p /><button id="btnSearch">Search</button>
+      <div id="dvResults">
 
-    <script src="~/Scripts/jquery-3.4.1.js"></script>
-    <script src="~/Scripts/bc-global.js"></script>
+      </div>
+      <p /><input id="errMsg" style="border:none; color:red; font-size:larger; font-weight:bold; width:600px;" value="" />
+      <p />@Html.ActionLink("Close", "EditTeam", new { user = Model.UserName, team = Model.TeamName })
+   </div>
+   <br />
+   <input id="hdnUserName" type="text" style="visibility:hidden" value="@Model.UserName" />
+   <input id="hdnTeamName" type="text" style="visibility:hidden" value="@Model.TeamName" />
 
-    <script>
+   @section Scripting {
+
+     <script>
         $(document).ready(function () {
 
             $(document).on('click', '#tblMatching tr td.addPlayer',
@@ -107,22 +115,7 @@
             })
 
         })
-    </script>
-</head>
-<body>
-    <div>
-        <h2>Search for player to add to @Model.TeamName</h2>
+     </script>
 
-        Enter first few characters of player's last name...
-        <br /><input type="text" id="txtName" />
-        <p /><button id="btnSearch">Search</button>
-        <div id="dvResults">
+   }
 
-        </div>
-        <p/><input id="errMsg" style="border:none; color:red; font-size:larger; font-weight:bold; width:600px;" value="" />
-        <p/>@Html.ActionLink("Close", "EditTeam", new { user = Model.UserName, team = Model.TeamName })
-    </div>
-    <br/><input id="hdnUserName" type="text" style="visibility:hidden" value="@Model.UserName" />
-    <input id="hdnTeamName" type="text" style="visibility:hidden" value="@Model.TeamName" />
-</body>
-</html>

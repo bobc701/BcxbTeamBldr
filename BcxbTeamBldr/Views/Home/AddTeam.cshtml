@@ -1,13 +1,5 @@
 ﻿@model BcxbTeamBldr.DataLayer.CUserTeam
 
-<!DOCTYPE html>
-
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>AddTeam</title>
-</head>
-<body>
     <h2>Add new team for @Model.UserName.Split('@')[0]</h2>
     @using (Html.BeginForm()) {
         <div> 
@@ -19,5 +11,3 @@
         </div>
         <input type="submit" value="Add the new team" />
     }
-</body>
-</html>

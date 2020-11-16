@@ -1,27 +1,4 @@
 ﻿@model BcxbTeamBldr.Models.UserPlayerListVM
-@{
-   Layout = "~/Views/Shared/_Layout.cshtml";
-}
-
-
-@section HeaderStuff {
-   <meta name="viewport" content="width=device-width" />
-   <title>EditTeam</title>
-
-   <style>
-      .button1 {
-         margin: 5px 0px 5px 25px;
-         padding: 10px;
-         font-size: large;
-         border-radius: 10px;
-         width: 150px;
-         box-shadow: 1px 1px;
-      }
-   </style>
-}
-
-
-<!-- Body Section -------------------------------------- -->
 
 @{
    string teamName = @Model.UserTeam.TeamName;
@@ -73,10 +50,10 @@
                   <td>@Model.Roster[i].FieldingString</td>
                   <td align="center">
                      @Html.DropDownListFor(
-                        m => m.Roster[i].Slot_NoDH,
-                        new SelectList(
-                           //new List<string> { "-", "c", "1b" })
-                           new List<SelectListItem>  {
+        m => m.Roster[i].Slot_NoDH,
+        new SelectList(
+           //new List<string> { "-", "c", "1b" })
+           new List<SelectListItem>  {
                               new SelectListItem { Value = "0", Text = "-"},
                               new SelectListItem { Value = "1", Text = "1"},
                               new SelectListItem { Value = "2", Text = "2"},
@@ -88,19 +65,19 @@
                               new SelectListItem { Value = "8", Text = "8"},
                               new SelectListItem { Value = "9", Text = "9"}
                            },
-                           "Value",
-                           "Text",
-                           Model.Roster[i].Slot_NoDH
+           "Value",
+           "Text",
+           Model.Roster[i].Slot_NoDH
 
-                       ),
-                       new { @class = "lineupPick" }
-                     )
+       ),
+       new { @class = "lineupPick" }
+     )
 
                   <td align="center">
                      @Html.DropDownListFor(
-                        m => m.Roster[i].Posn_NoDH,
-                        new SelectList(
-                           new List<SelectListItem> {
+        m => m.Roster[i].Posn_NoDH,
+        new SelectList(
+           new List<SelectListItem> {
                               new SelectListItem { Value = "0", Text = "-"},
                               new SelectListItem { Value = "2", Text = "c"},
                               new SelectListItem { Value = "3", Text = "1b"},
@@ -112,19 +89,19 @@
                               new SelectListItem { Value = "9", Text = "rf"},
                               new SelectListItem { Value = "1", Text = "p"}
                            },
-                           "Value",
-                           "Text",
-                           Model.Roster[i].Posn_NoDH
-                        ),
-                        new { @class = "lineupPick" }
-                     )
+           "Value",
+           "Text",
+           Model.Roster[i].Posn_NoDH
+        ),
+        new { @class = "lineupPick" }
+     )
 
                   </td>
                   <td align="center">
                      @Html.DropDownListFor(
-                        m => m.Roster[i].Slot_DH,
-                        new SelectList(
-                           new List<SelectListItem>  {
+        m => m.Roster[i].Slot_DH,
+        new SelectList(
+           new List<SelectListItem>  {
                               new SelectListItem { Value = "0", Text = "-"},
                               new SelectListItem { Value = "1", Text = "1"},
                               new SelectListItem { Value = "2", Text = "2"},
@@ -136,18 +113,18 @@
                               new SelectListItem { Value = "8", Text = "8"},
                               new SelectListItem { Value = "9", Text = "9"}
                            },
-                           "Value",
-                           "Text",
-                           Model.Roster[i].Slot_DH
-                        ),
-                        new { @class = "lineupPick" }
-                     )
+           "Value",
+           "Text",
+           Model.Roster[i].Slot_DH
+        ),
+        new { @class = "lineupPick" }
+     )
                   </td>
                   <td align="center">
                      @Html.DropDownListFor(
-                        m => m.Roster[i].Posn_DH,
-                        new SelectList(
-                           new List<SelectListItem> {
+        m => m.Roster[i].Posn_DH,
+        new SelectList(
+           new List<SelectListItem> {
                               new SelectListItem { Value = "0", Text = "-"},
                               new SelectListItem { Value = "2", Text = "c"},
                               new SelectListItem { Value = "3", Text = "1b"},
@@ -160,12 +137,12 @@
                               new SelectListItem { Value = "1", Text = "p"},
                               new SelectListItem { Value = "10", Text = "dh"}
                            },
-                           "Value",
-                           "Text",
-                           Model.Roster[i].Posn_DH
-                        ),
-                        new { @class = "lineupPick" }
-                     )
+           "Value",
+           "Text",
+           Model.Roster[i].Posn_DH
+        ),
+        new { @class = "lineupPick" }
+     )
                   </td>
                   <td>
                      @Html.CheckBoxFor(m => m.Roster[i].Remove)
@@ -196,7 +173,7 @@
    </div>
 }
 
-@Html.ActionLink("Add players", "SearchMulti", new { user = userName, team = teamName })
+@Html.ActionLink("Add players", "SearchMulti", new { user = userName, team = teamName }, new { @class="btn button1" })
 
 
 @section Scripting {
