@@ -2,10 +2,10 @@
 }
 
 .entry1 {
-    margin: 5px;
-    padding: 7px;
+    margin: 0px 0px 12px 0px;
+    padding: 3px;
     font-size: large;
-    background-color: seashell;
+    background-color: lightcyan;
     border-radius: 5px;
     border: 1px solid;
 }

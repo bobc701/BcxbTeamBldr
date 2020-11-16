@@ -6,13 +6,17 @@
 }
 @using (Html.BeginForm("EditTeam", "Home", FormMethod.Post)) {
 
-   <h2>Edit lineups</h2>
-   <h3>
-      User: @Html.TextBoxFor(m => m.UserTeam.UserName, new { @readonly = "readonly" })
-      <br />Team: @Html.TextBoxFor(m => m.UserTeam.TeamName, new { @readonly = "readonly" })
-   </h3>
+   <h2>Edit rosters and lineups</h2>
+   <h5>
+      User: @Html.TextBoxFor(
+         m => m.UserTeam.UserName, 
+         new { @readonly = "readonly", style = "border:none; font-weight:bold;" })<br/>
+      Team: @Html.TextBoxFor(
+         m => m.UserTeam.TeamName, 
+         new { @readonly = "readonly", style = "border:none; font-weight:bold;" })
+   </h5>
 
-   <div style="border:5px; box-shadow: 3px 3px 3px 3px; border-radius: 10px; padding:10px; ">
+   <div style="border:5px; box-shadow: 3px 3px 3px 3px; border-radius: 10px; padding:10px; margin: 30px 0px 50px 0px;">
    <em>
       You must enter default starting lineups for both DH and no-DH.
       <br />The lineups can always be changed at game-time in Play-by-Play Baseball.
@@ -29,7 +33,9 @@
          </div>
       }
       else {
-         <table border="0" cellpadding="0" style="border:0px solid black; border-collapse:collapse;">
+         <table 
+            border="0" cellpadding="0" style="border:0px solid black; border-collapse:collapse;
+            margin: 0px 0px 30px 0px;">
             <tr>
                <th width="130" align="left">Player Name</th>
                <th width="90" align="left">MLB Team</th>
@@ -160,20 +166,16 @@
          </table>
       }
 
-      <div>
-         <p /><input type="submit" id="btnSaveChanges" value="Save Changes" class="button1" disabled="disabled" />
-         @*<button id="btnAddPlayers" class="button1" style="width:150px;">Add Players</button>*@
-         <button id="btnCancel" class="button1">Cancel</button>
+   <div>
+      @Html.ActionLink("Add players", "SearchMulti", new { user = userName, team = teamName }, new { @class = "btn btn-primary" })
+      <input type="submit" id="btnSaveChanges" value="Save Changes" class="btn btn-primary" disabled="disabled" />
+      <button id="btnCancel" class="btn btn-primary">Close</button>
 
-         @*<br />@Html.ActionLink("Add players", "SearchMulti", new { user = userName, team = teamName })*@
-
-         @*$('#my-input-id').prop('disabled', false);*@
-      </div>
+   </div>
 
    </div>
 }
 
-@Html.ActionLink("Add players", "SearchMulti", new { user = userName, team = teamName }, new { @class="btn button1" })
 
 
 @section Scripting {
