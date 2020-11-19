@@ -39,3 +39,27 @@
     font-size: larger;
 }
 
+
+.errorMsg1 {
+    color:red; 
+    font-weight:bold;
+}
+
+
+.tablefmt2 th {
+    padding: 10px 10px 5px 10px;
+    border: 1px solid grey;
+    border-collapse: collapse;
+    background-color: lightgray;
+}
+
+.tablefmt2 td {
+    padding: 5px 10px 5px 10px;
+    border: 1px solid grey;
+    border-collapse: collapse;
+}
+
+.tablefmt2 {
+    border: 2px solid black;
+    border-collapse: collapse; /*Not needed*/
+}

@@ -11,7 +11,7 @@ namespace BcxbTeamBldr.Controllers {
 
    public class HomeController : Controller {
 
-      DbInfo dbinfo; 
+      DbInfo info; 
 
       public HomeController() {
          // -----------------------------------
@@ -22,7 +22,7 @@ namespace BcxbTeamBldr.Controllers {
          //dbinfo = TempData.Peek["dbinfo"] as DbInfo;
          //TempData.Keep("dbinfo");
 
-         dbinfo = new DbInfo();
+         info = new DbInfo();
       }
 
 
@@ -34,7 +34,7 @@ namespace BcxbTeamBldr.Controllers {
       }
 
 
-      public ActionResult TeamList(string user, DbInfo info) {
+      public ActionResult TeamList(string user) {
          // ----------------------------------------
          ViewBag.Title = "Team List";
          var view = new TeamListVM(user, info);
@@ -63,15 +63,15 @@ namespace BcxbTeamBldr.Controllers {
                ViewBag.Msg = "Team name is too long (30 characters max)";
             }
             else {
-               bool exists = dbinfo.TeamNameExists(team.UserName, team.TeamName);
+               bool exists = info.TeamNameExists(team.UserName, team.TeamName);
                if (exists) ViewBag.Msg = "You already have a team named " + team.TeamName;
             }
             if (ViewBag.Msg != "") {
                return View(team);
             }
             else {
-               dbinfo.AddNewTeam(team.UserName, team.TeamName, team.UsesDh);
-               var view = new TeamListVM(team.UserName, dbinfo);
+               info.AddNewTeam(team.UserName, team.TeamName, team.UsesDh);
+               var view = new TeamListVM(team.UserName, info);
                return View("TeamList", view);
             }
 
@@ -82,6 +82,32 @@ namespace BcxbTeamBldr.Controllers {
                ex.Message;
             ViewBag.ErrorMsg = msg;
             return View("ErrorView");
+         }
+
+      }
+
+
+      public ActionResult DeleteTeam(string user, string team) {
+      // -------------------------------------------------------
+         try {
+            ViewBag.Msg = "";
+            if (team == "") {
+               ViewBag.Msg = "You must enter a team name";
+            }
+            else {
+               info.DeleteTeam(user, team);
+            }
+            var view = new TeamListVM(user, info);
+            return RedirectToAction("TeamList", new { user = user }));
+
+         }
+         catch (Exception ex) {
+            string msg =
+               "An error occurred attempting to delete the team from the database:\r\n" +
+               ex.Message;
+            ViewBag.Msg = msg;
+            var view = new TeamListVM(user, info);
+            return RedirectToAction("TeamList", new { user = user });
          }
 
       }
@@ -123,10 +149,10 @@ namespace BcxbTeamBldr.Controllers {
             var aTagList = tagList.Split(',');
             var aYearList = yearList.Split(',').Select(y => int.Parse(y)).ToArray();
             for (int i=0; i<aPidList.Length; i++) {
-               var already = dbinfo.GetUserPlayerList(user, team)
+               var already = info.GetUserPlayerList(user, team)
                   .Exists(p => p.PlayerKey == (aPidList[i], aTagList[i], aYearList[i]));
                if (!already) { //Player already on team
-                  dbinfo.AddPlayerToTeam(user, team, (aPidList[i], aTagList[i], aYearList[i]));
+                  info.AddPlayerToTeam(user, team, (aPidList[i], aTagList[i], aYearList[i]));
                }
             }
             //var roster = new PlayerListVM(user, team);
@@ -150,8 +176,8 @@ namespace BcxbTeamBldr.Controllers {
          // ------------------------------------------------------------
          try {
             ViewBag.Msg = ""; 
-            dbinfo.RemovePlayerFromTeam(user, team, (playerID, teamID, yearID));
-            var roster = new UserPlayerListVM(user, team, dbinfo);
+            info.RemovePlayerFromTeam(user, team, (playerID, teamID, yearID));
+            var roster = new UserPlayerListVM(user, team, info);
             return View("EditTeam", roster);
          }
          catch (Exception ex) {
@@ -168,7 +194,7 @@ namespace BcxbTeamBldr.Controllers {
       public ActionResult EditTeam(string user, string team) {
          // -----------------------------------------------------
          ViewBag.Title = "Edit Team";
-         var roster = new UserPlayerListVM(user, team, dbinfo);
+         var roster = new UserPlayerListVM(user, team, info);
 
          return View(roster);
       }
@@ -186,7 +212,7 @@ namespace BcxbTeamBldr.Controllers {
          // Otherwise, shoot off an update for each with lineups. 
             dbinfo.UpdateLineups(user, team, model.Roster);
 
-            return View("EditTeam", new UserPlayerListVM(user, team, dbinfo));
+            return View("EditTeam", new UserPlayerListVM(user, team, info));
 
          }
          catch (Exception ex) {
@@ -215,7 +241,7 @@ namespace BcxbTeamBldr.Controllers {
 
       public ActionResult EditLineup(string user, string team) {
          // -----------------------------------------------------
-         var roster = new UserPlayerListVM(user, team, dbinfo);
+         var roster = new UserPlayerListVM(user, team, info);
          return View(roster);
       }
 
@@ -271,7 +297,7 @@ namespace BcxbTeamBldr.Controllers {
          //ret.Add(new { teamTag = "PHI", teamName = "PHI Phillies" });
 
          try {
-            var ret = dbinfo.GetTeamsForYear(yr);
+            var ret = info.GetTeamsForYear(yr);
 
             string s = Json(ret, JsonRequestBehavior.AllowGet).ToString();
             return Json(ret, JsonRequestBehavior.AllowGet);
@@ -289,7 +315,7 @@ namespace BcxbTeamBldr.Controllers {
 
       public JsonResult searchMultiJson(string critName, string critTeam, string critYear, string critPosn) {
       // -------------------------------------------------------------------------------------
-         List<MultiSearchView> py = dbinfo.SearchPlayersMulti(critName, critTeam, critYear, critPosn);
+         List<MultiSearchView> py = info.SearchPlayersMulti(critName, critTeam, critYear, critPosn);
          var s = Json(py, JsonRequestBehavior.AllowGet);
          return Json(py, JsonRequestBehavior.AllowGet);
 
@@ -299,7 +325,7 @@ namespace BcxbTeamBldr.Controllers {
 
       public ContentResult VerMsgAction(string user, string team, string pid, string teamTag, int year) {
       // --------------------------------------------------------------
-         bool already = dbinfo.GetUserPlayerList(user, team).Exists(p => p.PlayerKey == (pid, teamTag, year));
+         bool already = info.GetUserPlayerList(user, team).Exists(p => p.PlayerKey == (pid, teamTag, year));
          if (already) { //Player already on team
             return Content("Player is already on " + team);
          }
@@ -313,7 +339,7 @@ namespace BcxbTeamBldr.Controllers {
       public ContentResult AddNewUser(string user, string pwd) {
          // --------------------------------------------------------------
          try {
-            int retval = dbinfo.AddNewUser(user, pwd);
+            int retval = info.AddNewUser(user, pwd);
             switch (retval) {
                case 0: return Content("ok");
                case 1: return Content($"'{user}' is already in use");
@@ -330,7 +356,7 @@ namespace BcxbTeamBldr.Controllers {
       public ContentResult LogIn(string user, string pwd) {
          // --------------------------------------------------------------
          try {
-            int retval = dbinfo.Login(user, pwd);
+            int retval = info.Login(user, pwd);
             switch (retval) {
                case 0: return Content("ok");
                case 1: return Content("User name or password is not valid");

@@ -1,13 +1,21 @@
 ﻿@model BcxbTeamBldr.DataLayer.CUserTeam
 
     <h2>Add new team for @Model.UserName.Split('@')[0]</h2>
-    @using (Html.BeginForm()) {
-        <div> 
-            New team name: @Html.TextBoxFor(t => t.TeamName)
-            <p/>Team uses DH at home: @Html.CheckBoxFor(t => t.UsesDh)
-            <p/>@Html.HiddenFor(t => t.UserName)
-            <p style="color:red; font-weight:bold"/>@ViewBag.Msg
 
-        </div>
-        <input type="submit" value="Add the new team" />
+    @using (Html.BeginForm()) {
+       <div style="padding: 20px 0px 15px 0px;">
+
+         <span class="label1">New team name: </span>
+         @Html.TextBoxFor(t => t.TeamName, new { @class = "entry1" })
+
+         <p /><span class="label1">Team uses DH at home:</span>
+         @Html.CheckBoxFor(t => t.UsesDh, new { @class = "entry1", style = "margin: 0px 0px 0px 7px;" })
+
+         <p />@Html.HiddenFor(t => t.UserName)
+         <p class="errorMsg1" />@ViewBag.Msg
+
+       </div>
+       <input type="submit" class="btn btn-primary" value="Add the new team" />
+       @Html.ActionLink("Close", "TeamList", new { user = Model.UserName }, new { @class = "btn btn-primary" }) 
+
     }

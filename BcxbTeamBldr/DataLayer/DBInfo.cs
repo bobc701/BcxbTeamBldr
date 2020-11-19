@@ -54,13 +54,34 @@ namespace BcxbTeamBldr.DataLayer {
 
 
       public void AddNewTeam(string user, string team, bool dh) {
-         // ---------------------------------------------------------------------
-         //string sql = $"EXEC AddNewTeam '{user}', '{team}', {(dh ? '1' : '0')}";
-         string sql = $"INSERT INTO UserTeams (UserName, TeamName, UsesDh) VALUES ({user}, {team}, {(dh ? 1 : 0)})";
-         using (var cmd = new SqlCommand(sql, con1)) {
+      // ---------------------------------------------------------------------
+      // Let's try using parameterized query here, for security...
+         string sql2 = "INSERT INTO UserTeams (UserName, TeamName, UsesDh) VALUES (@user, @team, @dh)";
+         using (var cmd = new SqlCommand(sql2, con1)) { 
+            cmd.Parameters.AddWithValue("user", user);
+            cmd.Parameters.AddWithValue("team", team);
+            cmd.Parameters.AddWithValue("dh", dh ? 1 : 0);
+
             cmd.ExecuteNonQuery();
          }
-         //GetUserTeamList(user);
+
+
+         //string sql = $"INSERT INTO UserTeams (UserName, TeamName, UsesDh) VALUES ({user}, {team}, {(dh ? 1 : 0)})";
+         //using (var cmd = new SqlCommand(sql, con1)) {
+         //   cmd.ExecuteNonQuery();
+         //}
+
+      }
+
+      public void DeleteTeam(string user, string team) {
+      // ------------------------------------------
+         string sql = "DELETE FROM UserTeams (UserName, TeamName) VALUES (@user, @team)";
+         using (var cmd = new SqlCommand(sql, con1)) {
+            cmd.Parameters.AddWithValue("user", user);
+            cmd.Parameters.AddWithValue("team", team);
+
+            cmd.ExecuteNonQuery();
+         }
 
       }
 
@@ -271,15 +292,15 @@ namespace BcxbTeamBldr.DataLayer {
          //string sql =
          //   $@"SELECT up.PlayerId, msv.nameLast, msv.teamName, msv.lgID, msv.yearID,
          //      msv.G_p, msv.G_c, msv.G_1b, msv.G_2b, msv.G_3b, msv.G_ss, msv.G_lf, msv.G_cf, msv.G_rf,
-	        //    up.Slot_NoDH, up.Posn_NoDH, up.Slot_DH, up.Posn_DH
+         //    up.Slot_NoDH, up.Posn_NoDH, up.Slot_DH, up.Posn_DH
          //      FROM UserTeamRosters up
          //      JOIN MultiSearchView msv 
-	        //       ON msv.PlayerId = up.PlayerId
-	        //       AND msv.teamID = up.teamID
-	        //       AND msv.yearID = up.yearID
+         //       ON msv.PlayerId = up.PlayerId
+         //       AND msv.teamID = up.teamID
+         //       AND msv.yearID = up.yearID
          //      WHERE up.UserName = '{user}' AND up.TeamName = '{team}'";
-         
-               
+
+
          using (var cmd = new SqlCommand(sql, con1)) 
          using (SqlDataReader rdr = cmd.ExecuteReader()) 
 
@@ -301,7 +322,6 @@ namespace BcxbTeamBldr.DataLayer {
 
             list.Add(player);
          }
-
          return list;
 
       }
@@ -329,28 +349,28 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
-      private string GetFieldingString0
-         (object p, object c, object b1, object b2, object b3, object ss,
-          object lf, object cf, object rf) {
-      // -----------------------------------------------------------------------
+      //private string GetFieldingString0
+      //   (object p, object c, object b1, object b2, object b3, object ss,
+      //    object lf, object cf, object rf) {
+      //// -----------------------------------------------------------------------
 
-         const int fMin = 8; // Min games at posn to be listed in posn string
-         string s = "";
-         string del = "";
+      //   const int fMin = 8; // Min games at posn to be listed in posn string
+      //   string s = "";
+      //   string del = "";
 
-         if ((int)p >= fMin) { s += del + "p"; del = ","; }
-         if ((int)c >= fMin) { s += del + "c"; del = ","; }
-         if ((int)b1 >= fMin) { s += del + "1b"; del = ","; }
-         if ((int)b2 >= fMin) { s += del + "2b"; del = ","; }
-         if ((int)b3 >= fMin) { s += del + "3b"; del = ","; }
-         if ((int)ss >= fMin) { s += del + "ss"; del = ","; }
-         if ((int)lf >= fMin) { s += del + "lf"; del = ","; }
-         if ((int)cf >= fMin) { s += del + "cf"; del = ","; }
-         if ((int)rf >= fMin) { s += del + "rf"; del = ","; }
+      //   if ((int)p >= fMin) { s += del + "p"; del = ","; }
+      //   if ((int)c >= fMin) { s += del + "c"; del = ","; }
+      //   if ((int)b1 >= fMin) { s += del + "1b"; del = ","; }
+      //   if ((int)b2 >= fMin) { s += del + "2b"; del = ","; }
+      //   if ((int)b3 >= fMin) { s += del + "3b"; del = ","; }
+      //   if ((int)ss >= fMin) { s += del + "ss"; del = ","; }
+      //   if ((int)lf >= fMin) { s += del + "lf"; del = ","; }
+      //   if ((int)cf >= fMin) { s += del + "cf"; del = ","; }
+      //   if ((int)rf >= fMin) { s += del + "rf"; del = ","; }
 
-         return s;
+      //   return s;
 
-      }
+      //}
 
       //public List<CMlbPlayer> SearchPlayers(string crit) {
       //   // ---------------------------------------------------------------------

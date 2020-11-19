@@ -8,7 +8,7 @@
          </div>
       }
       else {
-         <table>
+         <table class="tablefmt2" >
             <tr>
                <th>Team</th>
                <th>Batters</th>
@@ -30,7 +30,7 @@
          </table>
       }
 
-      <div>
+      <div style="margin: 30px 0px 10px 0px;">
          <p />
          @Html.ActionLink("Add new team", "AddTeam", new { user = Model.UserName }, new { @class = "btn btn-primary" })
       </div>
