@@ -50,8 +50,8 @@
             @for (var i = 0; i < Model.Roster.Count; i++) {
                <tr>
                   <td>@Html.TextBoxFor(m => m.Roster[i].PlayerName, new { @readonly = "readonly", style = "border:none;" })</td>
-                  <td>@Html.TextBoxFor(m => m.Roster[i].PlayerKey.teamTag, new { @readonly = "readonly", style = "border:none;" })</td>
-                  <td align="center">@Html.TextBoxFor(m => m.Roster[i].PlayerKey.year, new { @readonly = "readonly", style = "border:none;" })</td>
+                  <td>@Html.TextBoxFor(m => m.Roster[i].teamTag, new { @readonly = "readonly", style = "border:none;" })</td>
+                  <td align="center">@Html.TextBoxFor(m => m.Roster[i].year, new { @readonly = "readonly", style = "border:none;" })</td>
                   <td>@Model.Roster[i].FieldingString</td>
                   <td align="center">
                      @Html.DropDownListFor(
@@ -156,7 +156,7 @@
                   </td>
                   <td>
                      @*Addl stuff needed on server to update UserPlayer table...*@
-                     @Html.HiddenFor(m => m.Roster[i].PlayerKey.pid)
+                     @Html.HiddenFor(m => m.Roster[i].pid)
                      @Html.HiddenFor(m => m.Roster[i].UserName)
                      @Html.HiddenFor(m => m.Roster[i].TeamName)
                   </td>

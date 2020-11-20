@@ -152,9 +152,9 @@ namespace BcxbTeamBldr.Controllers {
             var aYearList = yearList.Split(',').Select(y => int.Parse(y)).ToArray();
             for (int i=0; i<aPidList.Length; i++) {
                var already = info.GetUserPlayerList(user, team)
-                  .Exists(p => p.PlayerKey == (aPidList[i], aTagList[i], aYearList[i]));
+                  .Exists(p => p.pid == aPidList[i] && aTagList[i] == aTagList[i] && p.year == aYearList[i]);
                if (!already) { //Player already on team
-                  info.AddPlayerToTeam(user, team, (aPidList[i], aTagList[i], aYearList[i]));
+                  info.AddPlayerToTeam(user, team, aPidList[i], aTagList[i], aYearList[i]);
                }
             }
             //var roster = new PlayerListVM(user, team);
@@ -327,7 +327,7 @@ namespace BcxbTeamBldr.Controllers {
 
       public ContentResult VerMsgAction(string user, string team, string pid, string teamTag, int year) {
       // --------------------------------------------------------------
-         bool already = info.GetUserPlayerList(user, team).Exists(p => p.PlayerKey == (pid, teamTag, year));
+         bool already = info.GetUserPlayerList(user, team).Exists(p => p.pid == pid && p.teamTag == teamTag && p.year == year);
          if (already) { //Player already on team
             return Content("Player is already on " + team);
          }

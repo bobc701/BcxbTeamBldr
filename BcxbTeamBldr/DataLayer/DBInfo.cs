@@ -145,14 +145,21 @@ namespace BcxbTeamBldr.DataLayer {
 
 
 
-      public void AddPlayerToTeam(string user, string team, (string pid, string teamTag, int yr) key) {
+      public void AddPlayerToTeam(string user, string team, string pid, string teamTag, int yr) {
          // --------------------------------------------------------------------
          //string sql = $"EXEC AddPlayerToTeam '{user}', '{team}', '{id}'";
          string sql = 
             @$"INSERT INTO UserTeamRosters(UserName, TeamName, playerID, teamID, yearID) 
-               VALUES('{user}', '{team}', '{key.pid}', '{key.teamTag}', {key.yr})";
+               VALUES(@user, @team, @pid, '@teamTag, @year)";
 
          using (var cmd = new SqlCommand(sql, con1)) {
+
+            cmd.Parameters.AddWithValue("user", user);
+            cmd.Parameters.AddWithValue("team", team);
+            cmd.Parameters.AddWithValue("pid", pid);
+            cmd.Parameters.AddWithValue("teamTag", team);
+            cmd.Parameters.AddWithValue("year", yr);
+
             cmd.ExecuteNonQuery();
          }
       }
@@ -181,9 +188,9 @@ namespace BcxbTeamBldr.DataLayer {
                   cmd1.Parameters.Clear();
                   cmd1.Parameters.AddWithValue("@user", user);
                   cmd1.Parameters.AddWithValue("@team", team);
-                  cmd1.Parameters.AddWithValue("@pid", player.PlayerKey.pid);
-                  cmd1.Parameters.AddWithValue("@teamTag", player.PlayerKey.teamTag);
-                  cmd1.Parameters.AddWithValue("@year", player.PlayerKey.year);
+                  cmd1.Parameters.AddWithValue("@pid", player.pid);
+                  cmd1.Parameters.AddWithValue("@teamTag", player.teamTag);
+                  cmd1.Parameters.AddWithValue("@year", player.year);
                   cmd1.ExecuteNonQuery();
                }
                else {
@@ -191,9 +198,9 @@ namespace BcxbTeamBldr.DataLayer {
                   cmd2.Parameters.Clear();
                   cmd2.Parameters.AddWithValue("@user", user);
                   cmd2.Parameters.AddWithValue("@team", team);
-                  cmd1.Parameters.AddWithValue("@pid", player.PlayerKey.pid);
-                  cmd1.Parameters.AddWithValue("@teamTag", player.PlayerKey.teamTag);
-                  cmd1.Parameters.AddWithValue("@year", player.PlayerKey.year);
+                  cmd1.Parameters.AddWithValue("@pid", player.pid);
+                  cmd1.Parameters.AddWithValue("@teamTag", player.teamTag);
+                  cmd1.Parameters.AddWithValue("@year", player.year);
 
                   cmd2.Parameters.AddWithValue("@slotNoDh", player.Slot_NoDH);
                   cmd2.Parameters.AddWithValue("@posnNoDh", player.Posn_NoDH);
@@ -314,7 +321,9 @@ namespace BcxbTeamBldr.DataLayer {
 
          while (rdr.Read()) {
             var player = new CUserPlayer();
-            player.PlayerKey = (rdr["PlayerID"].ToString(), rdr["teamID"].ToString(), (int)rdr["yearID"]);
+            player.pid = rdr["PlayerID"].ToString();
+            player.teamTag = rdr["teamID"].ToString(); 
+            player.year = (int)rdr["yearID"];
             player.PlayerName = rdr["nameLast"].ToString();
             player.PlayerType = (int)rdr["G_p"] >= 5 ? 'P' : 'B';
             player.FieldingString = GetFieldingString(rdr);
