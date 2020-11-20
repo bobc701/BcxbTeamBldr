@@ -1,5 +1,5 @@
 ﻿      <div>
-         <h2>Search for player to add to @ViewData["team"]</h2>
+         <h2 style="margin: 0px 0px 35px 0px;">Search for players to add to @ViewData["team"]</h2>
 
          <p/><span class="label1"> Enter start of player's last name...</span>
          <input type="text" id="txtName" class="entry1" style="width:150px;"/>
@@ -47,7 +47,7 @@
 
       $('#btnSubmit').click(
          function () {
-            alert('In btnSubmit');
+            //alert('In btnSubmit');
             let pidList = '', tagList = '', yearList = '', delim = '';
             $('input.playerSelection:checked').each(
                function () {

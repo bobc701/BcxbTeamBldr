@@ -75,11 +75,19 @@ namespace BcxbTeamBldr.DataLayer {
 
       public void DeleteTeam(string user, string team) {
       // ------------------------------------------
-         string sql = "DELETE FROM UserTeams (UserName, TeamName) VALUES (@user, @team)";
+         string sql;
+
+         sql = "DELETE FROM UserTeamRosters WHERE UserName = @user AND TeamName = @team";
          using (var cmd = new SqlCommand(sql, con1)) {
             cmd.Parameters.AddWithValue("user", user);
             cmd.Parameters.AddWithValue("team", team);
+            cmd.ExecuteNonQuery();
+         }
 
+         sql = "DELETE FROM UserTeams WHERE UserName = @user AND TeamName = @team";
+         using (var cmd = new SqlCommand(sql, con1)) {
+            cmd.Parameters.AddWithValue("user", user);
+            cmd.Parameters.AddWithValue("team", team);
             cmd.ExecuteNonQuery();
          }
 

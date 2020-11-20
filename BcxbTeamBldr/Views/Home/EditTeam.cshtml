@@ -49,18 +49,17 @@
             </tr>
             @for (var i = 0; i < Model.Roster.Count; i++) {
                <tr>
-                  <td>@Model.Roster[i].PlayerName</td>
-
-                  <td>@Model.Roster[i].PlayerKey.teamTag</td>
-                  <td align="center">@Model.Roster[i].PlayerKey.year</td>
+                  <td>@Html.TextBoxFor(m => m.Roster[i].PlayerName, new { @readonly = "readonly", style = "border:none;" })</td>
+                  <td>@Html.TextBoxFor(m => m.Roster[i].PlayerKey.teamTag, new { @readonly = "readonly", style = "border:none;" })</td>
+                  <td align="center">@Html.TextBoxFor(m => m.Roster[i].PlayerKey.year, new { @readonly = "readonly", style = "border:none;" })</td>
                   <td>@Model.Roster[i].FieldingString</td>
                   <td align="center">
                      @Html.DropDownListFor(
-        m => m.Roster[i].Slot_NoDH,
-        new SelectList(
-           //new List<string> { "-", "c", "1b" })
-           new List<SelectListItem>  {
-                              new SelectListItem { Value = "0", Text = "-"},
+                       m => m.Roster[i].Slot_NoDH,
+                       new SelectList(
+                          //new List<string> { "-", "c", "1b" })
+                          new List<SelectListItem>  {
+                                             new SelectListItem { Value = "0", Text = "-"},
                               new SelectListItem { Value = "1", Text = "1"},
                               new SelectListItem { Value = "2", Text = "2"},
                               new SelectListItem { Value = "3", Text = "3"},
@@ -81,9 +80,9 @@
 
                   <td align="center">
                      @Html.DropDownListFor(
-        m => m.Roster[i].Posn_NoDH,
-        new SelectList(
-           new List<SelectListItem> {
+                       m => m.Roster[i].Posn_NoDH,
+                       new SelectList(
+                          new List<SelectListItem> {
                               new SelectListItem { Value = "0", Text = "-"},
                               new SelectListItem { Value = "2", Text = "c"},
                               new SelectListItem { Value = "3", Text = "1b"},
@@ -105,9 +104,9 @@
                   </td>
                   <td align="center">
                      @Html.DropDownListFor(
-        m => m.Roster[i].Slot_DH,
-        new SelectList(
-           new List<SelectListItem>  {
+                       m => m.Roster[i].Slot_DH,
+                       new SelectList(
+                          new List<SelectListItem>  {
                               new SelectListItem { Value = "0", Text = "-"},
                               new SelectListItem { Value = "1", Text = "1"},
                               new SelectListItem { Value = "2", Text = "2"},
@@ -128,9 +127,9 @@
                   </td>
                   <td align="center">
                      @Html.DropDownListFor(
-        m => m.Roster[i].Posn_DH,
-        new SelectList(
-           new List<SelectListItem> {
+                       m => m.Roster[i].Posn_DH,
+                       new SelectList(
+                          new List<SelectListItem> {
                               new SelectListItem { Value = "0", Text = "-"},
                               new SelectListItem { Value = "2", Text = "c"},
                               new SelectListItem { Value = "3", Text = "1b"},
@@ -167,10 +166,12 @@
       }
 
    <div>
-      @Html.ActionLink("Add players", "SearchMulti", new { user = userName, team = teamName }, new { @class = "btn btn-primary" })
+      @*@Html.ActionLink("Add players", "SearchMulti", new { user = userName, team = teamName }, new { @class = "btn btn-primary" })*@
+      <a href="#" id="btnAddPlayers" class="btn btn-primary">Add Players</a>
       <input type="submit" id="btnSaveChanges" value="Save Changes" class="btn btn-primary" disabled="disabled" />
-      <button id="btnCancel" class="btn btn-primary">Close</button>
-
+      @*<button type="button" id="btnCancel" class="btn btn-primary">Close</button>*@
+      @*@Html.ActionLink("Close", "TeamList", new { user = userName, team = teamName }, new { @class = "btn btn-primary" })*@
+      <a href="#" id="btnCancel" class="btn btn-primary">Close</a>
    </div>
 
    </div>
@@ -182,13 +183,46 @@
    <script>
       $(document).ready(
          function () {
-            alert("In document.ready");
+            //alert("In document.ready");
+
+            $("#btnCancel").on("click",
+               function () {
+                  //alert("In btnCancel.Click");
+                  let ok = true;
+                  if (!$('#btnSaveChanges').prop('disabled')) {
+                     if (!confirm("Discard lineup changes and close?")) ok = false;
+                  }
+                  if (ok) {
+                     let user1 = $('#UserTeam_UserName').val();
+                     let url = bc.routePrefix + `Home/TeamList?user=${user1}`;
+                     //alert(`url=${url}`);
+                     window.location.href = url;
+                  }
+               });
+
+            $("#btnAddPlayers").on("click",
+               function () {
+                  //alert("In btnAddPlayers.Click");
+                  let ok = true;
+                  if (!$('#btnSaveChanges').prop('disabled')) {
+                     if (!confirm("Discard lineup changes and continue?")) ok = false;
+                  }
+                  if (ok) {
+                     let user1 = $('#UserTeam_UserName').val().trim().replace(" ", "%20");;
+                     let team1 = $('#UserTeam_TeamName').val().trim().replace(" ", "%20");;
+                     //let url = bc.routePrefix + `Home/SearchMulti?user=${user1}&team=${team1}`;
+                     let url = bc.routePrefix + `home/mvc/searchmulti/${user1}/${team1}`;
+                     //alert(`url=${url}`);
+                     window.location.href = url;
+                  }
+               });
+
 
             $(".lineupPick").on("change",
                function () {
                   //alert("The select element was changed.");
                   $('#btnSaveChanges').prop('disabled', false);
-                  $('#btnAddPlayers').prop('disabled', true);
+                  //$('#btnAddPlayers').prop('disabled', true);
                });
 
             // ---------------------------------------------------------

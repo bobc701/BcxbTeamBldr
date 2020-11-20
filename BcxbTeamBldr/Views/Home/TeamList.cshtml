@@ -24,7 +24,7 @@
                   <td>@rec.NumPit.ToString()</td>
                   <td>@(rec.UsesDh ? "Yes" : "No") </td>
                   <td>@Html.ActionLink("Edit", "EditTeam", new { user = Model.UserName, team = @rec.TeamName }) </td>
-                  <td>@Html.ActionLink("Delete", "DeletetTeam", new { user = Model.UserName, team = @rec.TeamName }) </td>
+                  <td>@Html.ActionLink("Delete", "DeleteTeam", new { user = Model.UserName, team = @rec.TeamName }) </td>
                </tr>
             }
          </table>

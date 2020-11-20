@@ -43,6 +43,7 @@ namespace BcxbTeamBldr.Controllers {
 
       }
 
+      [Route("home/mvc/addteam/{user}")]
       public ActionResult AddTeam(string user) {
          // ------------------------------------------
          ViewBag.Title = "Add Team";
@@ -51,6 +52,7 @@ namespace BcxbTeamBldr.Controllers {
 
       }
 
+      [Route("home/mvc/addteam/{user}")]
       [HttpPost]
       public ActionResult AddTeam(CUserTeam team) {
       // ------------------------------------------
@@ -98,7 +100,7 @@ namespace BcxbTeamBldr.Controllers {
                info.DeleteTeam(user, team);
             }
             var view = new TeamListVM(user, info);
-            return RedirectToAction("TeamList", new { user = user }));
+            return RedirectToAction("TeamList", new { user = user });
 
          }
          catch (Exception ex) {
@@ -156,7 +158,7 @@ namespace BcxbTeamBldr.Controllers {
                }
             }
             //var roster = new PlayerListVM(user, team);
-            var roster = new UserPlayerListVM(user, team, dbinfo);
+            var roster = new UserPlayerListVM(user, team, info);
             return View("EditTeam", roster);
          }
          catch (Exception ex) {
@@ -190,7 +192,7 @@ namespace BcxbTeamBldr.Controllers {
 
       }
 
-
+      //[Route("home/mvc/editteam/{user}/{team}")]
       public ActionResult EditTeam(string user, string team) {
          // -----------------------------------------------------
          ViewBag.Title = "Edit Team";
@@ -199,7 +201,7 @@ namespace BcxbTeamBldr.Controllers {
          return View(roster);
       }
 
-
+      //[Route("home/mvc/editteam/{user}/{team}")]
       [HttpPost]
       public ActionResult EditTeam(UserPlayerListVM model) {
       // -----------------------------------------------------
@@ -210,7 +212,7 @@ namespace BcxbTeamBldr.Controllers {
          // Loop over player list, 
          // If they are marked'Remove', shoot off a delete.
          // Otherwise, shoot off an update for each with lineups. 
-            dbinfo.UpdateLineups(user, team, model.Roster);
+            info.UpdateLineups(user, team, model.Roster);
 
             return View("EditTeam", new UserPlayerListVM(user, team, info));
 
@@ -265,7 +267,7 @@ namespace BcxbTeamBldr.Controllers {
 
       }
 
-
+      [Route("home/mvc/searchmulti/{user}/{team}")]
       public ActionResult SearchMulti(string user, string team) {
          //  ------------------------------------------
          //var model = new PlayerListVM(user, team, dbinfo, 0);

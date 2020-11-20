@@ -28,6 +28,8 @@
 }
 
 
+
+
 /*.btn-primary {
     color: #fff;
     background-color: #1b6ec2;
@@ -45,6 +47,10 @@
     font-weight:bold;
 }
 
+/* -----------------------------------------------
+ * A nice basic table with thin borders
+ * on the cells, light gray background in headers.
+ * -----------------------------------------------*/
 
 .tablefmt2 th {
     padding: 10px 10px 5px 10px;
