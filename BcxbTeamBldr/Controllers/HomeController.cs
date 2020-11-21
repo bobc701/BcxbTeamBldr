@@ -173,7 +173,7 @@ namespace BcxbTeamBldr.Controllers {
       }
 
 
-
+      [Route("home/mvc/removeplayerfromteam/{user}/{team}/{yearID}/{teamID}/{playerID}")]
       public ActionResult RemovePlayerFromTeam(string user, string team, int yearID, string teamID, string playerID) {
          // ------------------------------------------------------------
          try {
