@@ -58,9 +58,9 @@ namespace BcxbTeamBldr.DataLayer {
       // Let's try using parameterized query here, for security...
          string sql2 = "INSERT INTO UserTeams (UserName, TeamName, UsesDh) VALUES (@user, @team, @dh)";
          using (var cmd = new SqlCommand(sql2, con1)) { 
-            cmd.Parameters.AddWithValue("user", user);
-            cmd.Parameters.AddWithValue("team", team);
-            cmd.Parameters.AddWithValue("dh", dh ? 1 : 0);
+            cmd.Parameters.AddWithValue("@user", user);
+            cmd.Parameters.AddWithValue("@team", team);
+            cmd.Parameters.AddWithValue("@dh", dh ? 1 : 0);
 
             cmd.ExecuteNonQuery();
          }
@@ -79,15 +79,15 @@ namespace BcxbTeamBldr.DataLayer {
 
          sql = "DELETE FROM UserTeamRosters WHERE UserName = @user AND TeamName = @team";
          using (var cmd = new SqlCommand(sql, con1)) {
-            cmd.Parameters.AddWithValue("user", user);
-            cmd.Parameters.AddWithValue("team", team);
+            cmd.Parameters.AddWithValue("@user", user);
+            cmd.Parameters.AddWithValue("@team", team);
             cmd.ExecuteNonQuery();
          }
 
          sql = "DELETE FROM UserTeams WHERE UserName = @user AND TeamName = @team";
          using (var cmd = new SqlCommand(sql, con1)) {
-            cmd.Parameters.AddWithValue("user", user);
-            cmd.Parameters.AddWithValue("team", team);
+            cmd.Parameters.AddWithValue("@user", user);
+            cmd.Parameters.AddWithValue("@team", team);
             cmd.ExecuteNonQuery();
          }
 
@@ -154,11 +154,11 @@ namespace BcxbTeamBldr.DataLayer {
 
          using (var cmd = new SqlCommand(sql, con1)) {
 
-            cmd.Parameters.AddWithValue("user", user);
-            cmd.Parameters.AddWithValue("team", team);
-            cmd.Parameters.AddWithValue("pid", pid);
-            cmd.Parameters.AddWithValue("teamTag", team);
-            cmd.Parameters.AddWithValue("year", yr);
+            cmd.Parameters.AddWithValue("@user", user);
+            cmd.Parameters.AddWithValue("@team", team);
+            cmd.Parameters.AddWithValue("@pid", pid);
+            cmd.Parameters.AddWithValue("@teamTag", team);
+            cmd.Parameters.AddWithValue("@year", yr);
 
             cmd.ExecuteNonQuery();
          }
@@ -198,9 +198,9 @@ namespace BcxbTeamBldr.DataLayer {
                   cmd2.Parameters.Clear();
                   cmd2.Parameters.AddWithValue("@user", user);
                   cmd2.Parameters.AddWithValue("@team", team);
-                  cmd1.Parameters.AddWithValue("@pid", player.pid);
-                  cmd1.Parameters.AddWithValue("@teamTag", player.teamTag);
-                  cmd1.Parameters.AddWithValue("@year", player.year);
+                  cmd2.Parameters.AddWithValue("@pid", player.pid);
+                  cmd2.Parameters.AddWithValue("@teamTag", player.teamTag);
+                  cmd2.Parameters.AddWithValue("@year", player.year);
 
                   cmd2.Parameters.AddWithValue("@slotNoDh", player.Slot_NoDH);
                   cmd2.Parameters.AddWithValue("@posnNoDh", player.Posn_NoDH);
