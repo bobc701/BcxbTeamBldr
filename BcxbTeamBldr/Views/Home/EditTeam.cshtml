@@ -9,255 +9,268 @@
    <h2>Edit rosters and lineups</h2>
    <h5>
       User: @Html.TextBoxFor(
-         m => m.UserTeam.UserName, 
-         new { @readonly = "readonly", style = "border:none; font-weight:bold;" })<br/>
-      Team: @Html.TextBoxFor(
-         m => m.UserTeam.TeamName, 
-         new { @readonly = "readonly", style = "border:none; font-weight:bold;" })
+   m => m.UserTeam.UserName,
+   new { @readonly = "readonly", style = "border:none; font-weight:bold;" })<br />
    </h5>
 
-   <div style="border:5px; box-shadow: 3px 3px 3px 3px; border-radius: 10px; padding:10px; margin: 30px 0px 50px 0px;">
-   <em>
-      You must enter default starting lineups for both DH and no-DH.
-      <br />The lineups can always be changed at game-time in Play-by-Play Baseball.
-      <br />Players may play any position, but if a the position is not listed in 'Positions',
-      <br />then he's not qualified there and will be a defensive liability.
-   </em>
+   <div style="font-weight:bold;">
+   Team: @Html.TextBoxFor(
+      m => m.UserTeam.TeamName,
+      new { style = "font-weight:bold; margin: 0px 0px 15px 0px;" })
+   <br />Uses DH at home: @Html.CheckBoxFor(
+      m => m.UserTeam.UsesDh)
    </div>
-   <p />
 
-   <div>
-      @if (Model.Roster.Count == 0) {
-         <div style="color:red;">
-            @teamName  <text>doesn't have any players yet.</text>
-         </div>
-      }
-      else {
-         <table class="tablefmt2" style="margin: 0px 0px 30px 0px;">
-            <tr>
-               <th align="left">Player Name</th>
-               <th align="left">MLB Team</th>
-               <th align="center">Year</th>
-               <th align="left">Positions</th>
-               <th width="70" align="center" style="display:none">Lineup<br />No DH</th>
-               <th width="70" align="center" style="display: none">Position<br />No DH</th>
-               <th width="70" align="center" style="display: none">Lineup<br />DH</th>
-               <th width="70" align="center" style="display: none">Position<br />DH</th>
-               <th width="70" align="center"></th>
-            </tr>
-            @for (var i = 0; i < Model.Roster.Count; i++) {
+      <div class="shadowed-text">
+         <em>
+            @*You must enter default starting lineups for both DH and no-DH.*@
+            @*The lineups can always be changed at game-time in Play-by-Play Baseball.*@
+            Players may play any position, but if a the position is not listed in 'Positions',
+            <br />then he's not qualified there and will be a defensive liability.
+            <br />Batting order and fielding positions can be set at game-time in Play-by-Play Baseball.
+         </em>
+      </div>
+      <p />
+
+      <div>
+         @if (Model.Roster.Count == 0) {
+            <div style="color:red;">
+               @teamName  <text>doesn't have any players yet.</text>
+            </div>
+         }
+         else {
+            <table class="tablefmt2" style="margin: 0px 0px 20px 0px;">
                <tr>
-                  <td>@Html.TextBoxFor(m => m.Roster[i].PlayerName, new { @readonly = "readonly", @class = "form-control", style="width:120px; background-color:white; border:none;" })</td>
-                  <td>@Html.TextBoxFor(m => m.Roster[i].teamTag, new { @readonly = "readonly", @class = "form-control", style="width:80px; background-color:white; border:none;" })</td>
-                  <td align="center">@Html.TextBoxFor(m => m.Roster[i].year, new { @readonly = "readonly", @class="form-control", style = "width:80px; background-color:white; border:none;" })</td>
-                  <td>@Model.Roster[i].FieldingString</td>
-                  
-                  <td align="center" style="display: none;">
-                     @Html.DropDownListFor(
-                       m => m.Roster[i].Slot_NoDH,
-                       new SelectList(
-                          //new List<string> { "-", "c", "1b" })
-                          new List<SelectListItem>  {
-                                             new SelectListItem { Value = "0", Text = "-"},
-                              new SelectListItem { Value = "1", Text = "1"},
-                              new SelectListItem { Value = "2", Text = "2"},
-                              new SelectListItem { Value = "3", Text = "3"},
-                              new SelectListItem { Value = "4", Text = "4"},
-                              new SelectListItem { Value = "5", Text = "5"},
-                              new SelectListItem { Value = "6", Text = "6"},
-                              new SelectListItem { Value = "7", Text = "7"},
-                              new SelectListItem { Value = "8", Text = "8"},
-                              new SelectListItem { Value = "9", Text = "9"}
-                           },
-           "Value",
-           "Text",
-           Model.Roster[i].Slot_NoDH
-
-       ),
-       new { @class = "lineupPick" }
-     )
-
-                  <td align="center" style="display: none;">
-                     @Html.DropDownListFor(
-                       m => m.Roster[i].Posn_NoDH,
-                       new SelectList(
-                          new List<SelectListItem> {
-                              new SelectListItem { Value = "0", Text = "-"},
-                              new SelectListItem { Value = "2", Text = "c"},
-                              new SelectListItem { Value = "3", Text = "1b"},
-                              new SelectListItem { Value = "4", Text = "2b"},
-                              new SelectListItem { Value = "5", Text = "3b"},
-                              new SelectListItem { Value = "6", Text = "ss"},
-                              new SelectListItem { Value = "7", Text = "lf"},
-                              new SelectListItem { Value = "8", Text = "cf"},
-                              new SelectListItem { Value = "9", Text = "rf"},
-                              new SelectListItem { Value = "1", Text = "p"}
-                           },
-           "Value",
-           "Text",
-           Model.Roster[i].Posn_NoDH
-        ),
-        new { @class = "lineupPick" }
-     )
-
-                  </td>
-                  <td align="center" style="display: none;">
-                     @Html.DropDownListFor(
-                       m => m.Roster[i].Slot_DH,
-                       new SelectList(
-                          new List<SelectListItem>  {
-                              new SelectListItem { Value = "0", Text = "-"},
-                              new SelectListItem { Value = "1", Text = "1"},
-                              new SelectListItem { Value = "2", Text = "2"},
-                              new SelectListItem { Value = "3", Text = "3"},
-                              new SelectListItem { Value = "4", Text = "4"},
-                              new SelectListItem { Value = "5", Text = "5"},
-                              new SelectListItem { Value = "6", Text = "6"},
-                              new SelectListItem { Value = "7", Text = "7"},
-                              new SelectListItem { Value = "8", Text = "8"},
-                              new SelectListItem { Value = "9", Text = "9"}
-                           },
-           "Value",
-           "Text",
-           Model.Roster[i].Slot_DH
-        ),
-        new { @class = "lineupPick" }
-     )
-                  </td>
-                  <td align="center" style="display: none;">
-                     @Html.DropDownListFor(
-                       m => m.Roster[i].Posn_DH,
-                       new SelectList(
-                          new List<SelectListItem> {
-                              new SelectListItem { Value = "0", Text = "-"},
-                              new SelectListItem { Value = "2", Text = "c"},
-                              new SelectListItem { Value = "3", Text = "1b"},
-                              new SelectListItem { Value = "4", Text = "2b"},
-                              new SelectListItem { Value = "5", Text = "3b"},
-                              new SelectListItem { Value = "6", Text = "ss"},
-                              new SelectListItem { Value = "7", Text = "lf"},
-                              new SelectListItem { Value = "8", Text = "cf"},
-                              new SelectListItem { Value = "9", Text = "rf"},
-                              new SelectListItem { Value = "1", Text = "p"},
-                              new SelectListItem { Value = "10", Text = "dh"}
-                           },
-           "Value",
-           "Text",
-           Model.Roster[i].Posn_DH
-        ),
-        new { @class = "lineupPick" }
-     )
-                  </td>
-                  <td style = "width:100px;" >
-                     @*@Html.CheckBoxFor(m => m.Roster[i].Remove)*@
-                     @Html.ActionLink("Remove", "RemovePlayerFromTeam", 
-                        new { user = userName, team = teamName, playerID = Model.Roster[i].pid, yearID = Model.Roster[i].year, teamID = Model.Roster[i].teamTag })
-
-                     @*Addl stuff needed on server to update UserPlayer table...*@
-                     @Html.HiddenFor(m => m.Roster[i].pid)
-                     @Html.HiddenFor(m => m.Roster[i].UserName)
-                     @Html.HiddenFor(m => m.Roster[i].TeamName)
-                  </td>
+                  <th align="left">Player Name</th>
+                  <th align="left">MLB Team</th>
+                  <th align="center">Year</th>
+                  <th align="left">Positions</th>
+                  <th width="70" align="center" style="display:none">Lineup<br />No DH</th>
+                  <th width="70" align="center" style="display: none">Position<br />No DH</th>
+                  <th width="70" align="center" style="display: none">Lineup<br />DH</th>
+                  <th width="70" align="center" style="display: none">Position<br />DH</th>
+                  <th width="70" align="center"></th>
                </tr>
-            }
-         </table>
+               @for (var i = 0; i < Model.Roster.Count; i++) {
+                  <tr>
+                     <td>@Html.TextBoxFor(m => m.Roster[i].PlayerName, new { @readonly = "readonly", style = "width:120px; background-color:white; border:none;" })</td>
+                     <td>@Html.TextBoxFor(m => m.Roster[i].teamTag, new { @readonly = "readonly", style = "width:80px; background-color:white; border:none;" })</td>
+                     <td align="center">@Html.TextBoxFor(m => m.Roster[i].year, new { @readonly = "readonly", style = "width:80px; background-color:white; border:none;" })</td>
+                     <td>@Model.Roster[i].FieldingString</td>
+
+                     <td align="center" style="display: none;">
+                        @Html.DropDownListFor(
+                          m => m.Roster[i].Slot_NoDH,
+                          new SelectList(
+                             //new List<string> { "-", "c", "1b" })
+                             new List<SelectListItem>  {
+                                                new SelectListItem { Value = "0", Text = "-"},
+                                 new SelectListItem { Value = "1", Text = "1"},
+                                 new SelectListItem { Value = "2", Text = "2"},
+                                 new SelectListItem { Value = "3", Text = "3"},
+                                 new SelectListItem { Value = "4", Text = "4"},
+                                 new SelectListItem { Value = "5", Text = "5"},
+                                 new SelectListItem { Value = "6", Text = "6"},
+                                 new SelectListItem { Value = "7", Text = "7"},
+                                 new SelectListItem { Value = "8", Text = "8"},
+                                 new SelectListItem { Value = "9", Text = "9"}
+                              },
+              "Value",
+              "Text",
+              Model.Roster[i].Slot_NoDH
+
+          ),
+          new { @class = "lineupPick" }
+        )
+
+                     <td align="center" style="display: none;">
+                        @Html.DropDownListFor(
+                          m => m.Roster[i].Posn_NoDH,
+                          new SelectList(
+                             new List<SelectListItem> {
+                                 new SelectListItem { Value = "0", Text = "-"},
+                                 new SelectListItem { Value = "2", Text = "c"},
+                                 new SelectListItem { Value = "3", Text = "1b"},
+                                 new SelectListItem { Value = "4", Text = "2b"},
+                                 new SelectListItem { Value = "5", Text = "3b"},
+                                 new SelectListItem { Value = "6", Text = "ss"},
+                                 new SelectListItem { Value = "7", Text = "lf"},
+                                 new SelectListItem { Value = "8", Text = "cf"},
+                                 new SelectListItem { Value = "9", Text = "rf"},
+                                 new SelectListItem { Value = "1", Text = "p"}
+                              },
+              "Value",
+              "Text",
+              Model.Roster[i].Posn_NoDH
+           ),
+           new { @class = "lineupPick" }
+        )
+
+                     </td>
+                     <td align="center" style="display: none;">
+                        @Html.DropDownListFor(
+                          m => m.Roster[i].Slot_DH,
+                          new SelectList(
+                             new List<SelectListItem>  {
+                                 new SelectListItem { Value = "0", Text = "-"},
+                                 new SelectListItem { Value = "1", Text = "1"},
+                                 new SelectListItem { Value = "2", Text = "2"},
+                                 new SelectListItem { Value = "3", Text = "3"},
+                                 new SelectListItem { Value = "4", Text = "4"},
+                                 new SelectListItem { Value = "5", Text = "5"},
+                                 new SelectListItem { Value = "6", Text = "6"},
+                                 new SelectListItem { Value = "7", Text = "7"},
+                                 new SelectListItem { Value = "8", Text = "8"},
+                                 new SelectListItem { Value = "9", Text = "9"}
+                              },
+              "Value",
+              "Text",
+              Model.Roster[i].Slot_DH
+           ),
+           new { @class = "lineupPick" }
+        )
+                     </td>
+                     <td align="center" style="display: none;">
+                        @Html.DropDownListFor(
+                          m => m.Roster[i].Posn_DH,
+                          new SelectList(
+                             new List<SelectListItem> {
+                                 new SelectListItem { Value = "0", Text = "-"},
+                                 new SelectListItem { Value = "2", Text = "c"},
+                                 new SelectListItem { Value = "3", Text = "1b"},
+                                 new SelectListItem { Value = "4", Text = "2b"},
+                                 new SelectListItem { Value = "5", Text = "3b"},
+                                 new SelectListItem { Value = "6", Text = "ss"},
+                                 new SelectListItem { Value = "7", Text = "lf"},
+                                 new SelectListItem { Value = "8", Text = "cf"},
+                                 new SelectListItem { Value = "9", Text = "rf"},
+                                 new SelectListItem { Value = "1", Text = "p"},
+                                 new SelectListItem { Value = "10", Text = "dh"}
+                              },
+              "Value",
+              "Text",
+              Model.Roster[i].Posn_DH
+           ),
+           new { @class = "lineupPick" }
+        )
+                     </td>
+                     <td style="width:100px;">
+                        @*@Html.CheckBoxFor(m => m.Roster[i].Remove)*@
+                        @Html.ActionLink("Remove", "RemovePlayerFromTeam",
+                           new { user = userName, team = teamName, playerID = Model.Roster[i].pid, yearID = Model.Roster[i].year, teamID = Model.Roster[i].teamTag })
+
+                        @*Addl stuff needed on server to update UserPlayer table...*@
+                        @Html.HiddenFor(m => m.Roster[i].pid)
+                        @Html.HiddenFor(m => m.Roster[i].UserName)
+                        @Html.HiddenFor(m => m.Roster[i].TeamName)
+                     </td>
+                  </tr>
+               }
+            </table>
+         }
+
+
+         <div>
+            @*@Html.ActionLink("Add players", "SearchMulti", new { user = userName, team = teamName }, new { @class = "btn btn-primary" })*@
+            <a href="#" id="btnAddPlayers" style="margin: 0px 0px 20px 0px;">Add Players</a>
+            <p /><p /><input type="submit" id="btnSaveChanges" value="Save Changes" class="btn btn-primary" disabled="disabled" />
+            @*<button type="button" id="btnCancel" class="btn btn-primary">Close</button>*@
+            @*@Html.ActionLink("Close", "TeamList", new { user = userName, team = teamName }, new { @class = "btn btn-primary" })*@
+            <a href="#" id="btnCancel" class="btn btn-primary">Close</a>
+         </div>
+
+         <div style="margin:25px 0px 0px 0px;">
+            <span class="errorMsg2">
+               @Html.DisplayFor(m => m.UserTeam.StatusMsg)
+            </span>
+         </div>
+
+      </div>
       }
 
-   <div>
-      @*@Html.ActionLink("Add players", "SearchMulti", new { user = userName, team = teamName }, new { @class = "btn btn-primary" })*@
-      <a href="#" id="btnAddPlayers" class="btn btn-primary">Add Players</a>
-      <input type="submit" id="btnSaveChanges" value="Save Changes" class="btn btn-primary" disabled="disabled" />
-      @*<button type="button" id="btnCancel" class="btn btn-primary">Close</button>*@
-      @*@Html.ActionLink("Close", "TeamList", new { user = userName, team = teamName }, new { @class = "btn btn-primary" })*@
-      <a href="#" id="btnCancel" class="btn btn-primary">Close</a>
-   </div>
-
-   </div>
-}
 
 
-
-@section Scripting {
-   <script>
-      $(document).ready(
-         function () {
-            //alert("In document.ready");
-
-            $("#btnCancel").on("click",
+      @section Scripting {
+         <script>
+            $(document).ready(
                function () {
-                  //alert("In btnCancel.Click");
-                  let ok = true;
-                  if (!$('#btnSaveChanges').prop('disabled')) {
-                     if (!confirm("Discard lineup changes and close?")) ok = false;
-                  }
-                  if (ok) {
-                     let user1 = $('#UserTeam_UserName').val();
-                     let url = bc.routePrefix + `Home/TeamList?user=${user1}`;
-                     //alert(`url=${url}`);
-                     window.location.href = url;
-                  }
+                  //alert("In document.ready");
+
+                  $("#btnCancel").on("click",
+                     function () {
+                        //alert("In btnCancel.Click");
+                        let ok = true;
+                        if (!$('#btnSaveChanges').prop('disabled')) {
+                           if (!confirm("Discard lineup changes and close?")) ok = false;
+                        }
+                        if (ok) {
+                           let user1 = $('#UserTeam_UserName').val();
+                           let url = bc.routePrefix + `Home/TeamList?user=${user1}`;
+                           //alert(`url=${url}`);
+                           window.location.href = url;
+                        }
+                     });
+
+                  $("#btnAddPlayers").on("click",
+                     function () {
+                        //alert("In btnAddPlayers.Click");
+                        let ok = true;
+                        if (!$('#btnSaveChanges').prop('disabled')) {
+                           if (!confirm("Discard lineup changes and continue?")) ok = false;
+                        }
+                        if (ok) {
+                           let user1 = $('#UserTeam_UserName').val().trim().replace(" ", "%20");;
+                           let team1 = $('#UserTeam_TeamName').val().trim().replace(" ", "%20");;
+                           //let url = bc.routePrefix + `Home/SearchMulti?user=${user1}&team=${team1}`;
+                           let url = bc.routePrefix + `home/mvc/searchmulti/${user1}/${team1}`;
+                           //alert(`url=${url}`);
+                           window.location.href = url;
+                        }
+                     });
+
+
+                  $(".lineupPick").on("change",
+                     function () {
+                        //alert("The select element was changed.");
+                        $('#btnSaveChanges').prop('disabled', false);
+                        //$('#btnAddPlayers').prop('disabled', true);
+                     });
+
+                  // ---------------------------------------------------------
+                  // A nice agorism this, but I decided to not use it after all
+                  // and use a form/submit instead...
+                  // ---------------------------------------------------------
+                  //$('#btnSaveLineupNot').click(
+                  //   function () {
+                  //      table.find('tr').each(
+                  //         function (i, el) {
+                  //            let $tds = $(this).find('td'),
+                  //               playerId[i] = $tds.eq(0).text(),
+                  //               slotNoDh[i] = $tds.eq(1).text(),
+                  //               posnNoDh[i] = $tds.eq(2).text(),
+                  //               slotDh[i] = $tds.eq(3).text(),
+                  //               posnDh[i] = $tds.eq(4).text();
+                  //         });
+                  //      let data = {
+                  //         User:
+                  //         Team:
+                  //         PlayerId: playerId,
+                  //         SlotNoDh: slotNoDh,
+                  //         PosnNoDh: posnNoDh,
+                  //         SlotDh: slotDh,
+                  //         PosnDh: posnDh
+                  //      }
+                  //      $.post('Home/UpdateLineup', data,
+                  //         function () {
+                  //            alert('Lineup updated');
+                  //         }
+                  //      )
+
+                  //   });
+
                });
 
-            $("#btnAddPlayers").on("click",
-               function () {
-                  //alert("In btnAddPlayers.Click");
-                  let ok = true;
-                  if (!$('#btnSaveChanges').prop('disabled')) {
-                     if (!confirm("Discard lineup changes and continue?")) ok = false;
-                  }
-                  if (ok) {
-                     let user1 = $('#UserTeam_UserName').val().trim().replace(" ", "%20");;
-                     let team1 = $('#UserTeam_TeamName').val().trim().replace(" ", "%20");;
-                     //let url = bc.routePrefix + `Home/SearchMulti?user=${user1}&team=${team1}`;
-                     let url = bc.routePrefix + `home/mvc/searchmulti/${user1}/${team1}`;
-                     //alert(`url=${url}`);
-                     window.location.href = url;
-                  }
-               });
-
-
-            $(".lineupPick").on("change",
-               function () {
-                  //alert("The select element was changed.");
-                  $('#btnSaveChanges').prop('disabled', false);
-                  //$('#btnAddPlayers').prop('disabled', true);
-               });
-
-            // ---------------------------------------------------------
-            // A nice agorism this, but I decided to not use it after all
-            // and use a form/submit instead...
-            // ---------------------------------------------------------
-            //$('#btnSaveLineupNot').click(
-            //   function () {
-            //      table.find('tr').each(
-            //         function (i, el) {
-            //            let $tds = $(this).find('td'),
-            //               playerId[i] = $tds.eq(0).text(),
-            //               slotNoDh[i] = $tds.eq(1).text(),
-            //               posnNoDh[i] = $tds.eq(2).text(),
-            //               slotDh[i] = $tds.eq(3).text(),
-            //               posnDh[i] = $tds.eq(4).text();
-            //         });
-            //      let data = {
-            //         User:
-            //         Team:
-            //         PlayerId: playerId,
-            //         SlotNoDh: slotNoDh,
-            //         PosnNoDh: posnNoDh,
-            //         SlotDh: slotDh,
-            //         PosnDh: posnDh
-            //      }
-            //      $.post('Home/UpdateLineup', data,
-            //         function () {
-            //            alert('Lineup updated');
-            //         }
-            //      )
-
-            //   });
-
-         });
-
-   </script>
-}
+         </script>
+      }
 
 

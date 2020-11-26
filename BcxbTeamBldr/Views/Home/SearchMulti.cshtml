@@ -40,6 +40,9 @@
       <br /><input id="hdnUserName" type="text" style="visibility:hidden" value="@ViewData["user"]" />
       <input id="hdnTeamName" type="text" style="visibility:hidden" value="@ViewData["team"]" />
 
+      <table id="tblMatching" border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse"> </table>
+      <table id="tblMatching" border="1" cellpadding="5" cellspacing="0" style="border:1px; padding:5px; spa border-collapse:collapse"> </table>
+
 
 @section Scripting {
 <script>
@@ -67,7 +70,7 @@
             let user1 = $('#hdnUserName').val();
             let team1 = $('#hdnTeamName').val();
             let url = bc.routePrefix + `Home/AddPlayerToTeamMulti?user=${user1}&team=${team1}&pidList=${pidList}&tagList=${tagList}&yearList=${yearList}`;
-            alert(`url=${url}`);
+            //alert(`url=${url}`);
             window.location.href = url;
 
          }
@@ -141,7 +144,8 @@
                //alert(JSON.stringify({ test: 'hello', quant: 12 })); So can be any object not just Json!
                //alert(data[0].PlayerName);
                content = '<h3>Matching Players...</h3>';
-               content += '<table id="tblMatching" border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse">';
+               //content += '<table id="tblMatching" border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse">';
+               content += '<table id="tblMatching" class="tablefmt3">';
 
                content += '<tr>';
                content += '<th>Player Name</th>';
@@ -167,7 +171,7 @@
                }
                content += "</table>";
 
-               //alert(content);
+               alert(content);
                $('#dvResults').html(content);
             },
             error: function (xhr, status, error) {

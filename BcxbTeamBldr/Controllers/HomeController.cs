@@ -179,6 +179,7 @@ namespace BcxbTeamBldr.Controllers {
          try {
             ViewBag.Msg = ""; 
             info.RemovePlayerFromTeam(user, team, (playerID, teamID, yearID));
+            //info.ValidateTeam(user, team);
             var roster = new UserPlayerListVM(user, team, info);
             return View("EditTeam", roster);
          }

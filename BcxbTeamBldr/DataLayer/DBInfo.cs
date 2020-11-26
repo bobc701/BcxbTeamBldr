@@ -43,6 +43,8 @@ namespace BcxbTeamBldr.DataLayer {
                   team.NumPit = (int)rdr["TotPit"];
                   team.NumPos = (int)rdr["TotPos"];
                   team.UsesDh = (bool)rdr["UsesDh"];
+                  team.IsComplete = (bool)rdr["IsComplete"];
+                  team.StatusMsg = rdr["StatusMsg"].ToString();
                   list.Add(team);
                }
 
@@ -150,14 +152,14 @@ namespace BcxbTeamBldr.DataLayer {
          //string sql = $"EXEC AddPlayerToTeam '{user}', '{team}', '{id}'";
          string sql = 
             @$"INSERT INTO UserTeamRosters(UserName, TeamName, playerID, teamID, yearID) 
-               VALUES(@user, @team, @pid, '@teamTag, @year)";
+               VALUES(@user, @team, @pid, @teamTag, @year)";
 
          using (var cmd = new SqlCommand(sql, con1)) {
 
             cmd.Parameters.AddWithValue("@user", user);
             cmd.Parameters.AddWithValue("@team", team);
             cmd.Parameters.AddWithValue("@pid", pid);
-            cmd.Parameters.AddWithValue("@teamTag", team);
+            cmd.Parameters.AddWithValue("@teamTag", teamTag);
             cmd.Parameters.AddWithValue("@year", yr);
 
             cmd.ExecuteNonQuery();

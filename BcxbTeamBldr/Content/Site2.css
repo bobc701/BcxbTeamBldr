@@ -47,6 +47,17 @@
     font-weight:bold;
 }
 
+
+.errorMsg2 {
+    color: red;
+    font-weight: bold;
+    border:none;
+    
+}
+
+
+
+
 /* -----------------------------------------------
  * A nice basic table with thin borders
  * on the cells, light gray background in headers.
@@ -66,6 +77,45 @@
 }
 
 .tablefmt2 {
-    border: 2px solid black;
+    border: 1px solid black;
     border-collapse: collapse; /*Not needed*/
+}
+
+
+/* -----------------------------------------------
+ * A simpler more utiiitarian table
+ * with no header shading and thinner outer borders
+ * -----------------------------------------------*/
+
+.tablefmt3 th {
+    padding: 4px 10px 5px 6px;/* 6px 6px 5px 6px;*/
+    border: 1px solid grey;
+    border-collapse: collapse;
+    background-color:inherit;
+}
+
+.tablefmt3 td {
+    padding: 2px 10px 3px 6px;  /*4px 10px 4px 10px;*/
+    border: 1px solid grey;
+    border-collapse: collapse;
+}
+
+.tablefmt3 {
+    border: 1px solid black;
+    border-collapse: collapse; /*Not needed*/
+}
+
+
+/* -----------------------------------------------
+ * Put this on a div to get bordered text with rounded 
+ * corners and a drop shadow.
+ * If you want italics, put <em> around thge text.
+ * -----------------------------------------------*/
+
+div.shadowed-text {
+    border: 5px;
+    box-shadow: 3px 3px 3px 3px;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 30px 0px 50px 0px;
 }
