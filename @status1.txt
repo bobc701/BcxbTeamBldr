@@ -1,3 +1,7 @@
+b10 (from b9)
+This will use jQuery dialog for Add Players.
+
+b9 (from b8)
 
 BRANCH b8 (From b3)
 -------------------------------------------------------------
