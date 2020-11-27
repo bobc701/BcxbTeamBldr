@@ -39,8 +39,8 @@ m => m.UserTeam.UsesDh)
          </div>
       }
       else {
-         <table class="tablefmt2" style="margin: 0px 0px 20px 0px;">
-            <tr>
+         <table id="currRoster" class="tablefmt2" style="margin: 0px 0px 20px 0px;">
+            @*<tr>
                <th align="left">Player Name</th>
                <th align="left">MLB Team</th>
                <th align="center">Year</th>
@@ -50,13 +50,13 @@ m => m.UserTeam.UsesDh)
                <th width="70" align="center" style="display: none">Lineup<br />DH</th>
                <th width="70" align="center" style="display: none">Position<br />DH</th>
                <th width="70" align="center"></th>
-            </tr>
+            </tr>*@
             @for (var i = 0; i < Model.Roster.Count; i++) {
                <tr>
-                  <td>@Html.TextBoxFor(m => m.Roster[i].PlayerName, new { @readonly = "readonly", style = "width:120px; background-color:white; border:none;" })</td>
-                  <td>@Html.TextBoxFor(m => m.Roster[i].teamTag, new { @readonly = "readonly", style = "width:80px; background-color:white; border:none;" })</td>
-                  <td align="center">@Html.TextBoxFor(m => m.Roster[i].year, new { @readonly = "readonly", style = "width:80px; background-color:white; border:none;" })</td>
-                  <td>@Model.Roster[i].FieldingString</td>
+                  <td>@Html.TextBoxFor(m => m.Roster[i].PlayerName, new { @class="playerName", @readonly = "readonly", style = "width:120px; background-color:white; border:none;" })</td>
+                  <td>@Html.TextBoxFor(m => m.Roster[i].teamTag, new { @class="teamTag", @readonly = "readonly", style = "width:80px; background-color:white; border:none;" })</td>
+                  <td align="center">@Html.TextBoxFor(m => m.Roster[i].year, new { @class="year", @readonly = "readonly", style = "width:80px; background-color:white; border:none;" })</td>
+                  <td class="fieldingString">@Model.Roster[i].FieldingString</td>
 
                   <td align="center" style="display: none;">
                      @Html.DropDownListFor(
@@ -160,7 +160,7 @@ m => m.UserTeam.UsesDh)
                         new { user = userName, team = teamName, playerID = Model.Roster[i].pid, yearID = Model.Roster[i].year, teamID = Model.Roster[i].teamTag })
 
                      @*Addl stuff needed on server to update UserPlayer table...*@
-                     @Html.HiddenFor(m => m.Roster[i].pid)
+                     @Html.HiddenFor(m => m.Roster[i].pid, new { @class = "pid" })
                      @Html.HiddenFor(m => m.Roster[i].UserName)
                      @Html.HiddenFor(m => m.Roster[i].TeamName)
                   </td>
@@ -229,7 +229,7 @@ Idea is to put this in dialog.
    </div>
    <p /><input id="errMsg" style="border:none; color:red; font-size:larger; font-weight:bold; width:600px;" value="" />
 
-   <p /><input id="btnSubmit" type="button" class="btn btn-primary" value="Add Selected Players" />
+   <p /><input id="btnAddSelected" type="button" class="btn btn-primary" value="Add Selected Players" />
    @Html.ActionLink("Close", "EditTeam", new { user = ViewData["user"], team = ViewData["team"] }, new { @class = "btn btn-primary" })
 
    <br />
@@ -323,54 +323,103 @@ Idea is to put this in dialog.
             //Functions copied from SearchMulti
             //--------------------------------------------
 
-            $('#btnSubmit').click(
+            function buildRoster() {
+            // ---------------------------------------------------
+               var rost = [];
+               $("#currRoster tr").each(
+                  function () {
+                     alert("In .each()");
+                     let x = {
+                        playerName: $(this).find("input.playerName").first().val(),
+                        teamTag: $(this).find("input.teamTag").first().val(),
+                        year: $(this).find("input.year").first().val(),
+                        fieldingString: $(this).find("td.fieldingString").first().text(),
+                        pid: $(this).find("input.pid").first().val()
+                     }
+                     rost.push(x);
+                  });
+               return rost;
+            }
+
+            function buildTableFromRoster(rost) {
+            // -----------------------------------------------
+               console.log("In buildTableFromRoster -------------------------------------")
+
+               let html = ""
+               let ix = 0;
+               for (e of rost) {
+               // alert($(this).parent().parent().get(0).tagName);
+                  let yr = $(this).parent().parent().find("td.selYear").first().text(); alert(yr);
+                  let tm = $(this).parent().parent().find("td.selTeamTag").first().text();;
+                  let id = $(this).parent().parent().find("td.selPlayerID").first().text();
+                  let name = $(this).parent().parent().find("td.selName").first().text();
+                  let fldg = $(this).parent().parent().find("td.selFieldingString").first().text();
+
+                  console.log(`In buildTableFromRoster: ${name} ${id} ${yr} ${tm} ${fldg}`);
+
+                  html += '<tr>';
+                  html += `<td><input id="Roster_${ix}__PlayerName" name="Roster[${ix}].PlayerName" readonly="readonly" style="width:120px; background-color:white; border:none;" type="text" value="${name}" /></td>`;
+                  html += `<td><input id="Roster_${ix}__teamTag" name="Roster[${ix}].teamTag" readonly="readonly" style="width:80px; background-color:white; border:none;" type="text" value="${tm}" /></td>`;
+                  html += `<td align="center"><input data-val="true" data-val-number="The field year must be a number." data-val-required="The year field is required." id="Roster_${ix}__year" name="Roster[${ix}].year" readonly="readonly" style="width:80px; background-color:white; border:none;" type="text" value="${yr}" /></td>`;
+                  html += '<td style="width:100px;">';
+                  html += `<td>${fldg}</td>'
+                  html += '<a href="/home/mvc/removeplayerfromteam/bobc/Rocket%20Men/2020/ATL/acunaro01">Remove</a>`;
+                  html += `<input id="Roster_${ix}__pid" name="Roster[${ix}].pid" type="hidden" value="${id}" />`;
+                  html += '</td>';
+                  html += '</tr>';
+                  ix++;
+                  console.log("html=" + html);
+               }
+               return html;
+            }
+
+
+            $('#btnAddSelected').click(
                function () {
-                  //alert('In btnSubmit');
-                  let pidList = '', tagList = '', yearList = '', delim = '';
+                  console.log('In btnAddSelected.click ---------------------------------------');
+
+               // Step 1: Build an array of the current roster
+                  let rost1 = buildRoster();
+                  for (e of rost1) alert(`After buildRoster: ${e.playerName} ${e.teamTag} ${e.year} ${e.fieldingString} ${e.pid}`);
+
+               // Step 2: Add these newly selected players to the roster array...
                   $('input.playerSelection:checked').each(
                      function () {
-                        //alert('element ' + ', id=' + this.value);
-                        //alert(this.tagName);
-                        //alert($(this).parent().parent().get(0).tagName);
-                        let yr = $(this).parent().parent().find("td.selectedYear").first().text(); alert(yr);
-                        let tm = $(this).parent().parent().find("td.selectedTeam").first().text();;
-                        let id = $(this).parent().parent().find("td.selectedPlayer").first().text();
+                        let yr = $(this).parent().parent().find("td.selYear").first().text(); alert(yr);
+                        let tm = $(this).parent().parent().find("td.selTeamTag").first().text();;
+                        let id = $(this).parent().parent().find("td.selPlayerID").first().text();
+                        let name = $(this).parent().parent().find("td.selName").first().text();
+                        let fldg = $(this).parent().parent().find("td.selFieldingString").first().text();
 
-                        //--------------------------------------------------------
-                        //In here, find player in grid, if not there, append a < tr > with the player data,
-                        //   including 'Remove'.
-                        //--------------------------------------------------------
-                        //Question: Do we really need ID and Name (with uindex)???
+                        console.log(`In btnAddSelected.click: ${name} ${id} ${yr} ${tm} ${fldg}`)
 
-                        //<td><input id="Roster_0__PlayerName" name="Roster[0].PlayerName" readonly="readonly" style="width:120px; background-color:white; border:none;" type="text" value="Acuna" /></td>
-                        //<td><input id="Roster_0__teamTag" name="Roster[0].teamTag" readonly="readonly" style="width:80px; background-color:white; border:none;" type="text" value="ATL" /></td>
-                        //<td align="center"><input data-val="true" data-val-number="The field year must be a number." data-val-required="The year field is required." id="Roster_0__year" name="Roster[0].year" readonly="readonly" style="width:80px; background-color:white; border:none;" type="text" value="2020" /></td>
-                        //<td>cf,rf</td>
-                        //<td style="width:100px;">
-                        //   <a href="/home/mvc/removeplayerfromteam/bobc/Rocket%20Men/2020/ATL/acunaro01">Remove</a>
-                        //   <input id="Roster_0__pid" name="Roster[0].pid" type="hidden" value="acunaro01" />
-                        //</td>
+                     // Checking that the palyer/team/year is not already in the roster...
+                        let elt = rost1.find(e => e.pid == id && teamTag == tm && year == yr);
+                        if (!elt) {
+                           rost1.push({ playerName: name, pid: id, year: yr, fieldingString: fldg, teamTag: tm });
+                        }
 
-                        pidList += delim + id;
-                        tagList += delim + tm;
-                        yearList += delim + yr;
-                        delim = ',';
-                        alert(`pidList: ${pidList} tagList: ${tagList} yearList: ${yearList}`);
-                     });
-                  //alert(`idList=|${idList}|`);
+                     }
+                  );
+                  console.log(`Roster size: ${rost1.length}`);
+
+               // Step 3: Convert the whole roster array to <tr> and <td> tags and attach it to the table...
                   let user1 = $('#hdnUserName').val();
                   let team1 = $('#hdnTeamName').val();
-                  let url = bc.routePrefix + `Home/AddPlayerToTeamMulti?user=${user1}&team=${team1}&pidList=${pidList}&tagList=${tagList}&yearList=${yearList}`;
-                  //alert(`url=${url}`);
-                  window.location.href = url;
+                  let content = buildTableFromRoster(rost1);
+                  
+                  console.log(`content: ${ content }`);
+
+                  $("#currRoster").html(content);
 
                }
+
             );
 
 
             $('#txtYear').on('change',
                function () {
-                  console.log('In change event');
+                  console.log('In txtYear.change ----------------------------------------------');
 
                   // First, validate the user's entry...
                   let err = false;
@@ -450,13 +499,13 @@ Idea is to put this in dialog.
                      let url;
                      for (let p of data) {
                         content += '<tr>';
-                        content += '<td>' + p.nameLast + '</td>';
+                        content += '<td class="selName">' + p.nameLast + '</td>';
                         content += '<td>' + p.teamName + '</td>';
-                        content += `<td class="selectedYear">` + p.yearID + '</td>';
-                        content += '<td>' + p.FieldingString + '</td>';
+                        content += `<td class="selYear">` + p.yearID + '</td>';
+                        content += '<td class="selFieldingString>' + p.FieldingString + '</td>';
                         content += `<td><input type="checkbox" class="playerSelection" value="${p.playerID}"/></td>`;
-                        content += `<td class="selectedPlayer" style="visibility:hidden">` + p.playerID + '</td>';
-                        content += `<td class="selectedTeam" style="visibility:hidden">` + p.teamID + '</td>';
+                        content += `<td class="selPlayerID" style="visibility:hidden">` + p.playerID + '</td>';
+                        content += `<td class="selTeamTag" style="visibility:hidden">` + p.teamID + '</td>';
                         content += '<td style="visibility:hidden">' + p.ZPlayerID + '</td>';
                         content += '</tr>';
                      }
