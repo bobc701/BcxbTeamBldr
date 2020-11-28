@@ -7,6 +7,7 @@ namespace BcxbTeamBldr.DataLayer {
 
    public class CUserTeam {
 
+      public int UserTeamID { get; set; }
       public string TeamName { get; set; }
       public string UserName { get; set; }
       public int NumPos { get; set; }

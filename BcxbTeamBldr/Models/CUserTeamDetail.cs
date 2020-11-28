@@ -6,7 +6,7 @@ using BcxbTeamBldr.DataLayer;
 
 namespace BcxbTeamBldr.Models {
 
-   public class UserPlayerListVM {
+   public class CUserTeamDetail {
 
       public CUserTeam UserTeam { get; set; }
       public List<CUserPlayer> Roster { get; set; }
@@ -16,25 +16,25 @@ namespace BcxbTeamBldr.Models {
       public string[] SlotToStr { get; } = { "-", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
       
 
-      public UserPlayerListVM(string user, string team, DbInfo info) {
+      public CUserTeamDetail(string user, int teamID, DbInfo info) {
       // ---------------------------------------------
-         UserTeam = new CUserTeam { UserName = user, TeamName = team };
-         Roster = info.GetUserPlayerList(user, team).OrderBy(p => p.PlayerType).ThenBy(p => p.PlayerName).ToList();
+         UserTeam = new CUserTeam { UserName = user, UserTeamID = teamID };
+         Roster = info.GetUserPlayerList(user, teamID).OrderBy(p => p.PlayerType).ThenBy(p => p.PlayerName).ToList();
       }
 
 
-      public UserPlayerListVM(string user, string team, DbInfo info, int option) {
+      public CUserTeamDetail(string user, int teamID, DbInfo info, int option) {
       // ---------------------------------------------
-         UserTeam = new CUserTeam { UserName = user, TeamName = team };
+         UserTeam = new CUserTeam { UserName = user, UserTeamID = teamID };
          Roster = option switch
          {
             0 => null,
-            _ => info.GetUserPlayerList(user, team).OrderBy(p => p.PlayerType).ThenBy(p => p.PlayerName).ToList()
+            _ => info.GetUserPlayerList(user, teamID).OrderBy(p => p.PlayerType).ThenBy(p => p.PlayerName).ToList()
          };
       }
 
 
-      public UserPlayerListVM() {
+      public CUserTeamDetail() {
          // ---------------------------------------------
          // I think you need a parameterless constructor
          // to use this as arg to [HttpPost] action.

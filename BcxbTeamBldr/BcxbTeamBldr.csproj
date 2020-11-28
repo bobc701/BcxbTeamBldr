@@ -155,7 +155,7 @@
     </Compile>
     <Compile Include="DataLayer\CUserTeam.cs" />
     <Compile Include="Models\TeamListVM.cs" />
-    <Compile Include="Models\UserPlayerListVM.cs" />
+    <Compile Include="Models\CUserTeamDetail.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

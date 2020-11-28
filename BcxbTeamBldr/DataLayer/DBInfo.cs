@@ -58,7 +58,7 @@ namespace BcxbTeamBldr.DataLayer {
       public void AddNewTeam(string user, string team, bool dh) {
       // ---------------------------------------------------------------------
       // Let's try using parameterized query here, for security...
-         string sql2 = "INSERT INTO UserTeams (UserName, TeamName, UsesDh) VALUES (@user, @team, @dh)";
+         string sql2 = "INSERT INTO UserTeams (UserName, TeamName, UsesDh) VALUES (@user, @teamID, @team, @dh)";
          using (var cmd = new SqlCommand(sql2, con1)) { 
             cmd.Parameters.AddWithValue("@user", user);
             cmd.Parameters.AddWithValue("@team", team);
@@ -75,21 +75,21 @@ namespace BcxbTeamBldr.DataLayer {
 
       }
 
-      public void DeleteTeam(string user, string team) {
+      public void DeleteTeam(string user, int teamID) {
       // ------------------------------------------
          string sql;
 
-         sql = "DELETE FROM UserTeamRosters WHERE UserName = @user AND TeamName = @team";
+         sql = "DELETE FROM UserTeamRosters WHERE UserName = @user AND UserTeamID = @teamID";
          using (var cmd = new SqlCommand(sql, con1)) {
             cmd.Parameters.AddWithValue("@user", user);
-            cmd.Parameters.AddWithValue("@team", team);
+            cmd.Parameters.AddWithValue("@team", teamID);
             cmd.ExecuteNonQuery();
          }
 
          sql = "DELETE FROM UserTeams WHERE UserName = @user AND TeamName = @team";
          using (var cmd = new SqlCommand(sql, con1)) {
             cmd.Parameters.AddWithValue("@user", user);
-            cmd.Parameters.AddWithValue("@team", team);
+            cmd.Parameters.AddWithValue("@team", teamID);
             cmd.ExecuteNonQuery();
          }
 
@@ -147,7 +147,7 @@ namespace BcxbTeamBldr.DataLayer {
 
 
 
-      public void AddPlayerToTeam(string user, string team, string pid, string teamTag, int yr) {
+      public void AddPlayerToTeam(string user, int teamID, string pid, string teamTag, int yr) {
          // --------------------------------------------------------------------
          //string sql = $"EXEC AddPlayerToTeam '{user}', '{team}', '{id}'";
          string sql = 
@@ -157,7 +157,7 @@ namespace BcxbTeamBldr.DataLayer {
          using (var cmd = new SqlCommand(sql, con1)) {
 
             cmd.Parameters.AddWithValue("@user", user);
-            cmd.Parameters.AddWithValue("@team", team);
+            cmd.Parameters.AddWithValue("@team", teamID);
             cmd.Parameters.AddWithValue("@pid", pid);
             cmd.Parameters.AddWithValue("@teamTag", teamTag);
             cmd.Parameters.AddWithValue("@year", yr);
@@ -167,7 +167,7 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
-      public void UpdateLineups(string user, string team, List<CUserPlayer> roster) {
+      public void UpdateLineups(string user, int teamID, List<CUserPlayer> roster) {
       // ----------------------------------------------------------------------------
       // This uses ADO i/o SP due to transaction.
 
@@ -189,7 +189,7 @@ namespace BcxbTeamBldr.DataLayer {
                   // Player is flagged for removal...
                   cmd1.Parameters.Clear();
                   cmd1.Parameters.AddWithValue("@user", user);
-                  cmd1.Parameters.AddWithValue("@team", team);
+                  cmd1.Parameters.AddWithValue("@teamID", teamID);
                   cmd1.Parameters.AddWithValue("@pid", player.pid);
                   cmd1.Parameters.AddWithValue("@teamTag", player.teamTag);
                   cmd1.Parameters.AddWithValue("@year", player.year);
@@ -199,7 +199,7 @@ namespace BcxbTeamBldr.DataLayer {
                   // Player not flagged, so update lineups (NoDh & Dh)...
                   cmd2.Parameters.Clear();
                   cmd2.Parameters.AddWithValue("@user", user);
-                  cmd2.Parameters.AddWithValue("@team", team);
+                  cmd2.Parameters.AddWithValue("@teamID", teamID);
                   cmd2.Parameters.AddWithValue("@pid", player.pid);
                   cmd2.Parameters.AddWithValue("@teamTag", player.teamTag);
                   cmd2.Parameters.AddWithValue("@year", player.year);
@@ -234,9 +234,9 @@ namespace BcxbTeamBldr.DataLayer {
       }
       
 
-      public void RemovePlayerFromTeam(string user, string team, (string pid, string teamTag, int yr) key) { 
+      public void RemovePlayerFromTeam(string user, int teamID, (string pid, string teamTag, int yr) key) { 
          // --------------------------------------------------------------------
-         string sql = $"EXEC RemovePlayerFromTeam '{user}', '{team}', '{key.pid}', '{key.teamTag}', {key.yr}";
+         string sql = $"EXEC RemovePlayerFromTeam '{user}', '{teamID}', '{key.pid}', '{key.teamTag}', {key.yr}";
 
          //This is used in several places so use the SP.
          //string sql = 
@@ -300,10 +300,10 @@ namespace BcxbTeamBldr.DataLayer {
       //}
 
 
-      public List<CUserPlayer> GetUserPlayerList(string user, string team) {
+      public List<CUserPlayer> GetUserPlayerList(string user, int teamID) {
          // ---------------------------------------------------------------------
          var list = new List<CUserPlayer>();
-         string sql = $"EXEC GetUserTeamRoster '{user}', '{team}'";
+         string sql = $"EXEC GetUserTeamRoster '{user}', '{teamID}'";
 
          //Let's use SP here due to complexity of query...
          //string sql =
@@ -323,6 +323,8 @@ namespace BcxbTeamBldr.DataLayer {
 
          while (rdr.Read()) {
             var player = new CUserPlayer();
+            player.UserName = user;
+            player.UserTeamID = teamID;
             player.pid = rdr["PlayerID"].ToString();
             player.teamTag = rdr["teamID"].ToString(); 
             player.year = (int)rdr["yearID"];
@@ -507,7 +509,7 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
-      //public void SetLineup(string user, string team, Models.UserPlayerListVM model) {
+      //public void SetLineup(string user, string team, Models.CUserTeamDetail model) {
       //   // ---------------------------------------------------------------------------------
       //   // First, delete all existing lineup data...
       //   string sql = $"EXEC ClearLineup '{user}', '{team}'";

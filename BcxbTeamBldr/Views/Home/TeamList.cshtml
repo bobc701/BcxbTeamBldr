@@ -23,8 +23,8 @@
                   <td>@rec.NumPos.ToString()</td>
                   <td>@rec.NumPit.ToString()</td>
                   <td>@(rec.UsesDh ? "Yes" : "No") </td>
-                  <td>@Html.ActionLink("Edit", "EditTeam", new { user = Model.UserName, team = @rec.TeamName }) </td>
-                  <td>@Html.ActionLink("Delete", "DeleteTeam", new { user = Model.UserName, team = @rec.TeamName }) </td>
+                  <td>@Html.ActionLink("Edit", "EditTeam", new { user = Model.UserName, teamID = @rec.UserTeamID }) </td>
+                  <td>@Html.ActionLink("Delete", "DeleteTeam", new { user = Model.UserName, teamID = @rec.UserTeamID }) </td>
                </tr>
             }
          </table>

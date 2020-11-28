@@ -9,6 +9,7 @@ namespace BcxbTeamBldr.DataLayer {
 
       public string UserName { get; set; } //Source table: UserPlayer
       public string TeamName { get; set; } //Source table: UserPlayer
+      public int UserTeamID { get; set; } //Added this
       
       //public (string pid, string teamTag, int year) PlayerKey { get; set; } //Source table: UserPlayer & MlbPlayer
       public string pid { get; set; } 

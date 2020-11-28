@@ -1,6 +1,7 @@
-﻿@model BcxbTeamBldr.Models.UserPlayerListVM
+﻿@model BcxbTeamBldr.Models.CUserTeamDetail
 
 @{
+   int teamID = Model.UserTeam.UserTeamID;
    string teamName = @Model.UserTeam.TeamName;
    string userName = @Model.UserTeam.UserName;
 }
@@ -9,14 +10,14 @@
    <h2>Edit rosters and lineups</h2>
    <h5>
       User: @Html.TextBoxFor(
-m => m.UserTeam.UserName,
-new { @readonly = "readonly", style = "border:none; font-weight:bold;" })<br />
+         m => m.UserTeam.UserName,
+         new { @readonly = "readonly", style = "border:none; font-weight:bold;" })<br />
    </h5>
 
    <div style="font-weight:bold;">
       Team: @Html.TextBoxFor(
-   m => m.UserTeam.TeamName,
-   new { style = "font-weight:bold; margin: 0px 0px 15px 0px;" })
+         m => m.UserTeam.TeamName,
+         new { style = "font-weight:bold; margin: 0px 0px 15px 0px;" })
       <br />Uses DH at home: @Html.CheckBoxFor(
 m => m.UserTeam.UsesDh)
    </div>
@@ -157,12 +158,13 @@ m => m.UserTeam.UsesDh)
                   <td style="width:100px;">
                      @*@Html.CheckBoxFor(m => m.Roster[i].Remove)*@
                      @Html.ActionLink("Remove", "RemovePlayerFromTeam",
-                        new { user = userName, team = teamName, playerID = Model.Roster[i].pid, yearID = Model.Roster[i].year, teamID = Model.Roster[i].teamTag })
+                        new { user = userName, team = teamID, playerID = Model.Roster[i].pid, yearID = Model.Roster[i].year, teamID = Model.Roster[i].teamTag })
 
                      @*Addl stuff needed on server to update UserPlayer table...*@
                      @Html.HiddenFor(m => m.Roster[i].pid, new { @class = "pid" })
                      @Html.HiddenFor(m => m.Roster[i].UserName)
                      @Html.HiddenFor(m => m.Roster[i].TeamName)
+                     @Html.HiddenFor(m => m.Roster[i].User)
                   </td>
                </tr>
             }
@@ -328,7 +330,7 @@ Idea is to put this in dialog.
                var rost = [];
                $("#currRoster tr").each(
                   function () {
-                     alert("In .each()");
+                     bc_log("In .each()");
                      let x = {
                         playerName: $(this).find("input.playerName").first().val(),
                         teamTag: $(this).find("input.teamTag").first().val(),
@@ -337,9 +339,11 @@ Idea is to put this in dialog.
                         pid: $(this).find("input.pid").first().val()
                      }
                      rost.push(x);
+                     bc_log(`Pushing: ${x.playerName} ${x.teamTag} ${x.year} ${x.fieldingString} ${x.pid}`);
                   });
                return rost;
             }
+
 
             function buildTableFromRoster(rost) {
             // -----------------------------------------------
@@ -348,28 +352,19 @@ Idea is to put this in dialog.
                let html = ""
                let ix = 0;
                for (e of rost) {
-               // alert($(this).parent().parent().get(0).tagName);
-                  let yr = $(this).parent().parent().find("td.selYear").first().text(); alert(yr);
-                  let tm = $(this).parent().parent().find("td.selTeamTag").first().text();;
-                  let id = $(this).parent().parent().find("td.selPlayerID").first().text();
-                  let name = $(this).parent().parent().find("td.selName").first().text();
-                  let fldg = $(this).parent().parent().find("td.selFieldingString").first().text();
-
-                  console.log(`In buildTableFromRoster: ${name} ${id} ${yr} ${tm} ${fldg}`);
-
                   html += '<tr>';
-                  html += `<td><input id="Roster_${ix}__PlayerName" name="Roster[${ix}].PlayerName" readonly="readonly" style="width:120px; background-color:white; border:none;" type="text" value="${name}" /></td>`;
-                  html += `<td><input id="Roster_${ix}__teamTag" name="Roster[${ix}].teamTag" readonly="readonly" style="width:80px; background-color:white; border:none;" type="text" value="${tm}" /></td>`;
-                  html += `<td align="center"><input data-val="true" data-val-number="The field year must be a number." data-val-required="The year field is required." id="Roster_${ix}__year" name="Roster[${ix}].year" readonly="readonly" style="width:80px; background-color:white; border:none;" type="text" value="${yr}" /></td>`;
-                  html += '<td style="width:100px;">';
-                  html += `<td>${fldg}</td>'
-                  html += '<a href="/home/mvc/removeplayerfromteam/bobc/Rocket%20Men/2020/ATL/acunaro01">Remove</a>`;
-                  html += `<input id="Roster_${ix}__pid" name="Roster[${ix}].pid" type="hidden" value="${id}" />`;
+                  html += `<td><input class="playerName" id="Roster_${ix}__PlayerName" name="Roster[${ix}].PlayerName" readonly="readonly" style="width:120px; background-color:white; border:none;" type="text" value="${e.playerName}" /></td>`;
+                  html += `<td><input class="teamTag" id="Roster_${ix}__teamTag" name="Roster[${ix}].teamTag" readonly="readonly" style="width:80px; background-color:white; border:none;" type="text" value="${e.teamTag}" /></td>`;
+                  html += `<td align="center"><input class="year" id="Roster_${ix}__year" name="Roster[${ix}].year" readonly="readonly" style="width:80px; background-color:white; border:none;" type="text" value="${e.year}" /></td>`;
+                  html += `<td class="fieldingString" style="width:100px;">${e.fieldingString}</td>`;
+                  html += '<td>'
+                  html += '  <a href = "/home/mvc/removeplayerfromteam/bobc/Rocket%20Men/2020/ATL/acunaro01" > Remove</a>';
+                  html += `  <input class="pid" id="Roster_${ix}__pid" name="Roster[${ix}].pid" type="hidden" value="${e.pid}" />`;
                   html += '</td>';
                   html += '</tr>';
                   ix++;
-                  console.log("html=" + html);
                }
+               bc_log("html=" + html);
                return html;
             }
 
@@ -380,7 +375,7 @@ Idea is to put this in dialog.
 
                // Step 1: Build an array of the current roster
                   let rost1 = buildRoster();
-                  for (e of rost1) alert(`After buildRoster: ${e.playerName} ${e.teamTag} ${e.year} ${e.fieldingString} ${e.pid}`);
+                  for (e of rost1) bc_log(`After buildRoster: ${e.playerName} ${e.teamTag} ${e.year} ${e.fieldingString} ${e.pid}`);
 
                // Step 2: Add these newly selected players to the roster array...
                   $('input.playerSelection:checked').each(
@@ -391,24 +386,26 @@ Idea is to put this in dialog.
                         let name = $(this).parent().parent().find("td.selName").first().text();
                         let fldg = $(this).parent().parent().find("td.selFieldingString").first().text();
 
-                        console.log(`In btnAddSelected.click: ${name} ${id} ${yr} ${tm} ${fldg}`)
+                        bc_log(`In btnAddSelected.click: ${name} ${id} ${yr} ${tm} ${fldg}`)
 
                      // Checking that the palyer/team/year is not already in the roster...
                         let elt = rost1.find(e => e.pid == id && teamTag == tm && year == yr);
                         if (!elt) {
-                           rost1.push({ playerName: name, pid: id, year: yr, fieldingString: fldg, teamTag: tm });
+                           let x = { playerName: name, pid: id, year: yr, fieldingString: fldg, teamTag: tm };
+                           rost1.push(x);
+                           bc_log(`Pushing new player: ${x.playerName} ${x.teamTag} ${x.year} ${x.fieldingString} ${x.pid}`);
                         }
 
                      }
                   );
-                  console.log(`Roster size: ${rost1.length}`);
+                  bc_log(`Roster size: ${rost1.length}`);
 
                // Step 3: Convert the whole roster array to <tr> and <td> tags and attach it to the table...
                   let user1 = $('#hdnUserName').val();
                   let team1 = $('#hdnTeamName').val();
                   let content = buildTableFromRoster(rost1);
                   
-                  console.log(`content: ${ content }`);
+                  bc_log(`content: ${ content }`);
 
                   $("#currRoster").html(content);
 
@@ -451,7 +448,7 @@ Idea is to put this in dialog.
                      },
                      "json"
                   );
-               })
+               });
 
 
             $('#btnSearch').click(function () {
@@ -501,17 +498,17 @@ Idea is to put this in dialog.
                         content += '<tr>';
                         content += '<td class="selName">' + p.nameLast + '</td>';
                         content += '<td>' + p.teamName + '</td>';
-                        content += `<td class="selYear">` + p.yearID + '</td>';
-                        content += '<td class="selFieldingString>' + p.FieldingString + '</td>';
+                        content += '<td class="selYear">' + p.yearID + '</td>';
+                        content += '<td class="selFieldingString">' + p.FieldingString + '</td>';
                         content += `<td><input type="checkbox" class="playerSelection" value="${p.playerID}"/></td>`;
-                        content += `<td class="selPlayerID" style="visibility:hidden">` + p.playerID + '</td>';
-                        content += `<td class="selTeamTag" style="visibility:hidden">` + p.teamID + '</td>';
+                        content += '<td class="selPlayerID" style="visibility:hidden">' + p.playerID + '</td>';
+                        content += '<td class="selTeamTag" style="visibility:hidden">' + p.teamID + '</td>';
                         content += '<td style="visibility:hidden">' + p.ZPlayerID + '</td>';
                         content += '</tr>';
                      }
                      content += "</table>";
 
-                     alert(content);
+                     console.log("content: " + content);
                      $('#dvResults').html(content);
                   },
                   error: function (xhr, status, error) {
