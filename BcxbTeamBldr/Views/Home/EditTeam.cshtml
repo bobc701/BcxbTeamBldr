@@ -1,25 +1,25 @@
-﻿@model BcxbTeamBldr.Models.CUserTeamDetail
+﻿@model BcxbTeamBldr.Models.CUserTeam
 
 @{
-   int teamID = Model.UserTeam.UserTeamID;
-   string teamName = @Model.UserTeam.TeamName;
-   string userName = @Model.UserTeam.UserName;
+   int teamID = Model.TeamSpecs.UserTeamID;
+   string teamName = @Model.TeamSpecs.TeamName;
+   string userName = @Model.TeamSpecs.UserName;
 }
 @using (Html.BeginForm("EditTeam", "Home", FormMethod.Post)) {
 
    <h2>Edit rosters and lineups</h2>
    <h5>
       User: @Html.TextBoxFor(
-         m => m.UserTeam.UserName,
+         m => m.TeamSpecs.UserName,
          new { @readonly = "readonly", style = "border:none; font-weight:bold;" })<br />
    </h5>
 
    <div style="font-weight:bold;">
       Team: @Html.TextBoxFor(
-         m => m.UserTeam.TeamName,
+         m => m.TeamSpecs.TeamName,
          new { style = "font-weight:bold; margin: 0px 0px 15px 0px;" })
       <br />Uses DH at home: @Html.CheckBoxFor(
-m => m.UserTeam.UsesDh)
+         m => m.TeamSpecs.UsesDh)
    </div>
 
    <div class="shadowed-text">
@@ -164,7 +164,7 @@ m => m.UserTeam.UsesDh)
                      @Html.HiddenFor(m => m.Roster[i].pid, new { @class = "pid" })
                      @Html.HiddenFor(m => m.Roster[i].UserName)
                      @Html.HiddenFor(m => m.Roster[i].TeamName)
-                     @Html.HiddenFor(m => m.Roster[i].User)
+                     @Html.HiddenFor(m => m.Roster[i].UserTeamID)
                   </td>
                </tr>
             }
@@ -183,7 +183,7 @@ m => m.UserTeam.UsesDh)
 
       <div style="margin:25px 0px 0px 0px;">
          <span class="errorMsg2">
-            @Html.DisplayFor(m => m.UserTeam.StatusMsg)
+            @Html.DisplayFor(m => m.TeamSpecs.StatusMsg)
          </span>
       </div>
 

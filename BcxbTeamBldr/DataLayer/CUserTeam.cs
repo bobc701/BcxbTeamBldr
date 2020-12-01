@@ -5,7 +5,7 @@ using System.Web;
 
 namespace BcxbTeamBldr.DataLayer {
 
-   public class CUserTeam {
+   public class CUserTeamSpecs {
 
       public int UserTeamID { get; set; }
       public string TeamName { get; set; }

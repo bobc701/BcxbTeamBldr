@@ -26,20 +26,21 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
-      public List<CUserTeam> GetUserTeamList(string user) {
+      public List<CUserTeamSpecs> GetUserTeamList(string user) {
          // --------------------------------------------------------------------
          // Purpose: Retrieve from database, a list of all teams for this user.
 
-         var list = new List<CUserTeam>();
+         var list = new List<CUserTeamSpecs>();
          //string sql = $"SELECT * FROM UserTeams WHERE UserName = '{user}'";
          string sql = $"EXEC GetUserTeamList '{user}'";
          using (var cmd = new SqlCommand(sql, con1)) {
 
             using (SqlDataReader rdr = cmd.ExecuteReader()) {
                while (rdr.Read()) {
-                  var team = new CUserTeam();
+                  var team = new CUserTeamSpecs();
                   team.UserName = user;
                   team.TeamName = rdr["TeamName"].ToString();
+                  team.UserTeamID = (int)rdr["UserTeamID"];
                   team.NumPit = (int)rdr["TotPit"];
                   team.NumPos = (int)rdr["TotPos"];
                   team.UsesDh = (bool)rdr["UsesDh"];
@@ -300,234 +301,242 @@ namespace BcxbTeamBldr.DataLayer {
       //}
 
 
-      public List<CUserPlayer> GetUserPlayerList(string user, int teamID) {
-         // ---------------------------------------------------------------------
-         var list = new List<CUserPlayer>();
-         string sql = $"EXEC GetUserTeamRoster '{user}', '{teamID}'";
+      public CUserTeam GetUserTeam(string user, int teamID) {
+      // ---------------------------------------------------------------------
+         var tm = new CUserTeam(); ;
 
-         //Let's use SP here due to complexity of query...
-         //string sql =
-         //   $@"SELECT up.PlayerId, msv.nameLast, msv.teamName, msv.lgID, msv.yearID,
-         //      msv.G_p, msv.G_c, msv.G_1b, msv.G_2b, msv.G_3b, msv.G_ss, msv.G_lf, msv.G_cf, msv.G_rf,
-         //    up.Slot_NoDH, up.Posn_NoDH, up.Slot_DH, up.Posn_DH
-         //      FROM UserTeamRosters up
-         //      JOIN MultiSearchView msv 
-         //       ON msv.PlayerId = up.PlayerId
-         //       AND msv.teamID = up.teamID
-         //       AND msv.yearID = up.yearID
-         //      WHERE up.UserName = '{user}' AND up.TeamName = '{team}'";
-
-
-         using (var cmd = new SqlCommand(sql, con1)) 
-         using (SqlDataReader rdr = cmd.ExecuteReader()) 
-
-         while (rdr.Read()) {
-            var player = new CUserPlayer();
-            player.UserName = user;
-            player.UserTeamID = teamID;
-            player.pid = rdr["PlayerID"].ToString();
-            player.teamTag = rdr["teamID"].ToString(); 
-            player.year = (int)rdr["yearID"];
-            player.PlayerName = rdr["nameLast"].ToString();
-            player.PlayerType = (int)rdr["G_p"] >= 5 ? 'P' : 'B';
-            player.FieldingString = GetFieldingString(rdr);
-               //rdr["G_p"], rdr["G_c"], rdr["G_1b"], rdr["G_2b"], rdr["G_3b"],
-               //rdr["G_ss"], rdr["G_lf"], rdr["G_cf"], rdr["G_rf"]);
-
-            player.MlbLeague = rdr["lgID"].ToString();
-
-            player.Slot_NoDH = (int)rdr["Slot_NoDH"];
-            player.Posn_NoDH = (int)rdr["Posn_NoDH"];
-            player.Slot_DH = (int)rdr["Slot_DH"];
-            player.Posn_DH = (int)rdr["Posn_DH"];
-
-            list.Add(player);
-         }
-         return list;
-
-      }
-
-
-      private string GetFieldingString(SqlDataReader rdr) {
-      // -----------------------------------------------------------------------
-
-         const int fMin = 8; // Min games at posn to be listed in posn string
-         string s = "";
-         string del = "";
-
-         if ((int)rdr["G_p"] >= fMin) { s += del + "p"; del = ","; }
-         if ((int)rdr["G_c"] >= fMin) { s += del + "c"; del = ","; }
-         if ((int)rdr["G_1b"] >= fMin) { s += del + "1b"; del = ","; }
-         if ((int)rdr["G_2b"] >= fMin) { s += del + "2b"; del = ","; }
-         if ((int)rdr["G_3b"] >= fMin) { s += del + "3b"; del = ","; }
-         if ((int)rdr["G_ss"] >= fMin) { s += del + "ss"; del = ","; }
-         if ((int)rdr["G_lf"] >= fMin) { s += del + "lf"; del = ","; }
-         if ((int)rdr["G_cf"] >= fMin) { s += del + "cf"; del = ","; }
-         if ((int)rdr["G_rf"] >= fMin) { s += del + "rf"; del = ","; }
-
-         return s;
-
-      }
-
-
-      //private string GetFieldingString0
-      //   (object p, object c, object b1, object b2, object b3, object ss,
-      //    object lf, object cf, object rf) {
-      //// -----------------------------------------------------------------------
-
-      //   const int fMin = 8; // Min games at posn to be listed in posn string
-      //   string s = "";
-      //   string del = "";
-
-      //   if ((int)p >= fMin) { s += del + "p"; del = ","; }
-      //   if ((int)c >= fMin) { s += del + "c"; del = ","; }
-      //   if ((int)b1 >= fMin) { s += del + "1b"; del = ","; }
-      //   if ((int)b2 >= fMin) { s += del + "2b"; del = ","; }
-      //   if ((int)b3 >= fMin) { s += del + "3b"; del = ","; }
-      //   if ((int)ss >= fMin) { s += del + "ss"; del = ","; }
-      //   if ((int)lf >= fMin) { s += del + "lf"; del = ","; }
-      //   if ((int)cf >= fMin) { s += del + "cf"; del = ","; }
-      //   if ((int)rf >= fMin) { s += del + "rf"; del = ","; }
-
-      //   return s;
-
-      //}
-
-      //public List<CMlbPlayer> SearchPlayers(string crit) {
-      //   // ---------------------------------------------------------------------
-      //   var list = new List<CMlbPlayer>();
-      //   string sql = $"EXEC SearchPlayers '{crit}'";
-      //   using (var cmd = new SqlCommand(sql, con1)) {
-
-      //      using (SqlDataReader rdr = cmd.ExecuteReader()) {
-      //         while (rdr.Read()) {
-      //            var player = new CMlbPlayer();
-      //            player.PlayerId = rdr["PlayerId"].ToString();
-      //            player.PlayerName = rdr["PlayerName"].ToString();
-      //            player.PlayerType = rdr["PlayerType"].ToString()[0];
-      //            player.FieldingString = rdr["FieldingString"].ToString();
-      //            player.Year = (int)rdr["Year"];
-      //            player.MlbTeam = rdr["MlbTeam"].ToString();
-      //            player.MlbLeague = rdr["MlbLeague"].ToString(); ;
-
-      //            list.Add(player);
-      //         }
-
-      //      }
-      //   }
-      //   return list;
-
-      //}
-
-
-      public List<SelectListItem> GetTeamsForYear(int yr) {
-      // -------------------------------------------------
-      // This gets a List of dropdown items for the Team dropdown on the search page.
-      // Note: I was using anonymous types passed back as objects.
-      // But I changed my mind, and am using List<SelectListItem>.
-
-         string sql =
-            @$"SELECT teamID, LineName, NickName
-               FROM ZTeams
-               WHERE yearID = {yr}";
-
-         var ret = new List<SelectListItem>();
-         using (var cmd = new SqlCommand(sql, con1))
-         using (SqlDataReader rdr = cmd.ExecuteReader())
-
-         while (rdr.Read()) {
-            ret.Add(new SelectListItem{ 
-               Value = rdr["teamID"].ToString(), 
-               Text = $"{rdr["LineName"]} {rdr["NickName"]}" }); // Eg: "NYY Yankees"
-         }
-         return ret;
-
-
-      }
-
-
-      public List<MultiSearchView> SearchPlayersMulti(string critName, string critTeam, string critYear, string critPosn) {
-         // ---------------------------------------------------------------------
-         const int posnMin = 5;
-
-         var list = new List<MultiSearchView>();
-
-         // Build search string for SQL select...
-         string crit = "", delim = "";
-         if (critName != "All") { crit = $"nameLast LIKE '%{critName}%'"; delim = " AND "; }
-         if (critTeam != "All") { crit += delim + $"teamID LIKE '%{critTeam}%'"; delim = " AND "; } // EG: 'NYA2019' LIKE '%NYA%'
-         if (critYear != "All") { crit += delim + $"yearID = '{critYear}'"; delim = " AND "; }
-
-         if (critPosn != "All") {
-            crit += delim + critPosn switch {
-               "p" => $"G_p > {posnMin}",
-               "c" => $"G_c > {posnMin}",
-               "1b" => $"G_1b > {posnMin}",
-               "2b" => $"G_2b > {posnMin}",
-               "3b" => $"G_3b > {posnMin}",
-               "ss" => $"G_ss > {posnMin}",
-               "lf" => $"G_lf > {posnMin}",
-               "cf" => $"G_cf > {posnMin}",
-               "rf" => $"G_rf > {posnMin}",
-               "of" => $"G_of > {posnMin}"
-            };
-         }
-
-         string sql = $"SELECT * FROM MultiSearchView WHERE {crit}";
-         //string sql = $"EXEC SearchPlayers '{crit}'";
+      // First, get the team-level information...
+         string sql = "SELECT * FROM UsetTeams WHERE UserName = @user AND UserTeamID = @teamID";
          using (var cmd = new SqlCommand(sql, con1)) {
+            cmd.Parameters.AddWithValue("@user", user);
+            cmd.Parameters.AddWithValue("@teamID", teamID);
+
+            using (SqlDataReader rdr = cmd.ExecuteReader()) {
+               tm.TeamSpecs = new CUserTeamSpecs();
+               tm.TeamSpecs.UserTeamID = teamID;
+               tm.TeamSpecs.TeamName = rdr["TeamName"].ToString();
+               tm.TeamSpecs.UserName = user;
+               tm.TeamSpecs.UsesDh = (bool)rdr["UsesDh"];
+               tm.TeamSpecs.IsComplete = false;
+               tm.TeamSpecs.StatusMsg = "";
+            }
+         }
+
+      // Then get to the roster, as a list of players...
+         sql = $"EXEC GetUserTeamRoster @user, @teamID";
+         using (var cmd = new SqlCommand(sql, con1)) {
+            cmd.Parameters.AddWithValue("@user", user);
+            cmd.Parameters.AddWithValue("@teamID", teamID);
 
             using (SqlDataReader rdr = cmd.ExecuteReader()) {
                while (rdr.Read()) {
-                  var msv = new MultiSearchView();
-                  msv.nameLast = rdr["nameLast"].ToString();
-                  msv.ZPlayerId = (int)rdr["ZPlayerID"];
-                  msv.playerID = rdr["playerID"].ToString();
-                  msv.yearID = (int)rdr["yearID"];
-                  msv.teamID = rdr["teamID"].ToString();
-                  msv.teamName = rdr["teamName"].ToString();
-                  msv.G_p = (int)rdr["G_p"];
-                  msv.G_c = (int)rdr["G_c"];
-                  msv.G_1b = (int)rdr["G_p"];
-                  msv.G_2b = (int)rdr["G_2b"];
-                  msv.G_3b = (int)rdr["G_3b"];
-                  msv.G_ss = (int)rdr["G_ss"];
-                  msv.G_lf = (int)rdr["G_lf"];
-                  msv.G_cf = (int)rdr["G_cf"];
-                  msv.G_rf = (int)rdr["G_rf"];
-                  msv.G_of = (int)rdr["G_of"];
-                  msv.G_all = (int)rdr["G_all"];
-                  msv.lgID = rdr["lgID"].ToString();
+                  tm.Roster = new List<CUserPlayer>();
+                  var player = new CUserPlayer();
 
-                  list.Add(msv);
+                  player.UserName = user;
+                  player.UserTeamID = teamID;
+                  player.pid = rdr["PlayerID"].ToString();
+                  player.teamTag = rdr["teamID"].ToString();
+                  player.year = (int)rdr["yearID"];
+                  player.PlayerName = rdr["nameLast"].ToString();
+                  player.PlayerType = (int)rdr["G_p"] >= 5 ? 'P' : 'B';
+                  player.FieldingString = GetFieldingString(rdr);
+                  player.MlbLeague = rdr["lgID"].ToString();
+
+                  player.Slot_NoDH = (int)rdr["Slot_NoDH"];
+                  player.Posn_NoDH = (int)rdr["Posn_NoDH"];
+                  player.Slot_DH = (int)rdr["Slot_DH"];
+                  player.Posn_DH = (int)rdr["Posn_DH"];
+
+                  tm.Roster.Add(player);
                }
-
             }
          }
-         return list;
+         return tm;
 
       }
 
 
-      //public void SetLineup(string user, string team, Models.CUserTeamDetail model) {
-      //   // ---------------------------------------------------------------------------------
-      //   // First, delete all existing lineup data...
-      //   string sql = $"EXEC ClearLineup '{user}', '{team}'";
-      //   using (var cmd = new SqlCommand(sql, con1)) {
-      //      cmd.ExecuteNonQuery();
-      //   }
+            private string GetFieldingString(SqlDataReader rdr) {
+               // -----------------------------------------------------------------------
 
-      //   // Now, update with new lineup data...
-      //   // NOTE: This should probably be a transaction!!!
-      //   foreach (CUserPlayer player in model.Roster
-      //      .Where(p => p.Slot_NoDH != 0 || p.Posn_NoDH != 0 || p.Slot_DH != 0 || p.Posn_DH != 0)) {
-      //      sql = $"EXEC SetLineup '{user}', '{team}', '{player.playerID}'";
-      //      using var cmd = new SqlCommand(sql, con1);
-      //      cmd.ExecuteNonQuery();
-      //   }
-      //}
+               const int fMin = 8; // Min games at posn to be listed in posn string
+               string s = "";
+               string del = "";
 
-   }
+               if ((int)rdr["G_p"] >= fMin) { s += del + "p"; del = ","; }
+               if ((int)rdr["G_c"] >= fMin) { s += del + "c"; del = ","; }
+               if ((int)rdr["G_1b"] >= fMin) { s += del + "1b"; del = ","; }
+               if ((int)rdr["G_2b"] >= fMin) { s += del + "2b"; del = ","; }
+               if ((int)rdr["G_3b"] >= fMin) { s += del + "3b"; del = ","; }
+               if ((int)rdr["G_ss"] >= fMin) { s += del + "ss"; del = ","; }
+               if ((int)rdr["G_lf"] >= fMin) { s += del + "lf"; del = ","; }
+               if ((int)rdr["G_cf"] >= fMin) { s += del + "cf"; del = ","; }
+               if ((int)rdr["G_rf"] >= fMin) { s += del + "rf"; del = ","; }
+
+               return s;
+
+            }
+
+
+            //private string GetFieldingString0
+            //   (object p, object c, object b1, object b2, object b3, object ss,
+            //    object lf, object cf, object rf) {
+            //// -----------------------------------------------------------------------
+
+            //   const int fMin = 8; // Min games at posn to be listed in posn string
+            //   string s = "";
+            //   string del = "";
+
+            //   if ((int)p >= fMin) { s += del + "p"; del = ","; }
+            //   if ((int)c >= fMin) { s += del + "c"; del = ","; }
+            //   if ((int)b1 >= fMin) { s += del + "1b"; del = ","; }
+            //   if ((int)b2 >= fMin) { s += del + "2b"; del = ","; }
+            //   if ((int)b3 >= fMin) { s += del + "3b"; del = ","; }
+            //   if ((int)ss >= fMin) { s += del + "ss"; del = ","; }
+            //   if ((int)lf >= fMin) { s += del + "lf"; del = ","; }
+            //   if ((int)cf >= fMin) { s += del + "cf"; del = ","; }
+            //   if ((int)rf >= fMin) { s += del + "rf"; del = ","; }
+
+            //   return s;
+
+            //}
+
+            //public List<CMlbPlayer> SearchPlayers(string crit) {
+            //   // ---------------------------------------------------------------------
+            //   var list = new List<CMlbPlayer>();
+            //   string sql = $"EXEC SearchPlayers '{crit}'";
+            //   using (var cmd = new SqlCommand(sql, con1)) {
+
+            //      using (SqlDataReader rdr = cmd.ExecuteReader()) {
+            //         while (rdr.Read()) {
+            //            var player = new CMlbPlayer();
+            //            player.PlayerId = rdr["PlayerId"].ToString();
+            //            player.PlayerName = rdr["PlayerName"].ToString();
+            //            player.PlayerType = rdr["PlayerType"].ToString()[0];
+            //            player.FieldingString = rdr["FieldingString"].ToString();
+            //            player.Year = (int)rdr["Year"];
+            //            player.MlbTeam = rdr["MlbTeam"].ToString();
+            //            player.MlbLeague = rdr["MlbLeague"].ToString(); ;
+
+            //            list.Add(player);
+            //         }
+
+            //      }
+            //   }
+            //   return list;
+
+            //}
+
+
+            public List<SelectListItem> GetTeamsForYear(int yr) {
+               // -------------------------------------------------
+               // This gets a List of dropdown items for the Team dropdown on the search page.
+               // Note: I was using anonymous types passed back as objects.
+               // But I changed my mind, and am using List<SelectListItem>.
+
+               string sql =
+                  @$"SELECT teamID, LineName, NickName
+               FROM ZTeams
+               WHERE yearID = {yr}";
+
+               var ret = new List<SelectListItem>();
+               using (var cmd = new SqlCommand(sql, con1))
+               using (SqlDataReader rdr = cmd.ExecuteReader())
+
+                  while (rdr.Read()) {
+                     ret.Add(new SelectListItem {
+                        Value = rdr["teamID"].ToString(),
+                        Text = $"{rdr["LineName"]} {rdr["NickName"]}" }); // Eg: "NYY Yankees"
+                  }
+               return ret;
+
+
+            }
+
+
+            public List<MultiSearchView> SearchPlayersMulti(string critName, string critTeam, string critYear, string critPosn) {
+               // ---------------------------------------------------------------------
+               const int posnMin = 5;
+
+               var list = new List<MultiSearchView>();
+
+               // Build search string for SQL select...
+               string crit = "", delim = "";
+               if (critName != "All") { crit = $"nameLast LIKE '%{critName}%'"; delim = " AND "; }
+               if (critTeam != "All") { crit += delim + $"teamID LIKE '%{critTeam}%'"; delim = " AND "; } // EG: 'NYA2019' LIKE '%NYA%'
+               if (critYear != "All") { crit += delim + $"yearID = '{critYear}'"; delim = " AND "; }
+
+               if (critPosn != "All") {
+                  crit += delim + critPosn switch {
+                     "p" => $"G_p > {posnMin}",
+                     "c" => $"G_c > {posnMin}",
+                     "1b" => $"G_1b > {posnMin}",
+                     "2b" => $"G_2b > {posnMin}",
+                     "3b" => $"G_3b > {posnMin}",
+                     "ss" => $"G_ss > {posnMin}",
+                     "lf" => $"G_lf > {posnMin}",
+                     "cf" => $"G_cf > {posnMin}",
+                     "rf" => $"G_rf > {posnMin}",
+                     "of" => $"G_of > {posnMin}"
+                  };
+               }
+
+               string sql = $"SELECT * FROM MultiSearchView WHERE {crit}";
+               //string sql = $"EXEC SearchPlayers '{crit}'";
+               using (var cmd = new SqlCommand(sql, con1)) {
+
+                  using (SqlDataReader rdr = cmd.ExecuteReader()) {
+                     while (rdr.Read()) {
+                        var msv = new MultiSearchView();
+                        msv.nameLast = rdr["nameLast"].ToString();
+                        msv.ZPlayerId = (int)rdr["ZPlayerID"];
+                        msv.playerID = rdr["playerID"].ToString();
+                        msv.yearID = (int)rdr["yearID"];
+                        msv.teamID = rdr["teamID"].ToString();
+                        msv.teamName = rdr["teamName"].ToString();
+                        msv.G_p = (int)rdr["G_p"];
+                        msv.G_c = (int)rdr["G_c"];
+                        msv.G_1b = (int)rdr["G_p"];
+                        msv.G_2b = (int)rdr["G_2b"];
+                        msv.G_3b = (int)rdr["G_3b"];
+                        msv.G_ss = (int)rdr["G_ss"];
+                        msv.G_lf = (int)rdr["G_lf"];
+                        msv.G_cf = (int)rdr["G_cf"];
+                        msv.G_rf = (int)rdr["G_rf"];
+                        msv.G_of = (int)rdr["G_of"];
+                        msv.G_all = (int)rdr["G_all"];
+                        msv.lgID = rdr["lgID"].ToString();
+
+                        list.Add(msv);
+                     }
+
+                  }
+               }
+               return list;
+
+            }
+
+
+            //public void SetLineup(string user, string team, Models.CUserTeamDetail model) {
+            //   // ---------------------------------------------------------------------------------
+            //   // First, delete all existing lineup data...
+            //   string sql = $"EXEC ClearLineup '{user}', '{team}'";
+            //   using (var cmd = new SqlCommand(sql, con1)) {
+            //      cmd.ExecuteNonQuery();
+            //   }
+
+            //   // Now, update with new lineup data...
+            //   // NOTE: This should probably be a transaction!!!
+            //   foreach (CUserPlayer player in model.Roster
+            //      .Where(p => p.Slot_NoDH != 0 || p.Posn_NoDH != 0 || p.Slot_DH != 0 || p.Posn_DH != 0)) {
+            //      sql = $"EXEC SetLineup '{user}', '{team}', '{player.playerID}'";
+            //      using var cmd = new SqlCommand(sql, con1);
+            //      cmd.ExecuteNonQuery();
+            //   }
+            //}
+
+         }
 
 }
 

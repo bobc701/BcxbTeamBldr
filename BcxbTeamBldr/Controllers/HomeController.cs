@@ -48,13 +48,13 @@ namespace BcxbTeamBldr.Controllers {
          // ------------------------------------------
          ViewBag.Title = "Add Team";
          ViewBag.UserName = user;
-         return View(new DataLayer.CUserTeam() { UserName = user });
+         return View(new DataLayer.CUserTeamSpecs() { UserName = user });
 
       }
 
       [Route("home/mvc/addteam/{user}")]
       [HttpPost]
-      public ActionResult AddTeam(CUserTeam team) {
+      public ActionResult AddTeam(CUserTeamSpecs team) {
       // ------------------------------------------
          try {
             ViewBag.Msg = "";
@@ -151,14 +151,14 @@ namespace BcxbTeamBldr.Controllers {
             var aTagList = tagList.Split(',');
             var aYearList = yearList.Split(',').Select(y => int.Parse(y)).ToArray();
             for (int i=0; i<aPidList.Length; i++) {
-               var already = info.GetUserPlayerList(user, teamID)
+               var already = info.GetUserTeam(user, teamID).Roster
                   .Exists(p => p.pid == aPidList[i] && aTagList[i] == aTagList[i] && p.year == aYearList[i]);
                if (!already) { //Player already on team
                   info.AddPlayerToTeam(user, teamID, aPidList[i], aTagList[i], aYearList[i]);
                }
             }
             //var roster = new PlayerListVM(user, team);
-            var roster = new CUserTeamDetail(user, teamID, info);
+            var roster = info.GetUserTeam(user, teamID); //new CUserTeam(user, teamID, info);
             return View("EditTeam", roster);
          }
          catch (Exception ex) {
@@ -180,7 +180,7 @@ namespace BcxbTeamBldr.Controllers {
             ViewBag.Msg = ""; 
             info.RemovePlayerFromTeam(user, teamID, (playerID, teamTag, yearID));
             //info.ValidateTeam(user, team);
-            var roster = new CUserTeamDetail(user, teamID, info);
+            var roster = info.GetUserTeam(user, teamID); //new CUserTeam(user, teamID, info);
             return View("EditTeam", roster);
          }
          catch (Exception ex) {
@@ -197,26 +197,26 @@ namespace BcxbTeamBldr.Controllers {
       public ActionResult EditTeam(string user, int teamID) {
          // -----------------------------------------------------
          ViewBag.Title = "Edit Team";
-         var roster = new CUserTeamDetail(user, teamID, info);
+         var roster = info.GetUserTeam(user, teamID); //new CUserTeam(user, teamID, info);
 
          return View(roster);
       }
 
       //[Route("home/mvc/editteam/{user}/{team}")]
       [HttpPost]
-      public ActionResult EditTeam(CUserTeamDetail model) {
+      public ActionResult EditTeam(CUserTeam model) {
       // -----------------------------------------------------
          try {
-            int teamID = model.UserTeam.UserTeamID;
-            string team = model.UserTeam.TeamName;
-            string user = model.UserTeam.UserName;
+            int teamID = model.TeamSpecs.UserTeamID;
+            string team = model.TeamSpecs.TeamName;
+            string user = model.TeamSpecs.UserName;
 
          // Loop over player list, 
          // If they are marked'Remove', shoot off a delete.
          // Otherwise, shoot off an update for each with lineups. 
             info.UpdateLineups(user, teamID, model.Roster);
 
-            return View("EditTeam", new CUserTeamDetail(user, teamID, info));
+            return View("EditTeam", info.GetUserTeam(user, teamID)); //new CUserTeam(user, teamID, info));
 
          }
          catch (Exception ex) {
@@ -245,7 +245,7 @@ namespace BcxbTeamBldr.Controllers {
 
       public ActionResult EditLineup(string user, int teamID) {
          // -----------------------------------------------------
-         var roster = new CUserTeamDetail(user, teamID, info);
+         var roster = info.GetUserTeam(user, teamID); //new CUserTeam(user, teamID, info);
          return View(roster);
       }
 
@@ -264,7 +264,7 @@ namespace BcxbTeamBldr.Controllers {
 
       public ActionResult SearchPlayers(string user, string team) {
       // -----------------------------------------------------
-         var model = new CUserTeam() { UserName = user, TeamName = team };
+         var model = new CUserTeamSpecs() { UserName = user, TeamName = team };
          return View(model);
 
       }
@@ -329,7 +329,7 @@ namespace BcxbTeamBldr.Controllers {
 
       public ContentResult VerMsgAction(string user, int teamID ,string pid, string teamTag, int year) {
       // --------------------------------------------------------------
-         bool already = info.GetUserPlayerList(user, teamID).Exists(p => p.pid == pid && p.teamTag == teamTag && p.year == year);
+         bool already = info.GetUserTeam(user, teamID).Roster.Exists(p => p.pid == pid && p.teamTag == teamTag && p.year == year);
          if (already) { //Player already on team
             return Content("Player is already on " + teamID);
          }

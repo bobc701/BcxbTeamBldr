@@ -9,7 +9,7 @@ namespace BcxbTeamBldr.Models {
    public class TeamListVM {
 
       public string UserName;
-      public List<CUserTeam> UserTeamList;
+      public List<CUserTeamSpecs> UserTeamList;
 
       public TeamListVM(string userName, DbInfo info) {
       // --------------------------------------------------------
