@@ -1,38 +1,67 @@
 ﻿@model BcxbTeamBldr.Models.TeamListVM
 
-   <h2>Team List for @Model.UserName.Split(new char[] { '@' })[0]</h2>
-   <div>
-      @if (Model.UserName.Length == 0) {
-         <div style="color:red;">
-            <text>Click 'Add new team' to add your first team </text>
-         </div>
-      }
-      else {
-         <table class="tablefmt2" >
-            <tr>
-               <th>Team</th>
-               <th>Batters</th>
-               <th>Pitchers</th>
-               <th>Uses DH</th>
-               <th></th>
-               <th></th>
-            </tr>
-            @foreach (var rec in Model.UserTeamList) {
-               <tr>
-                  <td>@rec.TeamName</td>
-                  <td>@rec.NumPos.ToString()</td>
-                  <td>@rec.NumPit.ToString()</td>
-                  <td>@(rec.UsesDh ? "Yes" : "No") </td>
-                  <td>@Html.ActionLink("Edit", "EditTeam", new { user = Model.UserName, teamID = @rec.UserTeamID }) </td>
-                  <td>@Html.ActionLink("Delete", "DeleteTeam", new { user = Model.UserName, teamID = @rec.UserTeamID }) </td>
-               </tr>
-            }
-         </table>
-      }
-
-      <div style="margin: 30px 0px 10px 0px;">
-         <p />
-         @Html.ActionLink("Add new team", "AddTeam", new { user = Model.UserName }, new { @class = "btn btn-primary" })
+<h2>Team List for @Model.UserName.Split(new char[] { '@' })[0]</h2>
+<div>
+   @if (Model.UserName.Length == 0) {
+      <div style="color:red;">
+         <text>Click 'Add new team' to add your first team </text>
       </div>
+   }
+   else {
+      <table class="tablefmt2">
+         <tr>
+            <th>Team</th>
+            <th>Batters</th>
+            <th>Pitchers</th>
+            <th>Uses DH</th>
+            <th></th>
+            <th></th>
+         </tr>
+         @foreach (var rec in Model.UserTeamList) {
+            <tr>
+               <td>@rec.TeamName</td>
+               <td>@rec.NumPos.ToString()</td>
+               <td>@rec.NumPit.ToString()</td>
+               <td>@(rec.UsesDh ? "Yes" : "No") </td>
+               <td>@Html.ActionLink("Edit", "EditTeam", new { user = Model.UserName, teamID = @rec.UserTeamID }) </td>
+               <td>
+                  @*@Html.ActionLink("Delete", "DeleteTeam", new { user = Model.UserName, teamID = @rec.UserTeamID })*@
+                  <a class="btnDelete" href="#">Delete</a>
+                  <input class="teamID" type="hidden" value="@rec.UserTeamID" />
+               </td>
 
+            </tr>
+         }
+      </table>
+   }
+
+   <div style="margin: 30px 0px 10px 0px;">
+      <p />
+      @Html.ActionLink("Add new team", "AddTeam", new { user = Model.UserName }, new { @class = "btn btn-primary" })
    </div>
+
+</div>
+
+@section Scripting {
+   <script>
+
+      $(document).ready(
+         function () {
+            $('.btnDelete').click(
+               function () {
+                  if (!confirm("This will delete the team and all player assignments")) {
+                     return;
+                  }
+                  let id = $(this).parent().find(".teamID").first().val();
+                  bc_log("In btnDelete: teamID=" + id);
+                  bc_log(bc.routePrefix);
+                  let url = bc.routePrefix + `Home/DeleteTeam?user=@Model.UserName&teamID=${id}`;
+                  bc_log("In btnDelete: url=" + url);
+                  window.location.href = url;
+               }
+            );
+         }
+      );
+
+   </script>
+}

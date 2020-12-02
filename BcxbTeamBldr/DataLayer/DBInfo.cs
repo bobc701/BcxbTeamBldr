@@ -59,7 +59,7 @@ namespace BcxbTeamBldr.DataLayer {
       public void AddNewTeam(string user, string team, bool dh) {
       // ---------------------------------------------------------------------
       // Let's try using parameterized query here, for security...
-         string sql2 = "INSERT INTO UserTeams (UserName, TeamName, UsesDh) VALUES (@user, @teamID, @team, @dh)";
+         string sql2 = "INSERT INTO UserTeams (UserName, TeamName, UsesDh) VALUES (@user, @team, @dh)";
          using (var cmd = new SqlCommand(sql2, con1)) { 
             cmd.Parameters.AddWithValue("@user", user);
             cmd.Parameters.AddWithValue("@team", team);
@@ -83,14 +83,14 @@ namespace BcxbTeamBldr.DataLayer {
          sql = "DELETE FROM UserTeamRosters WHERE UserName = @user AND UserTeamID = @teamID";
          using (var cmd = new SqlCommand(sql, con1)) {
             cmd.Parameters.AddWithValue("@user", user);
-            cmd.Parameters.AddWithValue("@team", teamID);
+            cmd.Parameters.AddWithValue("@teamID", teamID);
             cmd.ExecuteNonQuery();
          }
 
-         sql = "DELETE FROM UserTeams WHERE UserName = @user AND TeamName = @team";
+         sql = "DELETE FROM UserTeams WHERE UserName = @user AND UserTeamID = @teamID";
          using (var cmd = new SqlCommand(sql, con1)) {
             cmd.Parameters.AddWithValue("@user", user);
-            cmd.Parameters.AddWithValue("@team", teamID);
+            cmd.Parameters.AddWithValue("@teamID", teamID);
             cmd.ExecuteNonQuery();
          }
 
@@ -306,19 +306,21 @@ namespace BcxbTeamBldr.DataLayer {
          var tm = new CUserTeam(); ;
 
       // First, get the team-level information...
-         string sql = "SELECT * FROM UsetTeams WHERE UserName = @user AND UserTeamID = @teamID";
+         string sql = "SELECT * FROM UserTeams WHERE UserName = @user AND UserTeamID = @teamID";
          using (var cmd = new SqlCommand(sql, con1)) {
             cmd.Parameters.AddWithValue("@user", user);
             cmd.Parameters.AddWithValue("@teamID", teamID);
 
             using (SqlDataReader rdr = cmd.ExecuteReader()) {
-               tm.TeamSpecs = new CUserTeamSpecs();
-               tm.TeamSpecs.UserTeamID = teamID;
-               tm.TeamSpecs.TeamName = rdr["TeamName"].ToString();
-               tm.TeamSpecs.UserName = user;
-               tm.TeamSpecs.UsesDh = (bool)rdr["UsesDh"];
-               tm.TeamSpecs.IsComplete = false;
-               tm.TeamSpecs.StatusMsg = "";
+               if (rdr.Read()) {
+                  tm.TeamSpecs = new CUserTeamSpecs();
+                  tm.TeamSpecs.UserTeamID = teamID;
+                  tm.TeamSpecs.TeamName = rdr["TeamName"].ToString();
+                  tm.TeamSpecs.UserName = user;
+                  tm.TeamSpecs.UsesDh = (bool)rdr["UsesDh"];
+                  tm.TeamSpecs.IsComplete = false;
+                  tm.TeamSpecs.StatusMsg = "";
+               }
             }
          }
 
@@ -329,8 +331,8 @@ namespace BcxbTeamBldr.DataLayer {
             cmd.Parameters.AddWithValue("@teamID", teamID);
 
             using (SqlDataReader rdr = cmd.ExecuteReader()) {
+               tm.Roster = new List<CUserPlayer>();
                while (rdr.Read()) {
-                  tm.Roster = new List<CUserPlayer>();
                   var player = new CUserPlayer();
 
                   player.UserName = user;

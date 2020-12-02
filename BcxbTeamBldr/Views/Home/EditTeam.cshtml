@@ -405,9 +405,10 @@ Idea is to put this in dialog.
                   let team1 = $('#hdnTeamName').val();
                   let content = buildTableFromRoster(rost1);
                   
-                  bc_log(`content: ${ content }`);
+                  bc_log(`content: ${content}`);
 
                   $("#currRoster").html(content);
+                  bc_log('html=' + $("#currRoster").html());
 
                }
 

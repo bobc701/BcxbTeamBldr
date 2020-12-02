@@ -93,13 +93,9 @@ namespace BcxbTeamBldr.Controllers {
       // -------------------------------------------------------
          try {
             ViewBag.Msg = "";
-            if (teamID == 0) {
-               ViewBag.Msg = "You must enter a team name";
-            }
-            else {
-               info.DeleteTeam(user, teamID);
-            }
-            var view = new TeamListVM(user, info);
+            info.DeleteTeam(user, teamID);
+            
+            //var view = new TeamListVM(user, info);
             return RedirectToAction("TeamList", new { user = user });
 
          }
@@ -107,9 +103,11 @@ namespace BcxbTeamBldr.Controllers {
             string msg =
                "An error occurred attempting to delete the team from the database:\r\n" +
                ex.Message;
-            ViewBag.Msg = msg;
-            var view = new TeamListVM(user, info);
-            return RedirectToAction("TeamList", new { user = user });
+            ViewBag.ErrorMsg = msg;
+            return View("ErrorView");
+            //var view = new TeamListVM(user, info);
+            //return RedirectToAction("TeamList", new { user = user });
+
          }
 
       }
