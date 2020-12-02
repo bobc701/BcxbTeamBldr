@@ -152,7 +152,7 @@ namespace BcxbTeamBldr.DataLayer {
          // --------------------------------------------------------------------
          //string sql = $"EXEC AddPlayerToTeam '{user}', '{team}', '{id}'";
          string sql = 
-            @$"INSERT INTO UserTeamRosters(UserName, TeamName, playerID, teamID, yearID) 
+            @$"INSERT INTO UserTeamRosters(UserName, UserTeamID, playerID, teamID, yearID) 
                VALUES(@user, @team, @pid, @teamTag, @year)";
 
          using (var cmd = new SqlCommand(sql, con1)) {

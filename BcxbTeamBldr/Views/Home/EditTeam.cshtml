@@ -10,8 +10,8 @@
    <h2>Edit rosters and lineups</h2>
    <h5>
       User: @Html.TextBoxFor(
-         m => m.TeamSpecs.UserName,
-         new { @readonly = "readonly", style = "border:none; font-weight:bold;" })<br />
+         m => m.TeamSpecs.UserName, 
+         new { id="txtUserName", @readonly = "readonly", style = "border:none; font-weight:bold;" })<br />
    </h5>
 
    <div style="font-weight:bold;">
@@ -20,6 +20,10 @@
          new { style = "font-weight:bold; margin: 0px 0px 15px 0px;" })
       <br />Uses DH at home: @Html.CheckBoxFor(
          m => m.TeamSpecs.UsesDh)
+   </div>
+
+   <div>
+      <input type="hidden" id="txtTeamID" value="@teamID" />
    </div>
 
    <div class="shadowed-text">
@@ -174,11 +178,11 @@
 
       <div>
          @*@Html.ActionLink("Add players", "SearchMulti", new { user = userName, team = teamName }, new { @class = "btn btn-primary" })*@
-         <a href="#" id="btnAddPlayers" style="margin: 0px 0px 20px 0px;">Add Players</a>
-         <p /><p /><input type="submit" id="btnSaveChanges" value="Save Changes" class="btn btn-primary" disabled="disabled" />
+         <a href="#" id="btnAddPlayers" class = "btn btn-primary" style="margin: 0px 0px 0px 0px;">Add Players</a>
+         @*<p /><p /><input type="submit" id="btnSaveChanges" value="Save Changes" class="btn btn-primary" disabled="disabled" />*@
          @*<button type="button" id="btnCancel" class="btn btn-primary">Close</button>*@
-         @*@Html.ActionLink("Close", "TeamList", new { user = userName, team = teamName }, new { @class = "btn btn-primary" })*@
-         <a href="#" id="btnCancel" class="btn btn-primary">Close</a>
+         @Html.ActionLink("Close", "TeamList", new { user = userName }, new { @class = "btn btn-primary" })
+         @*<a href="#" id="btnCancel" class="btn btn-primary">Close</a>*@
       </div>
 
       <div style="margin:25px 0px 0px 0px;">
@@ -195,7 +199,7 @@ This used to be SearchMulti
 Idea is to put this in dialog.
 ----------------------------------------------*@
 
-<div>
+@*<div>
    <h2 style="margin: 0px 0px 35px 0px;">Search for players to add to @ViewData["team"]</h2>
 
    <p /><span class="label1"> Enter start of player's last name...</span>
@@ -238,7 +242,7 @@ Idea is to put this in dialog.
    <input id="hdnUserName" type="text" style="visibility:hidden" value="@ViewData["user"]" />
    <input id="hdnTeamName" type="text" style="visibility:hidden" value="@ViewData["team"]" />
 
-</div>
+</div>*@
 
 
 
@@ -249,36 +253,30 @@ Idea is to put this in dialog.
          function () {
             //alert("In document.ready");
 
-            $("#btnCancel").on("click",
-               function () {
-                  //alert("In btnCancel.Click");
-                  let ok = true;
-                  if (!$('#btnSaveChanges').prop('disabled')) {
-                     if (!confirm("Discard lineup changes and close?")) ok = false;
-                  }
-                  if (ok) {
-                     let user1 = $('#UserTeam_UserName').val();
-                     let url = bc.routePrefix + `Home/TeamList?user=${user1}`;
-                     //alert(`url=${url}`);
-                     window.location.href = url;
-                  }
-               });
+            //$("#btnCancel").on("click",
+            //   function () {
+            //      //alert("In btnCancel.Click");
+            //      let ok = true;
+            //      if (!$('#btnSaveChanges').prop('disabled')) {
+            //         if (!confirm("Discard lineup changes and close?")) ok = false;
+            //      }
+            //      if (ok) {
+            //         let user1 = $('#UserTeam_UserName').val();
+            //         let url = bc.routePrefix + `Home/TeamList?user=${user1}`;
+            //         //alert(`url=${url}`);
+            //         window.location.href = url;
+            //      }
+            //   });
 
             $("#btnAddPlayers").on("click",
                function () {
-                  //alert("In btnAddPlayers.Click");
-                  let ok = true;
-                  if (!$('#btnSaveChanges').prop('disabled')) {
-                     if (!confirm("Discard lineup changes and continue?")) ok = false;
-                  }
-                  if (ok) {
-                     let user1 = $('#UserTeam_UserName').val().trim().replace(" ", "%20");;
-                     let team1 = $('#UserTeam_TeamName').val().trim().replace(" ", "%20");;
-                     //let url = bc.routePrefix + `Home/SearchMulti?user=${user1}&team=${team1}`;
-                     let url = bc.routePrefix + `home/mvc/searchmulti/${user1}/${team1}`;
-                     //alert(`url=${url}`);
-                     window.location.href = url;
-                  }
+                  bc_log("In btnAddPlayers.Click");
+                  //let url = bc.routePrefix + `Home/SearchMulti?user=${user1}&team=${team1}`;
+                  let userName = $('#txtUserName').val();
+                  let teamID = $('#txtTeamID').val();
+                  let url = bc.routePrefix + `home/mvc/searchmulti/${userName}/${teamID}`;
+                  bc_log(`url=${url}`);
+                  window.location.href = url;
                });
 
 
@@ -325,202 +323,200 @@ Idea is to put this in dialog.
             //Functions copied from SearchMulti
             //--------------------------------------------
 
-            function buildRoster() {
-            // ---------------------------------------------------
-               var rost = [];
-               $("#currRoster tr").each(
-                  function () {
-                     bc_log("In .each()");
-                     let x = {
-                        playerName: $(this).find("input.playerName").first().val(),
-                        teamTag: $(this).find("input.teamTag").first().val(),
-                        year: $(this).find("input.year").first().val(),
-                        fieldingString: $(this).find("td.fieldingString").first().text(),
-                        pid: $(this).find("input.pid").first().val()
-                     }
-                     rost.push(x);
-                     bc_log(`Pushing: ${x.playerName} ${x.teamTag} ${x.year} ${x.fieldingString} ${x.pid}`);
-                  });
-               return rost;
-            }
+            //function buildRoster() {
+            //// ---------------------------------------------------
+            //   var rost = [];
+            //   $("#currRoster tr").each(
+            //      function () {
+            //         bc_log("In .each()");
+            //         let x = {
+            //            playerName: $(this).find("input.playerName").first().val(),
+            //            teamTag: $(this).find("input.teamTag").first().val(),
+            //            year: $(this).find("input.year").first().val(),
+            //            fieldingString: $(this).find("td.fieldingString").first().text(),
+            //            pid: $(this).find("input.pid").first().val()
+            //         }
+            //         rost.push(x);
+            //         bc_log(`Pushing: ${x.playerName} ${x.teamTag} ${x.year} ${x.fieldingString} ${x.pid}`);
+            //      });
+            //   return rost;
+            //}
 
 
-            function buildTableFromRoster(rost) {
-            // -----------------------------------------------
-               console.log("In buildTableFromRoster -------------------------------------")
+            //function buildTableFromRoster(rost) {
+            //// -----------------------------------------------
+            //   console.log("In buildTableFromRoster -------------------------------------")
 
-               let html = ""
-               let ix = 0;
-               for (e of rost) {
-                  html += '<tr>';
-                  html += `<td><input class="playerName" id="Roster_${ix}__PlayerName" name="Roster[${ix}].PlayerName" readonly="readonly" style="width:120px; background-color:white; border:none;" type="text" value="${e.playerName}" /></td>`;
-                  html += `<td><input class="teamTag" id="Roster_${ix}__teamTag" name="Roster[${ix}].teamTag" readonly="readonly" style="width:80px; background-color:white; border:none;" type="text" value="${e.teamTag}" /></td>`;
-                  html += `<td align="center"><input class="year" id="Roster_${ix}__year" name="Roster[${ix}].year" readonly="readonly" style="width:80px; background-color:white; border:none;" type="text" value="${e.year}" /></td>`;
-                  html += `<td class="fieldingString" style="width:100px;">${e.fieldingString}</td>`;
-                  html += '<td>'
-                  html += '  <a href = "/home/mvc/removeplayerfromteam/bobc/Rocket%20Men/2020/ATL/acunaro01" > Remove</a>';
-                  html += `  <input class="pid" id="Roster_${ix}__pid" name="Roster[${ix}].pid" type="hidden" value="${e.pid}" />`;
-                  html += '</td>';
-                  html += '</tr>';
-                  ix++;
-               }
-               bc_log("html=" + html);
-               return html;
-            }
-
-
-            $('#btnAddSelected').click(
-               function () {
-                  console.log('In btnAddSelected.click ---------------------------------------');
-
-               // Step 1: Build an array of the current roster
-                  let rost1 = buildRoster();
-                  for (e of rost1) bc_log(`After buildRoster: ${e.playerName} ${e.teamTag} ${e.year} ${e.fieldingString} ${e.pid}`);
-
-               // Step 2: Add these newly selected players to the roster array...
-                  $('input.playerSelection:checked').each(
-                     function () {
-                        let yr = $(this).parent().parent().find("td.selYear").first().text(); alert(yr);
-                        let tm = $(this).parent().parent().find("td.selTeamTag").first().text();;
-                        let id = $(this).parent().parent().find("td.selPlayerID").first().text();
-                        let name = $(this).parent().parent().find("td.selName").first().text();
-                        let fldg = $(this).parent().parent().find("td.selFieldingString").first().text();
-
-                        bc_log(`In btnAddSelected.click: ${name} ${id} ${yr} ${tm} ${fldg}`)
-
-                     // Checking that the palyer/team/year is not already in the roster...
-                        let elt = rost1.find(e => e.pid == id && teamTag == tm && year == yr);
-                        if (!elt) {
-                           let x = { playerName: name, pid: id, year: yr, fieldingString: fldg, teamTag: tm };
-                           rost1.push(x);
-                           bc_log(`Pushing new player: ${x.playerName} ${x.teamTag} ${x.year} ${x.fieldingString} ${x.pid}`);
-                        }
-
-                     }
-                  );
-                  bc_log(`Roster size: ${rost1.length}`);
-
-               // Step 3: Convert the whole roster array to <tr> and <td> tags and attach it to the table...
-                  let user1 = $('#hdnUserName').val();
-                  let team1 = $('#hdnTeamName').val();
-                  let content = buildTableFromRoster(rost1);
-                  
-                  bc_log(`content: ${content}`);
-
-                  $("#currRoster").html(content);
-                  bc_log('html=' + $("#currRoster").html());
-
-               }
-
-            );
+            //   let html = ""
+            //   let ix = 0;
+            //   for (e of rost) {
+            //      html += '<tr>';
+            //      html += `<td><input class="playerName" id="Roster_${ix}__PlayerName" name="Roster[${ix}].PlayerName" readonly="readonly" style="width:120px; background-color:white; border:none;" type="text" value="${e.playerName}" /></td>`;
+            //      html += `<td><input class="teamTag" id="Roster_${ix}__teamTag" name="Roster[${ix}].teamTag" readonly="readonly" style="width:80px; background-color:white; border:none;" type="text" value="${e.teamTag}" /></td>`;
+            //      html += `<td align="center"><input class="year" id="Roster_${ix}__year" name="Roster[${ix}].year" readonly="readonly" style="width:80px; background-color:white; border:none;" type="text" value="${e.year}" /></td>`;
+            //      html += `<td class="fieldingString" style="width:100px;">${e.fieldingString}</td>`;
+            //      html += '<td>'
+            //      html += '  <a href = "/home/mvc/removeplayerfromteam/bobc/Rocket%20Men/2020/ATL/acunaro01" > Remove</a>';
+            //      html += `  <input class="pid" id="Roster_${ix}__pid" name="Roster[${ix}].pid" type="hidden" value="${e.pid}" />`;
+            //      html += '</td>';
+            //      html += '</tr>';
+            //      ix++;
+            //   }
+            //   bc_log("html=" + html);
+            //   return html;
+            //}
 
 
-            $('#txtYear').on('change',
-               function () {
-                  console.log('In txtYear.change ----------------------------------------------');
+            //$('#btnAddSelected').click(
+            //   function () {
+            //      console.log('In btnAddSelected.click ---------------------------------------');
 
-                  // First, validate the user's entry...
-                  let err = false;
-                  let yr = $(this).val();
-                  if (isNaN(yr))
-                     err = true;
-                  else {
-                     yr = parseInt(yr);
-                     if (yr < 1901 || yr > 2020) err = true;
-                  }
-                  if (err) {
-                     alert('Year must be a number between 1901 and 2020');
-                     $("#selTeam").html('<option selected value=All>All</option>');
-                     return;
-                  }
-                  console.log('Year is good: ' + yr);
+            //   // Step 1: Build an array of the current roster
+            //      let rost1 = buildRoster();
+            //      for (e of rost1) bc_log(`After buildRoster: ${e.playerName} ${e.teamTag} ${e.year} ${e.fieldingString} ${e.pid}`);
 
-                  // Next, use ajax to get the dropdown list for the Team dropdown...
-                  $.get(
-                     bc.routePrefix + 'Home/GetTeamsForYear',
-                     { yr: yr },
-                     function (ret) {
-                        console.log('Ajax returned: ' + ret);
-                        let content = '<option selected value=All>All</option>';
-                        for (let t of ret) {
-                           content += `<option value=${t.Value}>${t.Text}</option>`;
-                        }
-                        $("#selTeam").html(content);
-                     },
-                     "json"
-                  );
-               });
+            //   // Step 2: Add these newly selected players to the roster array...
+            //      $('input.playerSelection:checked').each(
+            //         function () {
+            //            let yr = $(this).parent().parent().find("td.selYear").first().text(); alert(yr);
+            //            let tm = $(this).parent().parent().find("td.selTeamTag").first().text();;
+            //            let id = $(this).parent().parent().find("td.selPlayerID").first().text();
+            //            let name = $(this).parent().parent().find("td.selName").first().text();
+            //            let fldg = $(this).parent().parent().find("td.selFieldingString").first().text();
+
+            //            bc_log(`In btnAddSelected.click: ${name} ${id} ${yr} ${tm} ${fldg}`)
+
+            //         // Checking that the palyer/team/year is not already in the roster...
+            //            let elt = rost1.find(e => e.pid == id && teamTag == tm && year == yr);
+            //            if (!elt) {
+            //               let x = { playerName: name, pid: id, year: yr, fieldingString: fldg, teamTag: tm };
+            //               rost1.push(x);
+            //               bc_log(`Pushing new player: ${x.playerName} ${x.teamTag} ${x.year} ${x.fieldingString} ${x.pid}`);
+            //            }
+
+            //         }
+            //      );
+            //      bc_log(`Roster size: ${rost1.length}`);
+
+            //   // Step 3: Convert the whole roster array to <tr> and <td> tags and attach it to the table...
+            //      let user1 = $('#hdnUserName').val();
+            //      let team1 = $('#hdnTeamName').val();
+            //      let content = buildTableFromRoster(rost1);
+
+            //      bc_log(`content: ${content}`);
+
+            //      $("#currRoster").html(content);
+            //      bc_log('html=' + $("#currRoster").html());
+
+            //   }
+
+            //);
 
 
-            $('#btnSearch').click(function () {
-               //var crit1 = $(this).attr('id');
-               //$('#errMsg').css('display','none');
-               let critName1 = $('#txtName').val();
-               let critTeam1 = $('#selTeam').val();
-               let critYear1 = $('#txtYear').val();
-               let critPosn1 = $('#selPosn').val();
-               let user1 = $('#hdnUserName').val();
-               let team1 = $('#hdnTeamName').val();
-               //alert('criteria=' + critName1 + ' bc.routePrefix=' + bc.routePrefix);
+            //$('#txtYear').on('change',
+            //   function () {
+            //      console.log('In txtYear.change ----------------------------------------------');
 
-               if (critName1 == "All" && critTeam1 == "All" && critPosn1 == "All") {
-                  alert("You must specify at least name, team or position");
-                  return;
-               }
+            //      // First, validate the user's entry...
+            //      let err = false;
+            //      let yr = $(this).val();
+            //      if (isNaN(yr))
+            //         err = true;
+            //      else {
+            //         yr = parseInt(yr);
+            //         if (yr < 1901 || yr > 2020) err = true;
+            //      }
+            //      if (err) {
+            //         alert('Year must be a number between 1901 and 2020');
+            //         $("#selTeam").html('<option selected value=All>All</option>');
+            //         return;
+            //      }
+            //      console.log('Year is good: ' + yr);
 
-               $.ajax({
-                  url: bc.routePrefix + 'Home/SearchMultiJson', type: "GET", dataType: "json",
-                  //These become the arg to the Action method.
-                  data: {
-                     critName: critName1,
-                     critTeam: critTeam1,
-                     critYear: critYear1,
-                     critPosn: critPosn1
-                  },
-                  success: function (data) {
-                     alert(JSON.stringify(data));
-                     //alert(JSON.stringify({ test: 'hello', quant: 12 })); So can be any object not just Json!
-                     //alert(data[0].PlayerName);
-                     content = '<h3>Matching Players...</h3>';
-                     //content += '<table id="tblMatching" border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse">';
-                     content += '<table id="tblMatching" class="tablefmt3">';
+            //      // Next, use ajax to get the dropdown list for the Team dropdown...
+            //      $.get(
+            //         bc.routePrefix + 'Home/GetTeamsForYear',
+            //         { yr: yr },
+            //         function (ret) {
+            //            console.log('Ajax returned: ' + ret);
+            //            let content = '<option selected value=All>All</option>';
+            //            for (let t of ret) {
+            //               content += `<option value=${t.Value}>${t.Text}</option>`;
+            //            }
+            //            $("#selTeam").html(content);
+            //         },
+            //         "json"
+            //      );
+            //   });
 
-                     content += '<tr>';
-                     content += '<th>Player Name</th>';
-                     content += '<th>MLB Team</th>';
-                     content += '<th>Year</th>';
-                     content += '<th>Positions</th>';
-                     content += '<th>Select</th>';
-                     //content += '<th></th>'; //player id
-                     content += '</tr>'
 
-                     let url;
-                     for (let p of data) {
-                        content += '<tr>';
-                        content += '<td class="selName">' + p.nameLast + '</td>';
-                        content += '<td>' + p.teamName + '</td>';
-                        content += '<td class="selYear">' + p.yearID + '</td>';
-                        content += '<td class="selFieldingString">' + p.FieldingString + '</td>';
-                        content += `<td><input type="checkbox" class="playerSelection" value="${p.playerID}"/></td>`;
-                        content += '<td class="selPlayerID" style="visibility:hidden">' + p.playerID + '</td>';
-                        content += '<td class="selTeamTag" style="visibility:hidden">' + p.teamID + '</td>';
-                        content += '<td style="visibility:hidden">' + p.ZPlayerID + '</td>';
-                        content += '</tr>';
-                     }
-                     content += "</table>";
+            //$('#btnSearch').click(function () {
+            //   //var crit1 = $(this).attr('id');
+            //   //$('#errMsg').css('display','none');
+            //   let critName1 = $('#txtName').val();
+            //   let critTeam1 = $('#selTeam').val();
+            //   let critYear1 = $('#txtYear').val();
+            //   let critPosn1 = $('#selPosn').val();
+            //   let user1 = $('#hdnUserName').val();
+            //   let team1 = $('#hdnTeamName').val();
+            //   //alert('criteria=' + critName1 + ' bc.routePrefix=' + bc.routePrefix);
 
-                     console.log("content: " + content);
-                     $('#dvResults').html(content);
-                  },
-                  error: function (xhr, status, error) {
-                     alert(xhr.responseText);
-                     alert(status);
-                     alert(error);
-                  }
+            //   if (critName1 == "All" && critTeam1 == "All" && critPosn1 == "All") {
+            //      alert("You must specify at least name, team or position");
+            //      return;
+            //   }
 
-               })
+            //   $.ajax({
+            //      url: bc.routePrefix + 'Home/SearchMultiJson', type: "GET", dataType: "json",
+            //      //These become the arg to the Action method.
+            //      data: {
+            //         critName: critName1,
+            //         critTeam: critTeam1,
+            //         critYear: critYear1,
+            //         critPosn: critPosn1
+            //      },
+            //      success: function (data) {
+            //         alert(JSON.stringify(data));
+            //         //alert(JSON.stringify({ test: 'hello', quant: 12 })); So can be any object not just Json!
+            //         //alert(data[0].PlayerName);
+            //         content = '<h3>Matching Players...</h3>';
+            //         //content += '<table id="tblMatching" border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse">';
+            //         content += '<table id="tblMatching" class="tablefmt3">';
 
-            })
+            //         content += '<tr>';
+            //         content += '<th>Player Name</th>';
+            //         content += '<th>MLB Team</th>';
+            //         content += '<th>Year</th>';
+            //         content += '<th>Positions</th>';
+            //         content += '<th>Select</th>';
+            //         //content += '<th></th>'; //player id
+            //         content += '</tr>'
+
+            //         let url;
+            //         for (let p of data) {
+            //            content += '<tr>';
+            //            content += '<td class="selName">' + p.nameLast + '</td>';
+            //            content += '<td>' + p.teamName + '</td>';
+            //            content += '<td class="selYear">' + p.yearID + '</td>';
+            //            content += '<td class="selFieldingString">' + p.FieldingString + '</td>';
+            //            content += `<td><input type="checkbox" class="playerSelection" value="${p.playerID}"/></td>`;
+            //            content += '<td class="selPlayerID" style="visibility:hidden">' + p.playerID + '</td>';
+            //            content += '<td class="selTeamTag" style="visibility:hidden">' + p.teamID + '</td>';
+            //            content += '<td style="visibility:hidden">' + p.ZPlayerID + '</td>';
+            //            content += '</tr>';
+            //         }
+            //         content += "</table>";
+
+            //         console.log("content: " + content);
+            //         $('#dvResults').html(content);
+            //      },
+            //      error: function (xhr, status, error) {
+            //         alert(xhr.responseText);
+            //         alert(status);
+            //         alert(error);
+            //      }
+
+            //   })
 
          });
 

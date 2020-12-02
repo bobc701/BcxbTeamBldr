@@ -267,13 +267,13 @@ namespace BcxbTeamBldr.Controllers {
 
       }
 
-      [Route("home/mvc/searchmulti/{user}/{team}")]
-      public ActionResult SearchMulti(string user, string team) {
+      [Route("home/mvc/searchmulti/{user}/{teamID}")]
+      public ActionResult SearchMulti(string user, string teamID) {
          //  ------------------------------------------
          //var model = new PlayerListVM(user, team, dbinfo, 0);
          ViewBag.Title = "Search Players";
          ViewData["user"] = user;
-         ViewData["team"] = team;
+         ViewData["teamID"] = teamID;
          return View();
       }
 
