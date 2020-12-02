@@ -52,6 +52,7 @@ namespace BcxbTeamBldr.Controllers {
 
       }
 
+
       [Route("home/mvc/addteam/{user}")]
       [HttpPost]
       public ActionResult AddTeam(CUserTeamSpecs team) {
@@ -86,6 +87,21 @@ namespace BcxbTeamBldr.Controllers {
             return View("ErrorView");
          }
 
+      }
+
+
+      [Route("home/mvc/UpdUserTeamSpecs/{userName}/{teamID}/{teamName}")]
+      public void UpdUserTeamSpecs(string userName, int teamID, string teamName) {
+      // -------------------------------------------------------------------------
+         try {
+            info.UpdUserTeamSpecs(userName, teamID, teamName);
+         }
+         catch (Exception ex) {
+            string msg =
+               "An error occurred adding the new team to the database:\r\n" +
+               ex.Message;
+            ViewBag.ErrorMsg = msg;
+         }
       }
 
 

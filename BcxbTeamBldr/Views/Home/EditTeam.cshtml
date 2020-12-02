@@ -15,11 +15,17 @@
    </h5>
 
    <div style="font-weight:bold;">
-      Team: @Html.TextBoxFor(
+
+      Team name: @Html.TextBoxFor(
          m => m.TeamSpecs.TeamName,
          new { style = "font-weight:bold; margin: 0px 0px 15px 0px;" })
-      <br />Uses DH at home: @Html.CheckBoxFor(
-         m => m.TeamSpecs.UsesDh)
+
+      @Html.ActionLink("Save", "UpdUserTeamSpecs", 
+         new { userName=Model.TeamSpecs.UserName, teamID=Model.TeamSpecs.UserTeamID, teamName=Model.TeamSpecs.TeamName}, 
+         new { @class = "" })
+
+      <br />Uses DH at home: @Html.CheckBoxFor(m => m.TeamSpecs.UsesDh)
+
    </div>
 
    <div>
@@ -45,7 +51,7 @@
       }
       else {
          <table id="currRoster" class="tablefmt2" style="margin: 0px 0px 20px 0px;">
-            @*<tr>
+            <tr>
                <th align="left">Player Name</th>
                <th align="left">MLB Team</th>
                <th align="center">Year</th>
@@ -55,7 +61,7 @@
                <th width="70" align="center" style="display: none">Lineup<br />DH</th>
                <th width="70" align="center" style="display: none">Position<br />DH</th>
                <th width="70" align="center"></th>
-            </tr>*@
+            </tr>
             @for (var i = 0; i < Model.Roster.Count; i++) {
                <tr>
                   <td>@Html.TextBoxFor(m => m.Roster[i].PlayerName, new { @class="playerName", @readonly = "readonly", style = "width:120px; background-color:white; border:none;" })</td>
