@@ -187,15 +187,15 @@ namespace BcxbTeamBldr.Controllers {
       }
 
 
-      [Route("home/mvc/removeplayerfromteam/{user}/{team}/{yearID}/{teamID}/{playerID}")]
-      public ActionResult RemovePlayerFromTeam(string user, int teamID, int yearID, string teamTag, string playerID) {
+      [Route("home/mvc/removeplayerfromteam/{userName}/{teamID}/{yearID}/{teamTag}/{playerID}")]
+      public ActionResult RemovePlayerFromTeam(string userName, int teamID, int yearID, string teamTag, string playerID) {
          // ------------------------------------------------------------
          try {
             ViewBag.Msg = ""; 
-            info.RemovePlayerFromTeam(user, teamID, (playerID, teamTag, yearID));
+            info.RemovePlayerFromTeam(userName, teamID, (playerID, teamTag, yearID));
             //info.ValidateTeam(user, team);
-            var roster = info.GetUserTeam(user, teamID); //new CUserTeam(user, teamID, info);
-            return View("EditTeam", roster);
+            var team = info.GetUserTeam(userName, teamID); //new CUserTeam(user, teamID, info);
+            return View("EditTeam", team);
          }
          catch (Exception ex) {
             string msg =
@@ -218,25 +218,22 @@ namespace BcxbTeamBldr.Controllers {
 
       //[Route("home/mvc/editteam/{user}/{team}")]
       [HttpPost]
-      public ActionResult EditTeam(CUserTeam model) {
+      public void EditTeam(CUserTeam model) {
       // -----------------------------------------------------
          try {
             int teamID = model.TeamSpecs.UserTeamID;
-            string team = model.TeamSpecs.TeamName;
-            string user = model.TeamSpecs.UserName;
+            string teamName = model.TeamSpecs.TeamName;
+            string userName = model.TeamSpecs.UserName;
 
-         // Loop over player list, 
-         // If they are marked'Remove', shoot off a delete.
-         // Otherwise, shoot off an update for each with lineups. 
-            info.UpdateLineups(user, teamID, model.Roster);
+            info.UpdUserTeamSpecs(userName, teamID, teamName);
 
-            return View("EditTeam", info.GetUserTeam(user, teamID)); //new CUserTeam(user, teamID, info));
+            //return View("EditTeam", info.GetUserTeam(user, teamID)); //new CUserTeam(user, teamID, info));
 
          }
          catch (Exception ex) {
-            ViewBag.ErrorMsg =
-               $"There was an error updating the team in the database:\r\n{ex.Message}";
-            return View("ErrorView");
+            //ViewBag.ErrorMsg =
+            //   $"There was an error updating the team in the database:\r\n{ex.Message}";
+            //return View("ErrorView");
          }
 
       }

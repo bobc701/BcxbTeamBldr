@@ -2,35 +2,40 @@
 
 @{
    int teamID = Model.TeamSpecs.UserTeamID;
-   string teamName = @Model.TeamSpecs.TeamName;
-   string userName = @Model.TeamSpecs.UserName;
+   string teamName = Model.TeamSpecs.TeamName;
+   string userName = Model.TeamSpecs.UserName;
 }
 @using (Html.BeginForm("EditTeam", "Home", FormMethod.Post)) {
 
    <h2>Edit rosters and lineups</h2>
+
+   using (Html.BeginForm()) {
+
    <h5>
       User: @Html.TextBoxFor(
-         m => m.TeamSpecs.UserName, 
-         new { id="txtUserName", @readonly = "readonly", style = "border:none; font-weight:bold;" })<br />
+         m => m.TeamSpecs.UserName,
+         new { id = "txtUserName", @readonly = "readonly", style = "border:none; font-weight:bold;" })<br />
    </h5>
 
-   <div style="font-weight:bold;">
+   <div style="font-weight:bold; ">
 
       Team name: @Html.TextBoxFor(
          m => m.TeamSpecs.TeamName,
          new { style = "font-weight:bold; margin: 0px 0px 15px 0px;" })
 
-      @Html.ActionLink("Save", "UpdUserTeamSpecs", 
-         new { userName=Model.TeamSpecs.UserName, teamID=Model.TeamSpecs.UserTeamID, teamName=Model.TeamSpecs.TeamName}, 
-         new { @class = "" })
 
-      <br />Uses DH at home: @Html.CheckBoxFor(m => m.TeamSpecs.UsesDh)
+      @Html.ActionLink("Save Name", "UpdUserTeamSpecs",
+          new { userName = Model.TeamSpecs.UserName, teamID = Model.TeamSpecs.UserTeamID, teamName = Model.TeamSpecs.TeamName },
+          new { disabled="disabled" })
 
+      <br/>Uses DH at home: @Html.CheckBoxFor(m => m.TeamSpecs.UsesDh)
+
+      @Html.HiddenFor(m => m.TeamSpecs.UserTeamID, new { id = "txtTeamID" })
    </div>
 
-   <div>
-      <input type="hidden" id="txtTeamID" value="@teamID" />
-   </div>
+      <br/><input type="submit" value="Save with POST" />
+
+   }
 
    <div class="shadowed-text">
       <em>
@@ -168,7 +173,7 @@
                   <td style="width:100px;">
                      @*@Html.CheckBoxFor(m => m.Roster[i].Remove)*@
                      @Html.ActionLink("Remove", "RemovePlayerFromTeam",
-                        new { user = userName, team = teamID, playerID = Model.Roster[i].pid, yearID = Model.Roster[i].year, teamID = Model.Roster[i].teamTag })
+                        new { userName = userName, teamID = teamID, yearID = Model.Roster[i].year, teamTag = Model.Roster[i].teamTag, playerID = Model.Roster[i].pid })
 
                      @*Addl stuff needed on server to update UserPlayer table...*@
                      @Html.HiddenFor(m => m.Roster[i].pid, new { @class = "pid" })
