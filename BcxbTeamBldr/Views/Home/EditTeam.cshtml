@@ -5,11 +5,8 @@
    string teamName = Model.TeamSpecs.TeamName;
    string userName = Model.TeamSpecs.UserName;
 }
-@using (Html.BeginForm("EditTeam", "Home", FormMethod.Post)) {
 
    <h2>Edit rosters and lineups</h2>
-
-   using (Html.BeginForm()) {
 
    <h5>
       User: @Html.TextBoxFor(
@@ -21,21 +18,21 @@
 
       Team name: @Html.TextBoxFor(
          m => m.TeamSpecs.TeamName,
-         new { style = "font-weight:bold; margin: 0px 0px 15px 0px;" })
+         new { id = "txtTeamName", style = "font-weight:bold; margin: 0px 0px 15px 0px;" })
 
 
-      @Html.ActionLink("Save Name", "UpdUserTeamSpecs",
+      @*@Html.ActionLink("Save Name", "UpdUserTeamSpecs",
           new { userName = Model.TeamSpecs.UserName, teamID = Model.TeamSpecs.UserTeamID, teamName = Model.TeamSpecs.TeamName },
-          new { disabled="disabled" })
+          new { disabled="disabled" })*@
 
-      <br/>Uses DH at home: @Html.CheckBoxFor(m => m.TeamSpecs.UsesDh)
+      <a id="btnEditName" href="#">Edit name and DH</a>
+
+      <br/>Uses DH at home: @Html.CheckBoxFor(m => m.TeamSpecs.UsesDh, new { id = "chkUsesDh" })
 
       @Html.HiddenFor(m => m.TeamSpecs.UserTeamID, new { id = "txtTeamID" })
    </div>
 
       <br/><input type="submit" value="Save with POST" />
-
-   }
 
    <div class="shadowed-text">
       <em>
@@ -203,7 +200,13 @@
       </div>
 
    </div>
-}
+
+   <div id="dlgEditName" title="Edit Team Name & DH usage">
+
+      Team Name: <input id="dlg_txtTeamName" type="text" placeholder="Rocket man"/>
+      <br/>Uses DH at home: <input id="dlg_chkUsesDh" type="checkbox" />
+
+   </div>
 
 @*----------------------------------------------
 This used to be SearchMulti
@@ -297,6 +300,64 @@ Idea is to put this in dialog.
                   $('#btnSaveChanges').prop('disabled', false);
                   //$('#btnAddPlayers').prop('disabled', true);
                });
+
+            $('#btnEditName').click(
+               function () {
+                  $('#dlgEditName').dialog('open');
+               });
+
+            $('#dlgEditName').dialog({
+               autoOpen: false,
+               height: 200,
+               width: 350,
+               modal: true,
+               buttons: {
+                  'Save': function () {
+                     bc_log('In Save');
+                     let newName = $('#dlg_txtTeamName').val();
+                     res = PersistName(newName);
+                     if (res == "ok") {
+                        $('#txtTeamName').val(newName);
+                        $('#chkUsesDh').prop('checked', $('#dlg_chkUsesDh').prop('checked'));
+                     }
+                     else 
+                        alert(res);
+                     $(this).dialog('close');
+                  },
+                  'Cancel': function () {
+                     $(this).dialog('close');
+                  }
+               },
+               close: function () {
+                  bc_log('Closing');
+               },
+               open: function () {
+                  bc_log('In open');
+                  $('#dlg_txtTeamName').val($('#txtTeamName').val());
+                  $('#dlg_chkUsesDh').prop('checked', $('#chkUsesDh').prop('checked'));
+               }
+            });
+
+
+            function PersistName(newName) {
+            // ---------------------------------------------
+               $.post(
+                  bc.routePrefix + 'host/mvc/upduserteamspecs',
+                  {
+                     userName: userName,
+                     teamID = teamID,
+                     teamName = newName
+                  },
+                  function (res1) {
+                     var res = res1;
+                  },
+                  'text'
+               );
+               bc_log('Returned from .post() = ' + res)
+               return res;
+
+            }
+
 
             // ---------------------------------------------------------
             // A nice agorism this, but I decided to not use it after all

@@ -90,17 +90,19 @@ namespace BcxbTeamBldr.Controllers {
       }
 
 
-      [Route("home/mvc/UpdUserTeamSpecs/{userName}/{teamID}/{teamName}")]
-      public void UpdUserTeamSpecs(string userName, int teamID, string teamName) {
+      [Route("home/mvc/upduserteamspecs/{userName}/{teamID}/{teamName}")]
+      public ContentResult UpdUserTeamSpecs(string userName, int teamID, string teamName) {
       // -------------------------------------------------------------------------
          try {
             info.UpdUserTeamSpecs(userName, teamID, teamName);
+            return Content("ok");
          }
          catch (Exception ex) {
             string msg =
                "An error occurred adding the new team to the database:\r\n" +
                ex.Message;
             ViewBag.ErrorMsg = msg;
+            return Content(msg);
          }
       }
 
