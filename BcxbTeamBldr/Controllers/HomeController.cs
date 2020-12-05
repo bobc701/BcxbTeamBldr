@@ -90,7 +90,8 @@ namespace BcxbTeamBldr.Controllers {
       }
 
 
-      [Route("home/mvc/upduserteamspecs/{userName}/{teamID}/{teamName}")]
+      //[Route("home/mvc/upduserteamspecs/{userName}/{teamID}/{teamName}")]
+      [Route("home/mvc/upduserteamspecs")]
       public ContentResult UpdUserTeamSpecs(string userName, int teamID, string teamName) {
       // -------------------------------------------------------------------------
          try {

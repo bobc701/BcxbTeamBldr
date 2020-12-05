@@ -341,19 +341,22 @@ Idea is to put this in dialog.
 
             function PersistName(newName) {
             // ---------------------------------------------
-               $.post(
-                  bc.routePrefix + 'host/mvc/upduserteamspecs',
+               var res;
+               bc_log('In PersistName, newName: ' + newName);
+               $.get(
+                  bc.routePrefix + 'home/mvc/upduserteamspecs',
                   {
-                     userName: userName,
-                     teamID = teamID,
-                     teamName = newName
+                     userName: $('#txtUserName').val(),
+                     teamID: $('#txtTeamID').val(),
+                     teamName: newName
                   },
                   function (res1) {
-                     var res = res1;
+                     bc_log('In PersistName, res1: ' + res1);
+                     res = res1;
                   },
                   'text'
                );
-               bc_log('Returned from .post() = ' + res)
+               bc_log('Returned from .post(): ' + res)
                return res;
 
             }

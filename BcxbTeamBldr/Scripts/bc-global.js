@@ -7,5 +7,5 @@
 function bc_log(msg) {
 // --------------------------------
    console.log(msg);
-   //alert(msg);
+   alert(msg);
 }
