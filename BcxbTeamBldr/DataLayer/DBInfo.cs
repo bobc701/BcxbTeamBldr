@@ -97,13 +97,15 @@ namespace BcxbTeamBldr.DataLayer {
       }
 
 
-      public void UpdUserTeamSpecs(string userName, int teamID, string teamName) {
-      // ------------------------------------------------------------------------------
-         string sql = "UPDATE UserTeams SET TeamName = @teamName WHERE UserName = @userName AND UserTeamID = @teamID";
+      public void UpdUserTeamSpecs(string userName, int teamID, string teamName, bool usesDh) {
+         // ------------------------------------------------------------------------------
+         int nUsesDh = usesDh ? 1 : 0;
+         string sql = "UPDATE UserTeams SET TeamName = @teamName, UsesDh = @usesDh  WHERE UserName = @userName AND UserTeamID = @teamID";
          using (var cmd = new SqlCommand(sql, con1)) {
             cmd.Parameters.AddWithValue("@userName", userName);
             cmd.Parameters.AddWithValue("@teamID", teamID);
             cmd.Parameters.AddWithValue("@teamName", teamName);
+            cmd.Parameters.AddWithValue("@usesDh", nUsesDh);
 
             cmd.ExecuteNonQuery();
          }

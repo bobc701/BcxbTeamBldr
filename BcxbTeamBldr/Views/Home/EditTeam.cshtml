@@ -18,7 +18,7 @@
 
       Team name: @Html.TextBoxFor(
          m => m.TeamSpecs.TeamName,
-         new { id = "txtTeamName", style = "font-weight:bold; margin: 0px 0px 15px 0px;" })
+         new { id = "txtTeamName", @readonly = "readonly", style = "font-weight:bold; margin: 0px 0px 15px 0px;" })
 
 
       @*@Html.ActionLink("Save Name", "UpdUserTeamSpecs",
@@ -27,12 +27,10 @@
 
       <a id="btnEditName" href="#">Edit name and DH</a>
 
-      <br/>Uses DH at home: @Html.CheckBoxFor(m => m.TeamSpecs.UsesDh, new { id = "chkUsesDh" })
+      <br/>Uses DH at home: @Html.CheckBoxFor(m => m.TeamSpecs.UsesDh, new { id = "chkUsesDh", @readonly = "readonly" })
 
       @Html.HiddenFor(m => m.TeamSpecs.UserTeamID, new { id = "txtTeamID" })
    </div>
-
-      <br/><input type="submit" value="Save with POST" />
 
    <div class="shadowed-text">
       <em>
@@ -314,15 +312,7 @@ Idea is to put this in dialog.
                buttons: {
                   'Save': function () {
                      bc_log('In Save');
-                     let newName = $('#dlg_txtTeamName').val();
-                     res = PersistName(newName);
-                     if (res == "ok") {
-                        $('#txtTeamName').val(newName);
-                        $('#chkUsesDh').prop('checked', $('#dlg_chkUsesDh').prop('checked'));
-                     }
-                     else 
-                        alert(res);
-                     $(this).dialog('close');
+                     PersistName();
                   },
                   'Cancel': function () {
                      $(this).dialog('close');
@@ -339,25 +329,32 @@ Idea is to put this in dialog.
             });
 
 
-            function PersistName(newName) {
+            function PersistName() {
             // ---------------------------------------------
-               var res;
+               let newName = $('#dlg_txtTeamName').val();
                bc_log('In PersistName, newName: ' + newName);
                $.get(
                   bc.routePrefix + 'home/mvc/upduserteamspecs',
                   {
                      userName: $('#txtUserName').val(),
                      teamID: $('#txtTeamID').val(),
-                     teamName: newName
+                     teamName: newName,
+                     usesDh: $('#dlg_chkUsesDh').prop('checked')
                   },
-                  function (res1) {
-                     bc_log('In PersistName, res1: ' + res1);
+                  function (res) {
+                     bc_log('In succeed function, res:' + res)
+                     if (res == "ok") {
+                        bc_log('res = ok');
+                        $('#txtTeamName').val(newName);
+                        $('#chkUsesDh').prop('checked', $('#dlg_chkUsesDh').prop('checked'));
+                     }
+                     else
+                        alert(res);
+                     $('#dlgEditName').dialog('close');
                      res = res1;
                   },
                   'text'
                );
-               bc_log('Returned from .post(): ' + res)
-               return res;
 
             }
 

@@ -92,15 +92,15 @@ namespace BcxbTeamBldr.Controllers {
 
       //[Route("home/mvc/upduserteamspecs/{userName}/{teamID}/{teamName}")]
       [Route("home/mvc/upduserteamspecs")]
-      public ContentResult UpdUserTeamSpecs(string userName, int teamID, string teamName) {
+      public ContentResult UpdUserTeamSpecs(string userName, int teamID, string teamName, bool usesDh) {
       // -------------------------------------------------------------------------
          try {
-            info.UpdUserTeamSpecs(userName, teamID, teamName);
+            info.UpdUserTeamSpecs(userName, teamID, teamName, usesDh);
             return Content("ok");
          }
          catch (Exception ex) {
             string msg =
-               "An error occurred adding the new team to the database:\r\n" +
+               "An error occurred updating the database:\r\n" +
                ex.Message;
             ViewBag.ErrorMsg = msg;
             return Content(msg);
@@ -222,13 +222,16 @@ namespace BcxbTeamBldr.Controllers {
       //[Route("home/mvc/editteam/{user}/{team}")]
       [HttpPost]
       public void EditTeam(CUserTeam model) {
-      // -----------------------------------------------------
+      // -------------------------------------------------------------
+      // I think this is dead code, as EditTeam does not uses Forms...
+      // -------------------------------------------------------------
          try {
             int teamID = model.TeamSpecs.UserTeamID;
             string teamName = model.TeamSpecs.TeamName;
             string userName = model.TeamSpecs.UserName;
+            bool usesDh = model.TeamSpecs.UsesDh;
 
-            info.UpdUserTeamSpecs(userName, teamID, teamName);
+            info.UpdUserTeamSpecs(userName, teamID, teamName, usesDh);
 
             //return View("EditTeam", info.GetUserTeam(user, teamID)); //new CUserTeam(user, teamID, info));
 
