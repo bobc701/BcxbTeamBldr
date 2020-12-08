@@ -2,10 +2,10 @@
    <h2 style="margin: 0px 0px 35px 0px;">Search for players to add to @ViewData["team"]</h2>
 
    <p /><span class="label1"> Enter start of player's last name...</span>
-   <input type="text" id="txtName" class="entry1" style="width:150px;" />
+   <input type="text" id="txtName" class="entry1" style="width:150px;" placeholder="All"/>
 
    <br /><span class="label1">Year: (1901 to 2020, required)</span>
-   <input type="text" id="txtYear" name="txtYear" class="entry1" style="width:80px;" value="" />
+   <input type="text" id="txtYear" name="txtYear" class="entry1" style="width:80px;" />
 
    <br /><span class="label1">Team:</span>
    <select id="selTeam" name="selTeam" class="entry1" style="width:200px;">
@@ -121,7 +121,7 @@
             $('#btnSearch').click(function () {
                //var crit1 = $(this).attr('id');
                //$('#errMsg').css('display','none');
-               let critName1 = $('#txtName').val();
+               let critName1 = $('#txtName').val(); if (critName1 == '') critName1 = 'All';
                let critTeam1 = $('#selTeam').val();
                let critYear1 = $('#txtYear').val();
                let critPosn1 = $('#selPosn').val();

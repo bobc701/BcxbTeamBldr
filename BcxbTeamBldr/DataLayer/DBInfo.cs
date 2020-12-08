@@ -473,8 +473,11 @@ namespace BcxbTeamBldr.DataLayer {
 
 
             public List<MultiSearchView> SearchPlayersMulti(string critName, string critTeam, string critYear, string critPosn) {
-               // ---------------------------------------------------------------------
-               const int posnMin = 5;
+         // ---------------------------------------------------------------------
+            // Thresholds...
+               int posnMin = critYear != "2020" ? 8 : 5; //was 5; 12/8'20
+               int paMin = critYear != "2020" ? 150 : 60; 
+               int bfpMin = critYear != "2020" ? 150 : 60;
 
                var list = new List<MultiSearchView>();
 
@@ -499,6 +502,9 @@ namespace BcxbTeamBldr.DataLayer {
                   };
                }
 
+            // Here we apply an overall threshold...
+               crit += delim + $"(PAEst >= {paMin} OR ISNULL(BFP,0) >= {bfpMin})";
+
                string sql = $"SELECT * FROM MultiSearchView WHERE {crit}";
                //string sql = $"EXEC SearchPlayers '{crit}'";
                using (var cmd = new SqlCommand(sql, con1)) {
@@ -514,7 +520,7 @@ namespace BcxbTeamBldr.DataLayer {
                         msv.teamName = rdr["teamName"].ToString();
                         msv.G_p = (int)rdr["G_p"];
                         msv.G_c = (int)rdr["G_c"];
-                        msv.G_1b = (int)rdr["G_p"];
+                        msv.G_1b = (int)rdr["G_1b"];
                         msv.G_2b = (int)rdr["G_2b"];
                         msv.G_3b = (int)rdr["G_3b"];
                         msv.G_ss = (int)rdr["G_ss"];
@@ -530,7 +536,7 @@ namespace BcxbTeamBldr.DataLayer {
 
                   }
                }
-               return list;
+               return list.OrderBy(e => e.nameLast).ToList();
 
             }
 
