@@ -422,18 +422,18 @@ namespace BcxbTeamBldr.DataLayer {
          // -----------------------------------------------------------
             string s = "", del = "";
             bool ok;
-            if (!pos[1]) s += del + "p"; del = ",";
-            if (!pos[2]) s += del + "c"; del = ",";
-            if (!pos[3]) s += del + "1b"; del = ",";
-            if (!pos[4]) s += del + "2b"; del = ",";
-            if (!pos[5]) s += del + "3b"; del = ",";
-            if (!pos[6]) s += del + "ss"; del = ",";
-            if (!pos[7]) s += del + "lf"; del = ",";
-            if (!pos[8]) s += del + "cf"; del = ",";
-            if (!pos[9]) s += del + "rf"; del = ",";
+            if (!pos[1]) { s += del + "p"; del = ","; }
+            if (!pos[2]) { s += del + "c"; del = ","; }
+            if (!pos[3]) { s += del + "1b"; del = ","; }
+            if (!pos[4]) { s += del + "2b"; del = ","; }
+            if (!pos[5]) { s += del + "3b"; del = ","; }
+            if (!pos[6]) { s += del + "ss"; del = ","; }
+            if (!pos[7]) { s += del + "lf"; del = ","; }
+            if (!pos[8]) { s += del + "cf"; del = ","; }
+            if (!pos[9]) { s += del + "rf"; }
 
             if (posPlayerCount + pitPlayerCount == 0) {
-               s = $"{tm.TeamSpecs.TeamName} doesn't have any players yet";
+               s = $"{tm.TeamSpecs.TeamName} don't have any players yet!";
                ok = false;
             }
             else if (s != "") {
