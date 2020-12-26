@@ -14,23 +14,33 @@
             <th>Batters</th>
             <th>Pitchers</th>
             <th>Uses DH</th>
+            <th>Ready?</th>
             <th></th>
             <th></th>
          </tr>
          @foreach (var rec in Model.UserTeamList) {
-            <tr>
-               <td>@rec.TeamName</td>
-               <td>@rec.NumPos.ToString()</td>
-               <td>@rec.NumPit.ToString()</td>
-               <td>@(rec.UsesDh ? "Yes" : "No") </td>
-               <td>@Html.ActionLink("Edit", "EditTeam", new { user = Model.UserName, teamID = @rec.UserTeamID }) </td>
-               <td>
-                  @*@Html.ActionLink("Delete", "DeleteTeam", new { user = Model.UserName, teamID = @rec.UserTeamID })*@
-                  <a class="btnDelete" href="#">Delete</a>
-                  <input class="teamID" type="hidden" value="@rec.UserTeamID" />
-               </td>
+      <tr>
+         <td>@rec.TeamName</td>
+         <td>@rec.NumPos.ToString()</td>
+         <td>@rec.NumPit.ToString()</td>
+         <td style="text-align:center;">@(rec.UsesDh ? "Yes" : "No") </td>
+         <td style="text-align:center;">
+            @if (rec.IsComplete) {
+               @*<input type="checkbox" checked="checked" readonly style="background:green; color:green;" />*@
+               <img src="~/Images/checkBox_checked2.png" style="width:15px; height:15px;"/>
+            }
+            else {
+               @*<input type="checkbox" readonly />*@
+               <img src="~/Images/checkBox_unchecked2.png" style="width:15px; height:15px;"/>
+            }
+<td>@Html.ActionLink("Edit", "EditTeam", new { user = Model.UserName, teamID = @rec.UserTeamID }) </td>
+            <td>
+               @*@Html.ActionLink("Delete", "DeleteTeam", new { user = Model.UserName, teamID = @rec.UserTeamID })*@
+               <a class="btnDelete" href="#">Delete</a>
+               <input class="teamID" type="hidden" value="@rec.UserTeamID" />
+            </td>
 
-            </tr>
+         </tr>
          }
       </table>
    }

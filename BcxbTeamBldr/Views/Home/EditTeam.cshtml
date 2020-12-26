@@ -46,12 +46,14 @@
    <div>
       @if (Model.TeamSpecs.IsComplete) {
          <div style="color:limegreen; font-weight:bold">
+            <img src="~/Images/checkBox_checked2.png" style="width:15px; height:15px;" />&nbsp;
             @Model.TeamSpecs.StatusMsg
          </div>
-         <text><em>(You may still add up to 25 players.)</em></text>
+            <text><em>(You may still add up to 25 players.)</em></text>
       }
       else {
          <div class="errorMsg2">
+            <img src="~/Images/checkBox_unchecked2.png" style="width:15px; height:15px;" />&nbsp;
             @Model.TeamSpecs.StatusMsg
          </div>
       }

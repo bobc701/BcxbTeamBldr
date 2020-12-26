@@ -35,7 +35,7 @@
    <p /><input id="errMsg" style="border:none; color:red; font-size:larger; font-weight:bold; width:600px;" value="" />
 
    <p /><input id="btnAddSelected" type="button" class="btn btn-primary" value="Add Selected Players" />
-   @Html.ActionLink("Close", "EditTeam", new { user = ViewData["user"], team = ViewData["team"] }, new { @class = "btn btn-primary" })
+   @Html.ActionLink("Close", "EditTeam", new { user = ViewData["user"], teamID = ViewData["teamID"] }, new { @class = "btn btn-primary" })
 
    <br />
    <input id="hdnUserName" type="text" style="visibility:hidden" value="@ViewData["user"]" />
@@ -144,7 +144,7 @@
                      critPosn: critPosn1
                   },
                   success: function (data) {
-                     alert(JSON.stringify(data));
+                     alert(`Returned:${JSON.stringify(data)}`);
                      //alert(JSON.stringify({ test: 'hello', quant: 12 })); So can be any object not just Json!
                      //alert(data[0].PlayerName);
                      content = '<h3>Matching Players...</h3>';

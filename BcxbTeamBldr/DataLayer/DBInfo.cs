@@ -386,10 +386,15 @@ namespace BcxbTeamBldr.DataLayer {
 
        // Verify team status and post results back to the database...
          (tm.TeamSpecs.StatusMsg, tm.TeamSpecs.IsComplete) = GetTeamReadyStatus();
-         sql = "UPDATE UserTeams SET IsComplete = @ready, StatusMsg = @msg";
+         sql = 
+            @$"UPDATE UserTeams SET IsComplete = @ready, StatusMsg = @msg
+            WHERE UserName = @user AND UserTeamID = @teamID";
+
          using (var cmd = new SqlCommand(sql, con1)) {
             cmd.Parameters.AddWithValue("@ready", (int)(tm.TeamSpecs.IsComplete ? 1 : 0));
             cmd.Parameters.AddWithValue("@msg", tm.TeamSpecs.StatusMsg);
+            cmd.Parameters.AddWithValue("@user", user);
+            cmd.Parameters.AddWithValue("@teamID", teamID);
 
             cmd.ExecuteNonQuery();
          }
