@@ -1,11 +1,11 @@
 ﻿<div>
    <h2 style="margin: 0px 0px 35px 0px;">Search for players to add to @ViewData["team"]</h2>
 
-   <p /><span class="label1"> Enter start of player's last name...</span>
-   <input type="text" id="txtName" class="entry1" style="width:150px;" placeholder="All"/>
+   <p /><span class="label1">Year: (1901 to 2020, required)</span>
+   <input type="text" id="txtYear" name="txtYear" class="entry1" style="width:80px;" value="2020"/>
 
-   <br /><span class="label1">Year: (1901 to 2020, required)</span>
-   <input type="text" id="txtYear" name="txtYear" class="entry1" style="width:80px;" />
+   <br /><span class="label1"> Enter start of player's last name...</span>
+   <input type="text" id="txtName" class="entry1" style="width:150px;" placeholder="All" />
 
    <br /><span class="label1">Team:</span>
    <select id="selTeam" name="selTeam" class="entry1" style="width:200px;">
@@ -83,12 +83,12 @@
 
             $('#txtYear').on('change',
                function () {
-                  console.log('In txtYear.change ----------------------------------------------');
+                  bc_log(`In txtYear.change: ${$(this).val()} ----------------------------------------------`);
 
                   // First, validate the user's entry...
                   let err = false;
                   let yr = $(this).val();
-                  if (isNaN(yr))
+                  if (yr == '' || isNaN(yr))
                      err = true;
                   else {
                      yr = parseInt(yr);
@@ -117,6 +117,8 @@
                   );
                });
 
+            $('#txtYear').change();
+
 
             $('#btnSearch').click(function () {
                //var crit1 = $(this).attr('id');
@@ -129,10 +131,27 @@
                let team1 = $('#hdnTeamID').val();
                //alert('criteria=' + critName1 + ' bc.routePrefix=' + bc.routePrefix);
 
+
+            /* ------------------
+             * Edits of criteria
+             * -----------------*/
                if (critName1 == "All" && critTeam1 == "All" && critPosn1 == "All") {
                   alert("You must specify at least name, team or position");
                   return;
                }
+               if (critYear1 == '') {
+                  alert('Year is required');
+                  return;
+               }
+               if (isNaN(critYear1)) {
+                  alert('Year must be a number between 1901 and 2020');
+                  return;
+               }
+               if (critName1.length < 3) {
+                  alert('You must include at least 3 characters of name');
+                  return;
+               }
+
 
                $.ajax({
                   url: bc.routePrefix + 'Home/SearchMultiJson', type: "GET", dataType: "json",

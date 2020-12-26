@@ -519,11 +519,19 @@ namespace BcxbTeamBldr.DataLayer {
          // This gets a List of dropdown items for the Team dropdown on the search page.
          // Note: I was using anonymous types passed back as objects.
          // But I changed my mind, and am using List<SelectListItem>.
+         // -------------------------------------------------
 
-         string sql =
-            @$"SELECT teamID, LineName, NickName
-         FROM ZTeams
-         WHERE yearID = {yr}";
+
+         string sql;
+         if (yr == 0) {
+            sql =
+               @$"SELECT teamID, LineName, NickName
+               FROM ZTeams
+               WHERE yearID = {yr}";
+         }
+         else {
+            sql = @$"SELECT teamID, LineName, NickName FROM ZTeams";
+         }
 
          var ret = new List<SelectListItem>();
          using (var cmd = new SqlCommand(sql, con1))
@@ -552,7 +560,7 @@ namespace BcxbTeamBldr.DataLayer {
 
          // Build search string for SQL select...
          string crit = "", delim = "";
-         if (critName != "All") { crit = $"nameLast LIKE '%{critName}%'"; delim = " AND "; }
+         if (critName != "All") { crit = $"nameLast LIKE '{critName}%'"; delim = " AND "; }
          if (critTeam != "All") { crit += delim + $"teamID LIKE '%{critTeam}%'"; delim = " AND "; } // EG: 'NYA2019' LIKE '%NYA%'
          if (critYear != "All") { crit += delim + $"yearID = '{critYear}'"; delim = " AND "; }
 
