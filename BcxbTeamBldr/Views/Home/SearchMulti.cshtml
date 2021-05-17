@@ -3,6 +3,7 @@
 
    <p /><span class="label1">Year: (1901 to 2020, required)</span>
    <input type="text" id="txtYear" name="txtYear" class="entry1" style="width:80px;" value="2020"/>
+   <label id="lblInvalidYear" class="errorMsg1"></label>
 
    <br /><span class="label1"> Enter start of player's last name...</span>
    <input type="text" id="txtName" class="entry1" style="width:150px;" placeholder="All" />
@@ -95,11 +96,15 @@
                      if (yr < 1901 || yr > 2020) err = true;
                   }
                   if (err) {
-                     alert('Year must be a number between 1901 and 2020');
+                     bc_log('Year must be a number between 1901 and 2020');
                      $("#selTeam").html('<option selected value=All>All</option>');
+                     $("#lblInvalidYear").html("Year must be between 1901 and 2020")
                      return;
                   }
-                  console.log('Year is good: ' + yr);
+                  else {
+                     $("#lblInvalidYear").html("");
+                  }
+                  bc_log('Year is good: ' + yr);
 
                   // Next, use ajax to get the dropdown list for the Team dropdown...
                   $.get(
@@ -136,19 +141,23 @@
              * Edits of criteria
              * -----------------*/
                if (critName1 == "All" && critTeam1 == "All" && critPosn1 == "All") {
-                  alert("You must specify at least name, team or position");
+                  $("#dvResults").html("You must specify at least name, team or position");
                   return;
                }
                if (critYear1 == '') {
-                  alert('Year is required');
+                  $("#dvResults").html('Year is required');
                   return;
                }
                if (isNaN(critYear1)) {
-                  alert('Year must be a number between 1901 and 2020');
+                  $("#dvResults").html('Year must be a number between 1901 and 2020');
+                  return;
+               }
+               if (critYear1 < 1901 || critYear1 > 2020) {
+                  $("#dvResults").html('Year must be a number between 1901 and 2020');
                   return;
                }
                if (critName1.length < 3) {
-                  alert('You must include at least 3 characters of name');
+                  $("#dvResults").html('You must include at least 3 characters of name');
                   return;
                }
 
@@ -163,7 +172,13 @@
                      critPosn: critPosn1
                   },
                   success: function (data) {
-                     alert(`Returned:${JSON.stringify(data)}`);
+
+                     if (data.length == 0) {
+                        $('#dvResults').html("No matching players");
+                        return;
+                     }
+
+                     bc_log(`Returned:${JSON.stringify(data)}`);
                      //alert(JSON.stringify({ test: 'hello', quant: 12 })); So can be any object not just Json!
                      //alert(data[0].PlayerName);
                      content = '<h3>Matching Players...</h3>';

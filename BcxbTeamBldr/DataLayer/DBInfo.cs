@@ -401,9 +401,8 @@ namespace BcxbTeamBldr.DataLayer {
 
          return tm;
 
-
+         //local--
          string GetFieldingString(SqlDataReader rdr) {
-         // -----------------------------------------------------------------------
 
             const int fMin = 8; // Min games at posn to be listed in posn string
             string s = "";
@@ -423,10 +422,14 @@ namespace BcxbTeamBldr.DataLayer {
 
          }
 
+         //local--
          (string, bool) GetTeamReadyStatus() {
-         // -----------------------------------------------------------
-            string s = "", del = "";
+            
+            const int MAX_PLAYER_COUNT = 25;
+            const int MAX_PIT_COUNT = 11;
+            string s = "", del = "", msg ;
             bool ok;
+
             if (!pos[1]) { s += del + "p"; del = ","; }
             if (!pos[2]) { s += del + "c"; del = ","; }
             if (!pos[3]) { s += del + "1b"; del = ","; }
@@ -437,24 +440,32 @@ namespace BcxbTeamBldr.DataLayer {
             if (!pos[8]) { s += del + "cf"; del = ","; }
             if (!pos[9]) { s += del + "rf"; }
 
-            if (posPlayerCount + pitPlayerCount == 0) {
-               s = $"{tm.TeamSpecs.TeamName} don't have any players yet!";
+            if (posPlayerCount + pitPlayerCount > MAX_PLAYER_COUNT) { 
+               msg = $"Too many players (max is {MAX_PLAYER_COUNT})";
+               ok = false;
+            }
+            else if (pitPlayerCount > MAX_PIT_COUNT) {
+               msg = $"Too many pitchers (max is {MAX_PIT_COUNT})";
+               ok = false;
+            }
+            else if (posPlayerCount + pitPlayerCount == 0) {
+               msg = $"{tm.TeamSpecs.TeamName} don't have any players yet!";
                ok = false;
             }
             else if (s != "") {
-               s = "Need a player at these positions: " + s;
+               msg = "Need a player at these positions: " + s;
                ok = false;
             }
             else if (s == "" && posPlayerCount < 9) {
-               s = "Team must have at least 9 position players";
+               msg= "Team must have at least 9 position players";
                ok = false;
             }
             else {
-               s = "Roster is ready for use in Play-by-Play Baseball!";
+               msg = "Roster is ready for use in Play-by-Play Baseball!";
                ok = true;
             }
 
-            return (s, ok);
+            return (msg, ok);
          }
       }
 
@@ -521,28 +532,30 @@ namespace BcxbTeamBldr.DataLayer {
          // But I changed my mind, and am using List<SelectListItem>.
          // -------------------------------------------------
 
-
          string sql;
-         if (yr == 0) {
+         if (yr != 0) {
             sql =
                @$"SELECT teamID, LineName, NickName
                FROM ZTeams
-               WHERE yearID = {yr}";
+               WHERE yearID = @yr";
          }
          else {
             sql = @$"SELECT teamID, LineName, NickName FROM ZTeams";
          }
 
          var ret = new List<SelectListItem>();
-         using (var cmd = new SqlCommand(sql, con1))
-         using (SqlDataReader rdr = cmd.ExecuteReader())
-
-            while (rdr.Read()) {
-               ret.Add(new SelectListItem {
-                  Value = rdr["teamID"].ToString(),
-                  Text = $"{rdr["LineName"]} {rdr["NickName"]}"
-               }); // Eg: "NYY Yankees"
+         using (var cmd = new SqlCommand(sql, con1)) {
+            cmd.Parameters.AddWithValue("@yr", yr);
+            using (SqlDataReader rdr = cmd.ExecuteReader()) {
+               while (rdr.Read()) {
+                  ret.Add(new SelectListItem {
+                     Value = rdr["teamID"].ToString(),
+                     Text = $"{rdr["LineName"]} {rdr["NickName"]}"
+                  }); // Eg: "NYY Yankees"
+               }
             }
+         }
+
          return ret;
 
       }
