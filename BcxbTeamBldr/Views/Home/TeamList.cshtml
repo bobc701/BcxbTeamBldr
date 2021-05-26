@@ -2,19 +2,20 @@
 
 <h2>Team List for @Model.UserName.Split(new char[] { '@' })[0]</h2>
 <div>
-   @if (Model.UserName.Length == 0) {
+   @if (Model.UserTeamList.Count == 0) {
       <div style="color:red;">
          <text>Click 'Add new team' to add your first team </text>
       </div>
    }
    else {
+      
       <table class="tablefmt2">
          <tr>
             <th>Team</th>
             <th>Batters</th>
             <th>Pitchers</th>
             <th>Uses DH</th>
-            <th>Ready?</th>
+            <th>Ready *</th>
             <th></th>
             <th></th>
          </tr>
@@ -33,7 +34,7 @@
                @*<input type="checkbox" readonly />*@
                <img src="~/Images/checkBox_unchecked2.png" style="width:15px; height:15px;"/>
             }
-<td>@Html.ActionLink("Edit", "EditTeam", new { user = Model.UserName, teamID = @rec.UserTeamID }) </td>
+         <td>@Html.ActionLink("Edit", "EditTeam", new { user = Model.UserName, teamID = @rec.UserTeamID }) </td>
             <td>
                @*@Html.ActionLink("Delete", "DeleteTeam", new { user = Model.UserName, teamID = @rec.UserTeamID })*@
                <a class="btnDelete" href="#">Delete</a>
@@ -46,8 +47,30 @@
    }
 
    <div style="margin: 30px 0px 10px 0px;">
-      <p />
+      <p /><p />
       @Html.ActionLink("Add new team", "AddTeam", new { user = Model.UserName }, new { @class = "btn btn-primary" })
+   
+      <p />
+      @if (Model.UserTeamList.Count > 0) {
+
+  <div style="border:medium">
+  <pre>
+  * 'Ready' idicates whether the team is ready to be used in Zeemerix 
+  Play-by-Play Baseball for iPhone.
+  A green check mark indicates that the team is 'ready'.
+  Here are the requirements...
+
+  -- Maximum of 25 players
+  -- Minimum of 11 pitchers
+  -- Minimum of 1 pitcher
+  -- At least 1 player qualified to play each of the 9 fielding positions
+  -- At least 9 position players
+   </pre>
+   </div>
+
+      }
+
+
    </div>
 
 </div>
