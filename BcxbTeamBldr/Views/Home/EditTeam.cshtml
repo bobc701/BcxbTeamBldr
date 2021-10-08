@@ -288,7 +288,8 @@ Idea is to put this in dialog.
                   //let url = bc.routePrefix + `Home/SearchMulti?user=${user1}&team=${team1}`;
                   let userName = $('#txtUserName').val();
                   let teamID = $('#txtTeamID').val();
-                  let url = bc.routePrefix + `home/mvc/searchmulti/${userName}/${teamID}`;
+                  let teamName = $('#txtTeamName').val().trim().replace(' ', '_');
+                  let url = bc.routePrefix + `home/mvc/searchmulti/${userName}/${teamID}/${teamName}`;
                   bc_log(`url=${url}`);
                   window.location.href = url;
                });
