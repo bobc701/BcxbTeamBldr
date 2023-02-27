@@ -35,7 +35,7 @@ namespace BcxbTeamBldr.DataLayer {
          string sql = $"EXEC GetUserTeamList '{user}'";
          using (var cmd = new SqlCommand(sql, con1)) {
 
-            using (SqlDataReader rdr = cmd.ExecuteReader()) {
+            using (SqlDataReader rdr = cmd.ExecuteReader()) { 
                while (rdr.Read()) {
                   var team = new CUserTeamSpecs();
                   team.UserName = user;

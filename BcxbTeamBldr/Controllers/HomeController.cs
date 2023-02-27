@@ -199,6 +199,8 @@ namespace BcxbTeamBldr.Controllers {
             //info.ValidateTeam(user, team);
             var team = info.GetUserTeam(userName, teamID); //new CUserTeam(user, teamID, info);
             return View("EditTeam", team);
+            //You could use:
+            //return RedirectToAction("EditTeam", new { user = userName, teamID = teamID });
          }
          catch (Exception ex) {
             string msg =

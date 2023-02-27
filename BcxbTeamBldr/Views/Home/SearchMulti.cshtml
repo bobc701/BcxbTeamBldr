@@ -50,82 +50,14 @@
       $(document).ready(
 
          function () {
-            //alert("In document.ready");
-
-            $('#btnAddSelected').click(
-               function () {
-                  //alert('In btnSubmit');
-                  let pidList = '', tagList = '', yearList = '', delim = '';
-                  $('input.playerSelection:checked').each(
-                     function () {
-                        //alert('element ' + ', id=' + this.value);
-                        //alert(this.tagName);
-                        //alert($(this).parent().parent().get(0).tagName);
-                        let yr = $(this).parent().parent().find("td.selYear").first().text(); 
-                        let tm = $(this).parent().parent().find("td.selTeamTag").first().text();;
-                        let id = $(this).parent().parent().find("td.selPlayerID").first().text();
-                        pidList += delim + id;
-                        tagList += delim + tm;
-                        yearList += delim + yr;
-                        delim = ',';
-                        bc_log(`pidList: ${pidList} tagList: ${tagList} yearList: ${yearList}`);
-                     });
-                  //alert(`idList=|${idList}|`);
-                  let user1 = $('#hdnUserName').val();
-                  let team1 = $('#hdnTeamID').val();
-                  let url = bc.routePrefix + `Home/AddPlayerToTeamMulti?user=${user1}&teamID=${team1}&pidList=${pidList}&tagList=${tagList}&yearList=${yearList}`;
-                  bc_log(`url=${url}`);
-                  window.location.href = url;
-
-               }
-
-            );
-
-
-            $('#txtYear').on('change',
-               function () {
-                  bc_log(`In txtYear.change: ${$(this).val()} ----------------------------------------------`);
-
-                  // First, validate the user's entry...
-                  let err = false;
-                  let yr = $(this).val();
-                  if (yr == '' || isNaN(yr))
-                     err = true;
-                  else {
-                     yr = parseInt(yr);
-                     if (yr < 1901 || yr > 2020) err = true;
-                  }
-                  if (err) {
-                     bc_log('Year must be a number between 1901 and 2020');
-                     $("#selTeam").html('<option selected value=All>All</option>');
-                     $("#lblInvalidYear").html("Year must be between 1901 and 2020")
-                     return;
-                  }
-                  else {
-                     $("#lblInvalidYear").html("");
-                  }
-                  bc_log('Year is good: ' + yr);
-
-                  // Next, use ajax to get the dropdown list for the Team dropdown...
-                  $.get(
-                     bc.routePrefix + 'Home/GetTeamsForYear',
-                     { yr: yr },
-                     function (ret) {
-                        console.log('Ajax returned: ' + ret);
-                        let content = '<option selected value=All>All</option>';
-                        for (let t of ret) {
-                           content += `<option value=${t.Value}>${t.Text}</option>`;
-                        }
-                        $("#selTeam").html(content);
-                     },
-                     "json"
-                  );
-               });
-
-            $('#txtYear').change();
 
 
             $('#btnSearch').click(function () {
+
+               /* ---------------------------------------
+                * This is where .Ajax is called...
+                * ---------------------------------------
+                */
                //var crit1 = $(this).attr('id');
                //$('#errMsg').css('display','none');
                let critName1 = $('#txtName').val(); if (critName1 == '') critName1 = 'All';

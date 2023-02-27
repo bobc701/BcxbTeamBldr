@@ -174,15 +174,16 @@
   )
                </td>
                <td style="width:100px;">
-                  @*@Html.CheckBoxFor(m => m.Roster[i].Remove)*@
-                  @Html.ActionLink("Remove", "RemovePlayerFromTeam",
-                     new { userName = userName, teamID = teamID, yearID = Model.Roster[i].year, teamTag = Model.Roster[i].teamTag, playerID = Model.Roster[i].pid })
-
-                  @*Addl stuff needed on server to update UserPlayer table...*@
-                  @Html.HiddenFor(m => m.Roster[i].pid, new { @class = "pid" })
-                  @Html.HiddenFor(m => m.Roster[i].UserName)
-                  @Html.HiddenFor(m => m.Roster[i].TeamName)
-                  @Html.HiddenFor(m => m.Roster[i].UserTeamID)
+                   @*@Html.CheckBoxFor(m => m.Roster[i].Remove)*@
+                   @Html.ActionLink("Remove", "RemovePlayerFromTeam",
+                      new { userName = userName, teamID = teamID, yearID = Model.Roster[i].year, teamTag = Model.Roster[i].teamTag, playerID = Model.Roster[i].pid })
+                   @*Because of the [Route] attrib, this renders as:
+                   href="/home/mvc/removeplayerfromteam/bobc/5004/2019/HOU/bregmal01"*@
+                   @*Addl stuff needed on server to update UserPlayer table...*@
+                   @Html.HiddenFor(m => m.Roster[i].pid, new { @class = "pid" })
+                   @Html.HiddenFor(m => m.Roster[i].UserName)
+                   @Html.HiddenFor(m => m.Roster[i].TeamName)
+                   @Html.HiddenFor(m => m.Roster[i].UserTeamID)
                </td>
             </tr>
          }
