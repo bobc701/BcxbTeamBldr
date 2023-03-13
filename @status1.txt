@@ -1,3 +1,8 @@
+BRANCH Master, 3/14'23
+I have restored 2 javascript functions that were mysteriously 
+deleted in previous commit of Master.
+
+
 b10 (from b9)
 This will use jQuery dialog for Add Players.
 
